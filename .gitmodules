@@ -1,0 +1,3 @@
+[submodule "Robomatic"]
+	path = Robomatic
+	url = https://github.com/acmerobotics/robomatic.git
