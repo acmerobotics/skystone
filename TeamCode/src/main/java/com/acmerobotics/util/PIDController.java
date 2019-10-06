@@ -44,7 +44,6 @@ public class PIDController {
 
         }
 
-
             if (!updated) {
                 lastTimeStamp = System.currentTimeMillis();
                 lastError = error;

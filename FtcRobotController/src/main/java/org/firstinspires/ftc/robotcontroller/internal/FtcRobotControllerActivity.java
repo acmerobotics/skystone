@@ -711,6 +711,8 @@ public class FtcRobotControllerActivity extends Activity
       }
     });
 
+    FtcDashboard.attachWebServer(service.getWebServer());
+
   }
 
   private void updateUIAndRequestRobotSetup() {
