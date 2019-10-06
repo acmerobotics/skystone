@@ -1,5 +1,6 @@
 package com.acmerobotics.robot;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Config
@@ -42,7 +44,10 @@ public class Drive {
     private double headingOffset;
     private double rawHeading;
 
-    public Drive(HardwareMap hardwareMap){
+    private Telemetry telemetry;
+
+
+    public Drive(HardwareMap hardwareMap, Telemetry telemetry){
         //super("drive");
 
        /*motors[0] = robot.getMotor("m0");
@@ -51,15 +56,23 @@ public class Drive {
        motors[3] = robot.getMotor( "m3");
        */
 
+       this.telemetry = telemetry;
+
+       this.telemetry.addData("max v", MAX_V);
+       this.telemetry.addData("max o", MAX_O);
+
+
+       FtcDashboard dashboard = FtcDashboard.getInstance();
+
 
         motors[0] = hardwareMap.get(DcMotorEx.class, "m0");
         motors[1] = hardwareMap.get(DcMotorEx.class, "m1");
         motors[2] = hardwareMap.get(DcMotorEx.class, "m2");
         motors[3] = hardwareMap.get(DcMotorEx.class, "m3");
 
-       for (int i = 0; i < motors.length; i++){
+       for (int i = 0; i < 4; i++){
            motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-           motors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+           motors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
        }
 
        motors[0].setDirection(DcMotorEx.Direction.FORWARD);
@@ -92,7 +105,9 @@ public class Drive {
             Vector2d wheelVelocity = new Vector2d(v.x() - omega * WHEEL_POSITIONS[i].y(),
                     v.y() + omega * WHEEL_POSITIONS[i].x());
             double wheelOmega = (wheelVelocity.dot(ROTOR_DIRECTIONS[i]) * Math.sqrt(2)) / RADIUS;
-            motors[i].setVelocity(wheelOmega, AngleUnit.RADIANS);
+            motors[i].setPower(wheelOmega);
+            telemetry.addData("motor" + i, wheelOmega);
+
         }
 
     }
@@ -116,8 +131,8 @@ public class Drive {
 
     }
 
-    public void update()
-    {
+    public void update(){
+
         rawHeading = imu.getAngularOrientation().firstAngle;
     }
 

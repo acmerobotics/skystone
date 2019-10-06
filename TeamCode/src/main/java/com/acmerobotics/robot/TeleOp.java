@@ -12,8 +12,7 @@ public class TeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //SkyStoneRobot robot = new SkyStoneRobot(this);
-        Drive drive = new Drive(hardwareMap);
-        TelemetryPacket telemetryPacket = new TelemetryPacket()
+        Drive drive = new Drive(hardwareMap, telemetry);
 
 
         while (!isStopRequested()){
@@ -29,8 +28,7 @@ public class TeleOp extends LinearOpMode {
             drive.setPower(new Vector2d(gamepad1.left_stick_y, gamepad1.left_stick_x), gamepad1.right_stick_x);
             drive.update();
 
-
-
+            telemetry.update();
 
         }
 
