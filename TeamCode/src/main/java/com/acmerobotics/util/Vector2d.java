@@ -1,9 +1,6 @@
-package com.acmerobotics.practice;
-
-import java.util.Vector;
+package com.acmerobotics.util;
 
 public class Vector2d {
-
     private double x, y;
 
     public Vector2d (double x, double y) {

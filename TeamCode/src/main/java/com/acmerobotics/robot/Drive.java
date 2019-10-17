@@ -4,22 +4,20 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.practice.Vector2d;
+import com.acmerobotics.util.Vector2d;
 import com.acmerobotics.robomatic.robot.Robot;
 import com.acmerobotics.robomatic.robot.Subsystem;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Config
-public class Drive extends Subsystem{
+public class Drive {
 
-    public static double MAX_V = 0.5;
+    public static double MAX_V = 30;
     public static double MAX_O = 1;
     public static final double RADIUS = 2;
     public static Vector2d[] WHEEL_POSITIONS = {
@@ -47,21 +45,25 @@ public class Drive extends Subsystem{
     private Telemetry telemetry;
 
 
-    public Drive(Robot robot){
-        super("drive");
+    public Drive(HardwareMap hardwareMap){
+        //super("drive");
 
-       motors[0] = robot.getMotor("m0");
+      /* motors[0] = robot.getMotor("m0");
        motors[1] = robot.getMotor("m1");
        motors[2] = robot.getMotor("m2");
-       motors[3] = robot.getMotor( "m3");
+       motors[3] = robot.getMotor( "m3");*/
 
+        motors[0] = hardwareMap.get(DcMotorEx.class, "m0");
+        motors[1] = hardwareMap.get(DcMotorEx.class, "m1");
+        motors[2] = hardwareMap.get(DcMotorEx.class, "m2");
+        motors[3] = hardwareMap.get(DcMotorEx.class, "m3");
 
        FtcDashboard dashboard = FtcDashboard.getInstance();
 
 
        for (int i = 0; i < 4; i++){
-           motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-           motors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+           motors[i].setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+           motors[i].setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
        }
 
        motors[0].setDirection(DcMotorEx.Direction.FORWARD);
@@ -69,15 +71,16 @@ public class Drive extends Subsystem{
        motors[2].setDirection(DcMotorEx.Direction.FORWARD);
        motors[3].setDirection(DcMotorEx.Direction.REVERSE);
 
-       imu = robot.getRevHubImu(0);
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
+
+      /* imu = robot.getRevHubImu(0);
        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-       imu.initialize(parameters);
-
-    }
-
-    @Override
-    public void update(Canvas overlay) {
+       imu.initialize(parameters); */
 
     }
 
