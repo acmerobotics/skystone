@@ -17,7 +17,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Lift {
 
     private DcMotorEx liftMotor;
-    private DcMotorEx armMotor;
     private MotionProfile profile;
     DigitalChannel bottomHallEffect;
     private double startTime;
@@ -35,14 +34,10 @@ public class Lift {
     public static double J = 0;
     public static double RADIUS = 0;
 
-    public static double LIFT_HEIGHT = 0;
+    public static double LIFT_HEIGHT = 44;
     public static double LIFT_INTAKE = 0;
     public static double LIFT_RELOCATION = 0;
-    public static double LIFT_START = 0;
-
-    public static double ARM_START = 0;
-    public static double ARM_INTAKE = 0;
-    public static double ARM_RELOCATION = 0;
+    public static double LIFT_BOTTOM = 0;
 
     public static double CALIBRATE_V = 0;
 
@@ -64,12 +59,12 @@ public class Lift {
     public Lift(HardwareMap hardwareMap){
 
         liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
-        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
         bottomHallEffect = hardwareMap.digitalChannel.get("bottomHallEffect");
 
         pidController = new PIDController(P, I, D);
 
     }
+
     public double getPosition(){
         return internalGetPosition() + offset;
     }
@@ -133,8 +128,9 @@ public class Lift {
         return offset;
     }
 
-    public void startPosition(){
-
+    public void goToBottom(){
+        goToPosition(LIFT_BOTTOM);
+        liftMode = LiftMode.FIND_BOTTOM;
 
     }
 
@@ -145,6 +141,8 @@ public class Lift {
     }
 
     public void intakePosition(){
+        goToPosition(LIFT_INTAKE);
+
 
     }
 
