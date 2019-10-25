@@ -29,7 +29,6 @@ public class PlacingArm {
     public PlacingArm(HardwareMap hardwareMap){
 
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
-
         pidController = new PIDController(P, I, D);
 
     }
@@ -37,6 +36,7 @@ public class PlacingArm {
 
     public double getPosition(){
         return internalGetPosition() + offset;
+
     }
 
     public double internalGetPosition(){
@@ -46,31 +46,36 @@ public class PlacingArm {
 
     public void setPower(double power){
         internalSetVelocity(power);
+
     }
 
     public void setPosition(double position){
         offset = position - internalGetPosition();
+
     }
 
     public void internalSetVelocity(double v){
         armMotor.setPower(v);
-    }
 
+    }
 
 
     public void armZeroPosition(){
         setPosition(ARM_ZERO);
+        setPower(1);
         pidController = new PIDController(P, I, D);
 
     }
 
     public void armIntakePosition(){
         setPosition(ARM_INTAKE);
+        setPower(1);
         pidController = new PIDController(P, I, D);
     }
 
     public void armRelocationPosition(){
         setPosition(ARM_RELOCATION);
+        setPower(1);
         pidController = new PIDController(P, I, D);
 
     }

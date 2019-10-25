@@ -38,10 +38,14 @@ public class Lift {
     public static double LIFT_INTAKE = 0;
     public static double LIFT_RELOCATION = 0;
     public static double LIFT_BOTTOM = 0;
+    public static double LIFT_INCREMENT = 5;
+    public static double BASE_INCREMENT = 2.5;
+
 
     public static double CALIBRATE_V = 0;
 
     public double offset;
+    public double placingHeight = 0;
 
     private boolean calibrated = false;
 
@@ -96,7 +100,7 @@ public class Lift {
                 if(isAtBottom()){
                     liftMode = LiftMode.HOLD_POSITION;
                     calibrated = true;
-                    internalSetVelocity(0);
+                    setPower(0);
                     setPosition(0);
                     pidController = new PIDController(P, I, D);
                 }
@@ -132,22 +136,31 @@ public class Lift {
         goToPosition(LIFT_BOTTOM);
         liftMode = LiftMode.FIND_BOTTOM;
 
+
     }
 
 
     public void relocationPosition(){
         goToPosition(LIFT_RELOCATION);
+        liftMode = LiftMode.RUN_TO_POSITION;
 
     }
 
     public void intakePosition(){
         goToPosition(LIFT_INTAKE);
+        liftMode = LiftMode.RUN_TO_POSITION;
 
 
     }
 
     public boolean isAtBottom(){
         return bottomHallEffect.getState();
+    }
+
+    public void setLiftIncrement(double blocks){
+        placingHeight = BASE_INCREMENT + (LIFT_INCREMENT * blocks);
+        goToPosition(blocks);
+        liftMode = LiftMode.RUN_TO_POSITION;
     }
 
 }
