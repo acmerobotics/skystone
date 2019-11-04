@@ -21,6 +21,8 @@ public class Lift {
     DigitalChannel bottomHallEffect;
     private double startTime;
 
+    private double targetPosition;
+
 
     public static double K_V = 0;
     public static double K_A = 0;
@@ -38,8 +40,8 @@ public class Lift {
     public static double LIFT_INTAKE = 0;
     public static double LIFT_RELOCATION = 0;
     public static double LIFT_BOTTOM = 0;
-    public static double LIFT_INCREMENT = 5;
-    public static double BASE_INCREMENT = 2.5;
+    public static double INCREMENT = 5;
+    public static double BASE_HEIGHT = 2.5;
 
 
     public static double CALIBRATE_V = 0;
@@ -92,7 +94,25 @@ public class Lift {
 
         switch (liftMode){
 
+            case HOLD_POSITION:
+                double error = getPosition() - targetPosition;
+                double correction = pidController.update(error);
+                packet.put("error", error);
+                internalSetVelocity(-correction);
+                packet.put("lift correction", -correction);
+
+                break;
+
+
             case RUN_TO_POSITION:
+                double t = (System.currentTimeMillis() - startTime) / 1000.0;
+                MotionState target = profile.get(t);
+
+                error = getPosition() - target.getX();
+                packet.put("error", error);
+                correction = pidController.update(error);
+
+                break;
 
 
             case FIND_BOTTOM:
@@ -101,12 +121,11 @@ public class Lift {
                     liftMode = LiftMode.HOLD_POSITION;
                     calibrated = true;
                     setPower(0);
+                    targetPosition = 0;
                     setPosition(0);
                     pidController = new PIDController(P, I, D);
                 }
                 break;
-
-
 
 
         }
@@ -158,9 +177,18 @@ public class Lift {
     }
 
     public void setLiftIncrement(double blocks){
-        placingHeight = BASE_INCREMENT + (LIFT_INCREMENT * blocks);
+        placingHeight = BASE_HEIGHT + (INCREMENT * blocks);
         goToPosition(blocks);
         liftMode = LiftMode.RUN_TO_POSITION;
+    }
+
+    private double getFeedForward(MotionState state, double mass){
+        double ff = K_V * state.getV() + K_A * mass * (state.getA() - G);
+        if(Math.abs(ff) > 1e-4){
+            ff += Math.copySign(K_STATIC, ff);
+        }
+
+        return ff;
     }
 
 }
