@@ -17,6 +17,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @Config
 public class Drive {
 
+    //TODO figure what the heck is happening with the drive like why won't you do the things i need you to do?
+
     public static double MAX_V = 30;
     public static double MAX_O = 1;
     public static final double RADIUS = 2;
@@ -90,6 +92,8 @@ public class Drive {
 
     }
 
+    // is the math wrong ?????
+
     public void setVelocity(Vector2d v, double omega) {
         for (int i = 0; i < 4; i++) {
             Vector2d wheelVelocity = new Vector2d(v.x() - omega * WHEEL_POSITIONS[i].y(),
@@ -100,6 +104,10 @@ public class Drive {
         }
 
     }
+
+    // ha ha this is all for auto, something that doesn't exist yet....
+
+    //TODO make auto happen
 
     public double getRawHeading(){
         return rawHeading;
@@ -119,6 +127,8 @@ public class Drive {
         targetHeading = getHeading() + angle;
 
     }
+
+    //TODO robomatic probably needs the update function ha ha ha
 
     public void update(){
 

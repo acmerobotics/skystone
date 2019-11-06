@@ -2,6 +2,7 @@ package com.acmerobotics.opmodes;
 
 import com.acmerobotics.robot.Drive;
 import com.acmerobotics.robot.Lift;
+import com.acmerobotics.robot.PlacingArm;
 import com.acmerobotics.util.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 

@@ -43,6 +43,9 @@ public class Lift {
     public static double INCREMENT = 5;
     public static double BASE_HEIGHT = 2.5;
 
+    public static double MASS_ARM = 0;
+    public static double MASS_FRAME = 0;
+
 
     public static double CALIBRATE_V = 0;
 
@@ -111,6 +114,8 @@ public class Lift {
                 error = getPosition() - target.getX();
                 packet.put("error", error);
                 correction = pidController.update(error);
+                double feedForward = getFeedForward(target, getMass());
+                internalSetVelocity(feedForward - correction);
 
                 break;
 
@@ -151,13 +156,14 @@ public class Lift {
         return offset;
     }
 
-    public void goToBottom(){
+    // I really hope all of these things work, like really really hope
+
+    public void goToBottom() {
         goToPosition(LIFT_BOTTOM);
         liftMode = LiftMode.FIND_BOTTOM;
 
 
     }
-
 
     public void relocationPosition(){
         goToPosition(LIFT_RELOCATION);
@@ -178,7 +184,7 @@ public class Lift {
 
     public void setLiftIncrement(double blocks){
         placingHeight = BASE_HEIGHT + (INCREMENT * blocks);
-        goToPosition(blocks);
+        goToPosition(placingHeight);
         liftMode = LiftMode.RUN_TO_POSITION;
     }
 
@@ -189,6 +195,15 @@ public class Lift {
         }
 
         return ff;
+    }
+
+    public double getMass(){
+        double mass = MASS_ARM;
+        if(!isAtBottom()){
+            mass += MASS_FRAME;
+        }
+
+        return mass;
     }
 
 }

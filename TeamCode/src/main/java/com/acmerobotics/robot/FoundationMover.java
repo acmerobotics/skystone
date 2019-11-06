@@ -15,6 +15,8 @@ public class FoundationMover {
         servo = hardwareMap.servo.get("foundation_servo");
     }
 
+    //TODO add all the methods for the foundation mover
+
 
 }
 

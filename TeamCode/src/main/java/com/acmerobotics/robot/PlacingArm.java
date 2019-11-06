@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 @Config
 public class PlacingArm {
 
+    //TODO talk about moving this into the lift code. Might be worth it. Maybe idk
+
     public static double ARM_LENGTH = 15.375;
 
     public static double ARM_ZERO = 0;
