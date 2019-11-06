@@ -15,6 +15,7 @@ public class PlacingArm {
     public static double ARM_ZERO = 0;
     public static double ARM_INTAKE = 0;
     public static double ARM_RELOCATION = 0;
+    public static double ARM_MASS = 0;
 
     public static double RADIUS = 0;
 

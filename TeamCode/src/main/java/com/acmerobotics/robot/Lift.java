@@ -117,6 +117,15 @@ public class Lift {
                 double feedForward = getFeedForward(target, getMass());
                 internalSetVelocity(feedForward - correction);
 
+                if (t > profile.duration()){
+                    packet.put("complete", true);
+                    liftMode = LiftMode.HOLD_POSITION;
+                    targetPosition = profile.end().getX();
+                    return;
+                }
+
+
+
                 break;
 
 
