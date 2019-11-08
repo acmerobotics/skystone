@@ -19,7 +19,7 @@ public class PlacingArm {
 
     //TODO talk about moving this into the lift code. Might be worth it. Maybe idk
 
-    //TODO add feedforward method the add feedforward to RUN_TO_POSITION
+    //TODO add feedforward method and add feedforward to RUN_TO_POSITION
 
     //TODO add telemetry packet to both RUN_TO_POSITION and HOLD_POSITION
 

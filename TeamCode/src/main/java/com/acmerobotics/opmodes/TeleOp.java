@@ -22,7 +22,7 @@ public class TeleOp extends LinearOpMode {
         PlacingArm arm = new PlacingArm(hardwareMap);
 
 
-        //TODO add servo stuff
+        //TODO add servo stuff ///////////////////////////////////////////////////////
 
 
         while (!isStopRequested()){

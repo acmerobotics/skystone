@@ -111,7 +111,7 @@ public class Lift {
                 double t = (System.currentTimeMillis() - startTime) / 1000.0;
                 MotionState target = profile.get(t);
 
-                error = getPosition() - target.getX();// is getPosition() = 0????? //the set point (target.getX) is set to the position that is
+                error = getPosition() - target.getX();//the set point (target.getX) is set to the position that is
                                                         // reached at the end of the motion profiles journey.
                 packet.put("error", error);
                 correction = pidController.update(error);
@@ -166,8 +166,6 @@ public class Lift {
         return offset;
     }
 
-    // I really hope all of these things work, like really really hope
-
     public void goToBottom() {
         goToPosition(LIFT_BOTTOM);
         liftMode = LiftMode.FIND_BOTTOM;
@@ -187,7 +185,8 @@ public class Lift {
 //        liftMode = LiftMode.RUN_TO_POSITION;
 //    }
 
-    public void moveTo(double position){
+    public void moveTo(double blocks){
+        double position = setLiftIncrement((blocks));
         goToPosition(position);
         liftMode = LiftMode.RUN_TO_POSITION;
     }
