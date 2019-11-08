@@ -111,7 +111,8 @@ public class Lift {
                 double t = (System.currentTimeMillis() - startTime) / 1000.0;
                 MotionState target = profile.get(t);
 
-                error = getPosition() - target.getX();
+                error = getPosition() - target.getX();// is getPosition() = 0????? //the set point (target.getX) is set to the position that is
+                                                        // reached at the end of the motion profiles journey.
                 packet.put("error", error);
                 correction = pidController.update(error);
                 double feedForward = getFeedForward(target, getMass());
@@ -149,12 +150,12 @@ public class Lift {
     public void goToPosition(double position){
         pidController = new PIDController(P, I, D);
         profile = MotionProfileGenerator.generateSimpleMotionProfile(
-                new MotionState(0, 0, 0, 0),
-                new MotionState(0, 0, 0, 0),
+                new MotionState(getPosition(), 0, 0, 0),
+                new MotionState(position, 0, 0, 0),
                 V, A, J
         );
         startTime = System.currentTimeMillis();
-
+        liftMode = liftMode.RUN_TO_POSITION;
     }
 
     public void internalSetVelocity(double v){
@@ -174,27 +175,30 @@ public class Lift {
 
     }
 
-    public void relocationPosition(){
-        goToPosition(LIFT_RELOCATION);
+//    public void relocationPosition(){
+//        goToPosition(LIFT_RELOCATION);
+//        liftMode = LiftMode.RUN_TO_POSITION;
+//
+//    }
+//
+//    public void intakePosition(){
+//
+//        goToPosition(LIFT_INTAKE);
+//        liftMode = LiftMode.RUN_TO_POSITION;
+//    }
+
+    public void moveTo(double position){
+        goToPosition(position);
         liftMode = LiftMode.RUN_TO_POSITION;
-
-    }
-
-    public void intakePosition(){
-        goToPosition(LIFT_INTAKE);
-        liftMode = LiftMode.RUN_TO_POSITION;
-
-
     }
 
     public boolean isAtBottom(){
         return bottomHallEffect.getState();
     }
 
-    public void setLiftIncrement(double blocks){
+    public double setLiftIncrement(double blocks){
         placingHeight = BASE_HEIGHT + (INCREMENT * blocks);
-        goToPosition(placingHeight);
-        liftMode = LiftMode.RUN_TO_POSITION;
+        return placingHeight;
     }
 
     private double getFeedForward(MotionState state, double mass){
