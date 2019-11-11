@@ -111,7 +111,8 @@ public class PlacingArm {
 
     }
 
-    public void updade(TelemetryPacket packet){// telemetry seems to only be used in teleOP so is telemetryPacket like teleOP but made for code outside TeleOp class
+    public void updade(TelemetryPacket packet){// telemetry seems to only be used in teleOP. So is
+                                               // telemetryPacket like teleOP but made for code outside TeleOp class?
         packet.put("arm mode", armMode.toString());
         packet.put("position", getPosition());
 
