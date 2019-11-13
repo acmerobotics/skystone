@@ -22,9 +22,6 @@ public class TeleOp extends LinearOpMode {
         PlacingArm arm = new PlacingArm(hardwareMap);
 
 
-        //TODO add servo stuff ///////////////////////////////////////////////////////
-
-
         while (!isStopRequested()){
 
             ////////gamepad1   ////////////////////
@@ -72,6 +69,7 @@ public class TeleOp extends LinearOpMode {
 
             if (gamepad2.right_bumper){
                 // grab block, servo stuff
+                arm.setServo("close");
             }
 
             telemetry.addData("Block count ", liftPotentialValue);
