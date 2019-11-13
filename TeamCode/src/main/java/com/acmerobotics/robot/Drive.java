@@ -19,6 +19,8 @@ public class Drive {
 
     //TODO figure what the heck is happening with the drive like why won't you do the things i need you to do?
 
+    public static double AUTO_SPEED = 10;
+
     public static double MAX_V = 30;
     public static double MAX_O = 1;
     public static final double RADIUS = 2;
@@ -46,7 +48,6 @@ public class Drive {
 
     private Telemetry telemetry;
 
-
     public Drive(HardwareMap hardwareMap){
         //super("drive");
 
@@ -54,6 +55,7 @@ public class Drive {
        motors[1] = robot.getMotor("m1");
        motors[2] = robot.getMotor("m2");
        motors[3] = robot.getMotor( "m3");*/
+
 
         motors[0] = hardwareMap.get(DcMotorEx.class, "m0");
         motors[1] = hardwareMap.get(DcMotorEx.class, "m1");
