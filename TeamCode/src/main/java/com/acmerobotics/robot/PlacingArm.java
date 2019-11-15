@@ -80,8 +80,9 @@ public class PlacingArm {
 
     public PlacingArm(HardwareMap hardwareMap){
 
-        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
+        armMotor = hardwareMap.get(DcMotorEx.class, "Arm Motor");
         pidController = new PIDController(P, I, D);
+        handServo = hardwareMap.get(Servo.class, "hand Servo");
 
     }
 
