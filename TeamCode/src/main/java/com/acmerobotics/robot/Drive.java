@@ -20,10 +20,10 @@ public class Drive {
     //TODO figure what the heck is happening with the drive like why won't you do the things i need you to do?
 
     public static double AUTO_SPEED = 10;
-
     public static double MAX_V = 30;
     public static double MAX_O = 1;
     public static final double RADIUS = 2;
+
     public static Vector2d[] WHEEL_POSITIONS = {
             new Vector2d(6, 7.5),
             new Vector2d(-6, 7.5),
@@ -109,7 +109,7 @@ public class Drive {
 
     // ha ha this is all for auto, something that doesn't exist yet....
 
-    //TODO make auto happen
+    //TODO make auto happens
 
     public double getRawHeading(){
         return rawHeading;
