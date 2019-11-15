@@ -20,6 +20,7 @@ public class Drive {
     //TODO figure what the heck is happening with the drive like why won't you do the things i need you to do?
 
     public static double AUTO_SPEED = 10;
+
     public static double d = 0; //distance
     public static double r = 0; //rate
     public static double t = 0; //time
