@@ -39,6 +39,8 @@ public class Drive {
     private static final double WHEEL_DIAMETER = 0;
     private static final double TICKS_PER_INCH = TICK_COUNT/ WHEEL_DIAMETER * Math.PI; //figure out if drive gear reduction is needed
 
+    public static double AUTO_SPEED = 10;
+
     public static Vector2d[] WHEEL_POSITIONS = {
             new Vector2d(6, 7.5),
             new Vector2d(-6, 7.5),
