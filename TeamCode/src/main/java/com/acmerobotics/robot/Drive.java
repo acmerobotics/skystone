@@ -36,7 +36,7 @@ public class Drive {
     private static double WHEEL_FROM_CENTER = 0; /////////////////find length of wheel from center
 
     private static final double TICK_COUNT = 0;
-    private static final double WHEEL_DIAMETER = 0;
+    private static final double WHEEL_DIAMETER = 1; //find real wheel diameter
     private static final double TICKS_PER_INCH = TICK_COUNT/ WHEEL_DIAMETER * Math.PI; //figure out if drive gear reduction is needed
 
     public static double AUTO_SPEED = 10;
