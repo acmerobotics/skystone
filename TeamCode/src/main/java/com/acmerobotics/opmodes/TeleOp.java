@@ -12,8 +12,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp")
 public class TeleOp extends LinearOpMode {
 
+
     public double liftPotentialValue = 0;
     //Telemetry telemetry;
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -28,6 +31,12 @@ public class TeleOp extends LinearOpMode {
             ////////gamepad1   ////////////////////
             drive.setPower(new Vector2d(-gamepad1.left_stick_y, gamepad1.left_stick_x), -gamepad1.right_stick_x);
 
+            //TODO check power that is going to motors (is it between -1 and 1 or -30 and 30)
+            telemetry.addData("0", drive.motors[0].getPower());
+            telemetry.addData("m1", drive.motors[1].getPower());
+            telemetry.addData("m2", drive.motors[2].getPower());
+            telemetry.addData("m3", drive.motors[3].getPower());
+
             if (gamepad1.y){
                 arm.armRelocationPosition();
             }
@@ -37,6 +46,8 @@ public class TeleOp extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper){
+                /// servo grab block
+
                 arm.setServo("open");
             }
 
@@ -70,7 +81,7 @@ public class TeleOp extends LinearOpMode {
 
             if (gamepad2.right_bumper){
                 // grab block, servo stuff
-                arm.setServo("close");
+                arm.setServo("open");
             }
 
             //telemetry.addData("Block count ", liftPotentialValue);

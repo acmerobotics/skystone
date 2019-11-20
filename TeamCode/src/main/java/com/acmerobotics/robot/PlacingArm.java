@@ -31,9 +31,7 @@ public class PlacingArm {
 
     public static double initAngle;
     public static double intakeAngle;
-    public static double relocationAngle; //find angle, but be careful because an angle of 0 degrees is the angle at which the arm
-                                              //motor is doing nothing. So the motor may be doing noting while the arm is at 30 degrees.
-                                              // Look at method ___ for solution
+    public static double relocationAngle;
     public static double restingAngle = 0; //angle where motor is doing nothing and the arm is resting
 
     public static double wantInitAngle = 0; //find angle
