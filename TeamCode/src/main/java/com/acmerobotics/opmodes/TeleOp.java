@@ -39,16 +39,17 @@ public class TeleOp extends LinearOpMode {
             telemetry.addData("m3", drive.motors[3].getPower());
 
             if (gamepad1.y){
+                //arm relocation
                 arm.armRelocationPosition();
             }
 
             if (gamepad1.a){ // could possible combine with right bumper
+                //arm is right on top of block
                 arm.armIntakePosition();
             }
 
             if (gamepad1.right_bumper){
                 /// servo grab block
-
                 arm.setServo("open");
             }
 
@@ -74,10 +75,12 @@ public class TeleOp extends LinearOpMode {
             }
 
             if (gamepad2.y){
+                //arm is above block
                 arm.armInitPosition();
             }
 
             if (gamepad2.a){
+                //arm is on top block
                 arm.armIntakePosition();// could possible combine with right bumper
             }
 
