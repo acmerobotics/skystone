@@ -18,7 +18,7 @@ public class Lift {
 
     private DcMotorEx liftMotor;
     private MotionProfile profile;
-    DigitalChannel bottomHallEffect;
+    private DigitalChannel bottomHallEffect;
     private double startTime;
 
     private double targetPosition;
@@ -34,9 +34,11 @@ public class Lift {
     public static double V = 0;
     public static double A = 0;
     public static double J = 0;
-    public static double RADIUS = 0;
+    public static double RADIUS = 0.5;
 
-    public static double LIFT_HEIGHT = 44;
+    public static double MAX_LIFT_HIEGHT = 14;
+
+    public static double LIFT_HEIGHT = 15;
     public static double LIFT_INTAKE = 0;
     public static double LIFT_RELOCATION = 0;
     public static double LIFT_BOTTOM = 0;
@@ -71,6 +73,7 @@ public class Lift {
         bottomHallEffect = hardwareMap.digitalChannel.get("bottomHallEffect");
 
         pidController = new PIDController(P, I, D);
+
 
     }
 
@@ -109,6 +112,9 @@ public class Lift {
 
             case RUN_TO_POSITION:
                 double t = (System.currentTimeMillis() - startTime) / 1000.0;
+                if (profile == null){
+                    return;
+                }
                 MotionState target = profile.get(t);
 
                 error = getPosition() - target.getX();//the set point (target.getX) is set to the position that is
@@ -124,8 +130,6 @@ public class Lift {
                     targetPosition = profile.end().getX();
                     return;
                 }
-
-
 
                 break;
 
@@ -186,9 +190,13 @@ public class Lift {
 //    }
 
     public void moveTo(double blocks){
-        double position = setLiftIncrement((blocks));
-        goToPosition(position);
-        liftMode = LiftMode.RUN_TO_POSITION;
+        if(getPosition() < MAX_LIFT_HIEGHT){
+            double position = setLiftIncrement((blocks));
+            goToPosition(position);
+            liftMode = LiftMode.RUN_TO_POSITION;
+        } else {
+            liftMode = LiftMode.HOLD_POSITION;
+        }
     }
 
     public boolean isAtBottom(){

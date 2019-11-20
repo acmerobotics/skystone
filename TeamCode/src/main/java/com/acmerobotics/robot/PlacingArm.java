@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.acmerobotics.robot.Lift;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.SystemProperties;
 
 
@@ -68,6 +67,7 @@ public class PlacingArm {
     public static double V = 0;
     public static double A = 0;
     public static double J = 0;
+    public static double G = 0;
 
     private enum ArmMode{
         HOLD_POSITION,
@@ -217,7 +217,7 @@ public class PlacingArm {
             handServo.setPosition(handOpenPos);
         }
 
-        if (position.equals("open")){
+        if (position.equals("close")){
             //close hand
             handServo.setPosition(handClosePos);
         }

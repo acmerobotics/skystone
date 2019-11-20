@@ -1,32 +1,27 @@
 package com.acmerobotics.opmodes;
 
-import com.acmerobotics.robot.Drive;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.robot.Lift;
 import com.acmerobotics.robot.PlacingArm;
-import com.acmerobotics.util.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp")
-public class TeleOp extends LinearOpMode {
+@TeleOp(name="TestArm/Lift")
+public class TestLiftArm extends LinearOpMode {
 
     public double liftPotentialValue = 0;
-    //Telemetry telemetry;
+    TelemetryPacket packet;
 
     @Override
-    public void runOpMode() throws InterruptedException {
-        //SkyStoneRobot robot = new SkyStoneRobot(this);
-        Drive drive = new Drive(hardwareMap);
-        Lift lift = new Lift(hardwareMap);
-        PlacingArm arm = new PlacingArm(hardwareMap);
+    public void runOpMode() throws InterruptedException{
 
+        PlacingArm arm = new PlacingArm(hardwareMap);
+        Lift lift = new Lift(hardwareMap);
 
         while (!isStopRequested()){
-
-            ////////gamepad1   ////////////////////
-            drive.setPower(new Vector2d(-gamepad1.left_stick_y, gamepad1.left_stick_x), -gamepad1.right_stick_x);
 
             if (gamepad1.y){
                 arm.armRelocationPosition();
@@ -34,10 +29,6 @@ public class TeleOp extends LinearOpMode {
 
             if (gamepad1.a){ // could possible combine with right bumper
                 arm.armIntakePosition();
-            }
-
-            if (gamepad1.right_bumper){
-                arm.setServo("open");
             }
 
 
@@ -53,6 +44,7 @@ public class TeleOp extends LinearOpMode {
             if (gamepad2.dpad_right){
                 // accept potential value and change lift value
                 lift.moveTo(liftPotentialValue);
+                lift.update(packet);
             }
 
             if (gamepad2.dpad_left){
@@ -68,14 +60,24 @@ public class TeleOp extends LinearOpMode {
                 arm.armIntakePosition();// could possible combine with right bumper
             }
 
+            if(gamepad2.left_bumper){
+                //release block, servo stuff
+                arm.setServo("open");
+            }
+
             if (gamepad2.right_bumper){
                 // grab block, servo stuff
                 arm.setServo("close");
             }
 
-            //telemetry.addData("Block count ", liftPotentialValue);
+            telemetry.addData("Block count: ", liftPotentialValue);
+            telemetry.update();
+
         }
 
+
     }
+
+
 
 }
