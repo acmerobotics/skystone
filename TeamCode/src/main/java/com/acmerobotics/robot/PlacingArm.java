@@ -6,11 +6,14 @@ import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.robomatic.util.PIDController;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.acmerobotics.robot.Lift;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.SystemProperties;
 
 
@@ -25,7 +28,7 @@ public class PlacingArm {
 
     public static double ARM_INIT;
     public static double ARM_INTAKE;
-    public static double ARM_RELOCATION;
+    public static double ARM_RELOCATION ;
 
     public static double ARM_MASS = 0;
 
@@ -36,8 +39,10 @@ public class PlacingArm {
 
     public static double wantInitAngle = 0; //find angle
     public static double wantIntakeAngle = 0; //find angle
-    public static double wantRelocationAngle = 90;
+    public static double wantRelocationAngle = 20;
 
+
+    Telemetry telemetry;
 
 
     public static double RADIUS = 0;
@@ -82,7 +87,23 @@ public class PlacingArm {
         pidController = new PIDController(P, I, D);
         handServo = hardwareMap.get(Servo.class, "hand Servo");
 
+        armMotor.setDirection(DcMotorEx.Direction.REVERSE);
+        armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+
     }
+
+    public void resetEncoder(){
+        armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    public double checkEncoder(){
+        return armMotor.getCurrentPosition();
+
+    }
+
+
 
 
     public double getPosition(){
@@ -110,7 +131,7 @@ public class PlacingArm {
 
     }
 
-    public void updade(TelemetryPacket packet){// telemetry seems to only be used in teleOP. So is
+    public void update(TelemetryPacket packet){// telemetry seems to only be used in teleOP. So is
                                                // telemetryPacket like teleOP but made for code outside TeleOp class?
         packet.put("arm mode", armMode.toString());
         packet.put("position", getPosition());
@@ -124,9 +145,12 @@ public class PlacingArm {
                 internalSetVelocity(-correction);
                 packet.put("arm correction", -correction);
 
+                break;
+
 
             case RUN_TO_POSITION:
-                double t = System.currentTimeMillis() - startTime/ 1000;// start time is used as move the motion state so it is out of its 0 or motion state start position
+                pidController = new PIDController(P, I, D);
+               /* double t = System.currentTimeMillis() - startTime/ 1000;// start time is used as move the motion state so it is out of its 0 or motion state start position
                                                                         // that way pid won't get a 0 error when not at set point. Start time skips over motion state start
                                                                         //position to not confuse pid (only pid sees a skipped motion state start position).
 
@@ -145,24 +169,36 @@ public class PlacingArm {
                     armMode = armMode.HOLD_POSITION;
                     targetPosition = profile.end().getX();
                     //return;  ???
+
                 }
+                */
+
+               break;
 
         }
     }
 
 
     public void goToPosition(double position){
+        internalSetVelocity(.25);
         // initializes motion profiling and starts RUN_TO_POSITION.
-        pidController = new PIDController();
+        /*pidController = new PIDController();
 
         profile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(getPosition(), 0, 0, 0), //start
                 new MotionState(position, 0, 0, 0),// goal
                 V,A,J
         );
-        startTime = System.currentTimeMillis();
-        armMode = armMode.RUN_TO_POSITION;
+        startTime = System.currentTimeMillis(); */
+        armMode = ArmMode.RUN_TO_POSITION;
 
+    }
+
+    public void armGoToIntake(){
+        goToPosition(20);
+
+        armMode = ArmMode.RUN_TO_POSITION;
+        pidController = new PIDController(P, I, D);
     }
 
     public void armInitPosition(){

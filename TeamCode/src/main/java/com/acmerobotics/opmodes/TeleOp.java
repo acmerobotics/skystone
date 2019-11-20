@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class TeleOp extends LinearOpMode {
 
 
-    public double liftPotentialValue = 0;
+    public int liftPotentialValue = 0;
     //Telemetry telemetry;
 
 

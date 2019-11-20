@@ -24,16 +24,16 @@ public class Lift {
     private double targetPosition;
 
 
-    public static double K_V = 0;
-    public static double K_A = 0;
-    public static double K_STATIC = 0;
-    public static double G = 0;
-    public static double P = 0;
-    public static double I = 0;
-    public static double D = 0;
-    public static double V = 0;
-    public static double A = 0;
-    public static double J = 0;
+    public static double K_V = 1;
+    public static double K_A = 1;
+    public static double K_STATIC = 1;
+    public static double G = 1;
+    public static double P = 1;
+    public static double I = 1;
+    public static double D = 1;
+    public static double V = 1;
+    public static double A = 1;
+    public static double J = 1;
     public static double RADIUS = 0.5;
 
     public static double MAX_LIFT_HIEGHT = 14;
@@ -72,7 +72,11 @@ public class Lift {
         liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
         bottomHallEffect = hardwareMap.digitalChannel.get("bottomHallEffect");
 
+        liftMotor.setPower(0);
+
         pidController = new PIDController(P, I, D);
+
+        liftMode = LiftMode.HOLD_POSITION;
 
 
     }
@@ -111,7 +115,8 @@ public class Lift {
 
 
             case RUN_TO_POSITION:
-                double t = (System.currentTimeMillis() - startTime) / 1000.0;
+                pidController = new PIDController(P, I, D);
+               /* double t = (System.currentTimeMillis() - startTime) / 1000.0;
                 if (profile == null){
                     return;
                 }
@@ -129,7 +134,7 @@ public class Lift {
                     liftMode = LiftMode.HOLD_POSITION;
                     targetPosition = profile.end().getX();
                     return;
-                }
+                }*/
 
                 break;
 
@@ -152,14 +157,15 @@ public class Lift {
     }
 
     public void goToPosition(double position){
-        pidController = new PIDController(P, I, D);
+        internalSetVelocity(1);
+        /*pidController = new PIDController(P, I, D);
         profile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(getPosition(), 0, 0, 0),
                 new MotionState(position, 0, 0, 0),
                 V, A, J
         );
-        startTime = System.currentTimeMillis();
-        liftMode = liftMode.RUN_TO_POSITION;
+        startTime = System.currentTimeMillis(); */
+        liftMode = LiftMode.RUN_TO_POSITION;
     }
 
     public void internalSetVelocity(double v){
@@ -189,7 +195,7 @@ public class Lift {
 //        liftMode = LiftMode.RUN_TO_POSITION;
 //    }
 
-    public void moveTo(double blocks){
+    public void moveTo(int blocks){
         if(getPosition() < MAX_LIFT_HIEGHT){
             double position = setLiftIncrement((blocks));
             goToPosition(position);
@@ -203,7 +209,7 @@ public class Lift {
         return bottomHallEffect.getState();
     }
 
-    public double setLiftIncrement(double blocks){
+    public double setLiftIncrement(int blocks){
         placingHeight = BASE_HEIGHT + (INCREMENT * blocks);
         return placingHeight;
     }

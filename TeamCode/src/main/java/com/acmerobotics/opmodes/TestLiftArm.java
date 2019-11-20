@@ -9,22 +9,34 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+
 @TeleOp(name="TestArm/Lift")
 public class TestLiftArm extends LinearOpMode {
 
-    public double liftPotentialValue = 0;
-    TelemetryPacket packet;
+    public int liftPotentialValue = 0;
+    TelemetryPacket packet = new TelemetryPacket();
+    private boolean isUpDown = false;
+    private boolean isDownDown = false;
 
     @Override
     public void runOpMode() throws InterruptedException{
 
+
         PlacingArm arm = new PlacingArm(hardwareMap);
         Lift lift = new Lift(hardwareMap);
+
+
+        telemetry.addLine("this is init");
+        telemetry.update();
+        arm.internalSetVelocity(0);
+
+        waitForStart();
+
 
         while (!isStopRequested()){
 
             if (gamepad1.y){
-                arm.armRelocationPosition();
+                arm.armGoToIntake();
             }
 
             if (gamepad1.a){ // could possible combine with right bumper
@@ -33,12 +45,21 @@ public class TestLiftArm extends LinearOpMode {
 
 
             ////////gamepad2   ///////////////
+
             if (gamepad2.dpad_up){
+                isUpDown = true;
+
+            } else if (isUpDown){
                 liftPotentialValue += 1;
+                isUpDown = false;
             }
 
             if (gamepad2.dpad_down){
+                isDownDown = true;
+
+            } else if (isDownDown){
                 liftPotentialValue -= 1;
+                isDownDown = false;
             }
 
             if (gamepad2.dpad_right){
@@ -50,6 +71,7 @@ public class TestLiftArm extends LinearOpMode {
             if (gamepad2.dpad_left){
                 // reset height value
                 lift.moveTo(0);
+                liftPotentialValue = 0;
             }
 
             if (gamepad2.y){

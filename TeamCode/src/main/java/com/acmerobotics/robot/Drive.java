@@ -63,8 +63,6 @@ public class Drive {
     private double headingOffset;
     private double rawHeading;
 
-    private Telemetry telemetry;
-
     private ElapsedTime runTime = new ElapsedTime();
 
     public Drive(HardwareMap hardwareMap){
