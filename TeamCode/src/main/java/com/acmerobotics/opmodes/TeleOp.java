@@ -28,7 +28,8 @@ public class TeleOp extends LinearOpMode {
 
         while (!isStopRequested()){
 
-            ////////gamepad1   ////////////////////
+            ////////////////////// gamepad1   /////////////////////////////
+
             drive.setPower(new Vector2d(-gamepad1.left_stick_y, gamepad1.left_stick_x), -gamepad1.right_stick_x);
 
             //TODO check power that is going to motors (is it between -1 and 1 or -30 and 30)
@@ -52,7 +53,8 @@ public class TeleOp extends LinearOpMode {
             }
 
 
-            ////////gamepad2   ///////////////
+            ///////////////////// gamepad2   /////////////////////////////
+
             if (gamepad2.dpad_up){
                 liftPotentialValue += 1;
             }
