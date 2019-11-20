@@ -5,23 +5,23 @@ import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.opmodes.TeleOp;
-import com.acmerobotics.roadrunner.profile.MotionProfile;
-import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
-import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.robomatic.util.PIDController;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+//TODO get rid of motion profiling and repalce with encoder code that should be similar to placing arm
 
 @Config
 public class Lift {
 
     private DcMotorEx liftMotor;
-    private MotionProfile profile;
     private DigitalChannel bottomHallEffect;
     private double startTime;
 
     private double targetPosition;
+
 
 
     public static double K_V = 1;
@@ -34,6 +34,7 @@ public class Lift {
     public static double V = 1;
     public static double A = 1;
     public static double J = 1;
+
     public static double RADIUS = 0.5;
 
     public static double MAX_LIFT_HIEGHT = 14;
@@ -47,6 +48,10 @@ public class Lift {
 
     public static double MASS_ARM = 0;
     public static double MASS_FRAME = 0;
+
+    private static final double TICK_COUNT = 0; //should be 1440 or something
+    private static final double DIAMETER = 1; //find real diameter
+    private static final double TICKS_PER_INCH = TICK_COUNT/ DIAMETER * Math.PI;
 
 
     public static double CALIBRATE_V = 0;
@@ -78,6 +83,8 @@ public class Lift {
 
         liftMode = LiftMode.HOLD_POSITION;
 
+        liftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        liftMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
     }
 
@@ -105,34 +112,36 @@ public class Lift {
         switch (liftMode){
 
             case HOLD_POSITION:
-                double error = getPosition() - targetPosition;
+                double error = targetPosition - liftMotor.getCurrentPosition();
                 double correction = pidController.update(error);
                 packet.put("error", error);
                 internalSetVelocity(-correction);
-                packet.put("lift correction", -correction);
+                packet.put("lift correction", correction);
 
                 break;
 
 
             case RUN_TO_POSITION:
+
                 pidController = new PIDController(P, I, D);
                /* double t = (System.currentTimeMillis() - startTime) / 1000.0;
                 if (profile == null){
                     return;
                 }
+
+                double t = (System.currentTimeMillis() - startTime) / 1000.0;
+
                 MotionState target = profile.get(t);
 
-                error = getPosition() - target.getX();//the set point (target.getX) is set to the position that is
-                                                        // reached at the end of the motion profiles journey.
+                error = targetPosition - liftMotor.getCurrentPosition();
                 packet.put("error", error);
                 correction = pidController.update(error);
                 double feedForward = getFeedForward(target, getMass());
-                internalSetVelocity(feedForward - correction);
+                internalSetVelocity(feedForward + correction);
 
-                if (t > profile.duration()){
+                if (t > 1){
                     packet.put("complete", true);
                     liftMode = LiftMode.HOLD_POSITION;
-                    targetPosition = profile.end().getX();
                     return;
                 }*/
 
@@ -157,6 +166,7 @@ public class Lift {
     }
 
     public void goToPosition(double position){
+
         internalSetVelocity(1);
         /*pidController = new PIDController(P, I, D);
         profile = MotionProfileGenerator.generateSimpleMotionProfile(
@@ -166,6 +176,23 @@ public class Lift {
         );
         startTime = System.currentTimeMillis(); */
         liftMode = LiftMode.RUN_TO_POSITION;
+
+        pidController = new PIDController(P, I, D);
+        startTime = System.currentTimeMillis();
+        liftMode = liftMode.RUN_TO_POSITION;
+        setMotorEncoders(position);
+        targetPosition = liftMotor.getCurrentPosition() + convertToTicks(position);
+    }
+
+    public void setMotorEncoders(double distance) {
+        int moveMotorTo = liftMotor.getCurrentPosition() + convertToTicks(distance);
+        liftMotor.setTargetPosition(moveMotorTo);
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);// figure out the difference of run to position from ArmMode and DcMotor.RunMode
+    }
+
+    public int convertToTicks(double distance){
+        int numToTicks = (int)(distance * TICKS_PER_INCH);
+        return numToTicks;
     }
 
     public void internalSetVelocity(double v){
@@ -214,14 +241,8 @@ public class Lift {
         return placingHeight;
     }
 
-    private double getFeedForward(MotionState state, double mass){
-        double ff = K_V * state.getV() + K_A * mass * (state.getA() - G);
-        if(Math.abs(ff) > 1e-4){
-            ff += Math.copySign(K_STATIC, ff);
-        }
 
-        return ff;
-    }
+
 
     public double getMass(){
         double mass = MASS_ARM;

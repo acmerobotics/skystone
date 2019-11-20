@@ -1,4 +1,4 @@
-package com.acmerobotics.opmodes;
+package com.acmerobotics.opmodes.AutoOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

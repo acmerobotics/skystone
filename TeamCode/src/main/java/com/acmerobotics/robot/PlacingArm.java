@@ -2,9 +2,6 @@ package com.acmerobotics.robot;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.profile.MotionProfile;
-import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
-import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.robomatic.util.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -24,6 +21,8 @@ public class PlacingArm {
 
     //ToDo talk about angle issue (resting arm angle and desired arm positions)
 
+    //ToDo find the vales to all the empty variables
+
     public static double ARM_LENGTH = 15.375;
 
     public static double ARM_INIT;
@@ -41,24 +40,24 @@ public class PlacingArm {
     public static double wantIntakeAngle = 0; //find angle
     public static double wantRelocationAngle = 20;
 
-
-    Telemetry telemetry;
-
-
     public static double RADIUS = 0;
-
-    private MotionProfile profile;
 
     private double startTime;
     private double error;
     private double correction;
     private double targetPosition;
 
+    private static double WHEEL_FROM_CENTER = 0; /////////////////find length of wheel from center
+
+    private static final double TICK_COUNT = 0; //should be 1440 or something
+    private static final double DIAMETER = 1; //find real diameter
+    private static final double TICKS_PER_INCH = TICK_COUNT/ DIAMETER * Math.PI; //figure out if drive gear reduction is needed
+
     private DcMotorEx armMotor;
     private Servo handServo;
 
     private double handOpenPos = 0; //add angle position at which hand will open
-    private  double handClosePos = 0; // add angle position at which hand will close
+    private double handClosePos = 0; // add angle position at which hand will close
 
     private PIDController pidController;
 
@@ -67,9 +66,6 @@ public class PlacingArm {
     public static double P = 0;
     public static double I = 0;
     public static double D = 0;
-    public static double V = 0;
-    public static double A = 0;
-    public static double J = 0;
     public static double G = 0;
 
     private enum ArmMode{
@@ -87,6 +83,7 @@ public class PlacingArm {
         pidController = new PIDController(P, I, D);
         handServo = hardwareMap.get(Servo.class, "hand Servo");
 
+
         armMotor.setDirection(DcMotorEx.Direction.REVERSE);
         armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -96,6 +93,10 @@ public class PlacingArm {
 
     public void resetEncoder(){
         armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+         armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+         armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);// find out what float is
+
     }
 
     public double checkEncoder(){
@@ -138,12 +139,12 @@ public class PlacingArm {
 
         switch (armMode){
             case HOLD_POSITION:
-                error = getPosition() - targetPosition; //error is created when the arm leaves its target position
+                error = targetPosition - armMotor.getCurrentPosition() ; //find out what to do here now
                 packet.put("error", error);
 
                 correction = pidController.update(error);
-                internalSetVelocity(-correction);
-                packet.put("arm correction", -correction);
+                internalSetVelocity(correction);////////////////////might need to make correction negative or motor should be reversed
+                packet.put("arm correction", correction);
 
                 break;
 
@@ -154,21 +155,24 @@ public class PlacingArm {
                                                                         // that way pid won't get a 0 error when not at set point. Start time skips over motion state start
                                                                         //position to not confuse pid (only pid sees a skipped motion state start position).
 
-                MotionState target = profile.get(t); //notice how a motion state (target) is set equal to a motion profile (profile). The get(t) returns
-                                                      // the motion state of profile at t.
-                error = getPosition() - target.getX();
+                error = targetPosition - armMotor.getCurrentPosition();
                 packet.put("error", error);
                 correction = pidController.update(error);
 
-                internalSetVelocity(-correction); //add feedforward
-                packet.put("arm correction", -correction);
+                internalSetVelocity(correction); //add feedforward
+                packet.put("arm correction", correction);/////correction might have to be changed to negative or motor should be reversed
 
 
-                if(t > profile.duration()){
+                if(t > 1){ //how you will know you reached the destination (probably use encoders or time) (the current 2 second time is just so A-S won't through an error)
                     packet.put("complete", true);
+
                     armMode = armMode.HOLD_POSITION;
                     targetPosition = profile.end().getX();
                     //return;  ???
+
+
+                    armMode = ArmMode.HOLD_POSITION;
+                    //return; ???????
 
                 }
                 */
@@ -179,10 +183,22 @@ public class PlacingArm {
     }
 
 
+    public void setMotorEncoders(double distance) {
+        int moveMotorTo = armMotor.getCurrentPosition() + convertToTicks(distance);
+        armMotor.setTargetPosition(moveMotorTo);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);// figure out the difference of run to position from ArmMode and DcMotor.RunMode
+    }
+
+    public int convertToTicks(double distance){
+        int numToTicks = (int)(distance * TICKS_PER_INCH);
+        return numToTicks;
+    }
+
     public void goToPosition(double position){
         internalSetVelocity(.25);
         // initializes motion profiling and starts RUN_TO_POSITION.
         /*pidController = new PIDController();
+
 
         profile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(getPosition(), 0, 0, 0), //start
@@ -191,6 +207,12 @@ public class PlacingArm {
         );
         startTime = System.currentTimeMillis(); */
         armMode = ArmMode.RUN_TO_POSITION;
+
+
+        startTime = System.currentTimeMillis();
+        armMode = ArmMode.RUN_TO_POSITION;
+        setMotorEncoders(position);
+        targetPosition = armMotor.getCurrentPosition() + convertToTicks(position);
 
     }
 
