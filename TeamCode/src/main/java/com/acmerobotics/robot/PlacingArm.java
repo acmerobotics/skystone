@@ -49,7 +49,7 @@ public class PlacingArm {
 
     private static double WHEEL_FROM_CENTER = 0; /////////////////find length of wheel from center
 
-    private static final double TICK_COUNT = 0; //should be 1440 or something
+    private static final double TICK_COUNT = 280; //should be 1440 or something
     private static final double DIAMETER = 1; //find real diameter
     private static final double TICKS_PER_INCH = TICK_COUNT/ DIAMETER * Math.PI; //figure out if drive gear reduction is needed
 
@@ -84,7 +84,7 @@ public class PlacingArm {
         handServo = hardwareMap.get(Servo.class, "hand Servo");
 
 
-        armMotor.setDirection(DcMotorEx.Direction.REVERSE);
+        armMotor.setDirection(DcMotorEx.Direction.FORWARD);
         armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
@@ -94,8 +94,6 @@ public class PlacingArm {
     public void resetEncoder(){
         armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-         armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-         armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);// find out what float is
 
     }
 
@@ -103,8 +101,6 @@ public class PlacingArm {
         return armMotor.getCurrentPosition();
 
     }
-
-
 
 
     public double getPosition(){
@@ -151,31 +147,30 @@ public class PlacingArm {
 
             case RUN_TO_POSITION:
                 pidController = new PIDController(P, I, D);
-               /* double t = System.currentTimeMillis() - startTime/ 1000;// start time is used as move the motion state so it is out of its 0 or motion state start position
+                double t = System.currentTimeMillis() - startTime/ 1000;// start time is used as move the motion state so it is out of its 0 or motion state start position
                                                                         // that way pid won't get a 0 error when not at set point. Start time skips over motion state start
                                                                         //position to not confuse pid (only pid sees a skipped motion state start position).
 
-                error = targetPosition - armMotor.getCurrentPosition();
-                packet.put("error", error);
-                correction = pidController.update(error);
+                    error = targetPosition - armMotor.getCurrentPosition();
+                    packet.put("error", error);
+                    correction = pidController.update(error);
 
-                internalSetVelocity(correction); //add feedforward
-                packet.put("arm correction", correction);/////correction might have to be changed to negative or motor should be reversed
-
-
-                if(t > 1){ //how you will know you reached the destination (probably use encoders or time) (the current 2 second time is just so A-S won't through an error)
-                    packet.put("complete", true);
-
-                    armMode = armMode.HOLD_POSITION;
-                    targetPosition = profile.end().getX();
-                    //return;  ???
+                    internalSetVelocity(correction); //add feedforward
+                    packet.put("arm correction", correction);/////correction might have to be changed to negative or motor should be reversed
 
 
-                    armMode = ArmMode.HOLD_POSITION;
+                    if(t > 1){ //how you will know you reached the destination (probably use encoders or time) (the current 2 second time is just so A-S won't through an error)
+                        packet.put("complete", true);
+
+                        armMode = armMode.HOLD_POSITION;
+                        //return;  ???
+
+
+                        armMode = ArmMode.HOLD_POSITION;
                     //return; ???????
 
                 }
-                */
+
 
                break;
 
@@ -195,29 +190,16 @@ public class PlacingArm {
     }
 
     public void goToPosition(double position){
-        internalSetVelocity(.25);
-        // initializes motion profiling and starts RUN_TO_POSITION.
-        /*pidController = new PIDController();
-
-
-        profile = MotionProfileGenerator.generateSimpleMotionProfile(
-                new MotionState(getPosition(), 0, 0, 0), //start
-                new MotionState(position, 0, 0, 0),// goal
-                V,A,J
-        );
-        startTime = System.currentTimeMillis(); */
-        armMode = ArmMode.RUN_TO_POSITION;
-
+       // armMode = ArmMode.RUN_TO_POSITION;
+        internalSetVelocity(1);
 
         startTime = System.currentTimeMillis();
-        armMode = ArmMode.RUN_TO_POSITION;
         setMotorEncoders(position);
         targetPosition = armMotor.getCurrentPosition() + convertToTicks(position);
 
     }
 
     public void armGoToIntake(){
-        goToPosition(20);
 
         armMode = ArmMode.RUN_TO_POSITION;
         pidController = new PIDController(P, I, D);

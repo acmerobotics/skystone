@@ -16,10 +16,14 @@ public class TestArm extends LinearOpMode {
         waitForStart();
 
         while (!isStopRequested()) {
-
-
             telemetry.addData("encoder", Double.toString(arm.checkEncoder()));
             telemetry.update();
+
+            if(gamepad1.y){
+                arm.armRelocationPosition();
+            }
+
+
         }
     }
 }
