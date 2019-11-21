@@ -47,11 +47,9 @@ public class PlacingArm {
     private double correction;
     private double targetPosition;
 
-    private static double WHEEL_FROM_CENTER = 0; /////////////////find length of wheel from center
-
-    private static final double TICK_COUNT = 0; //should be 1440 or something
-    private static final double DIAMETER = 1; //find real diameter
-    private static final double TICKS_PER_INCH = TICK_COUNT/ DIAMETER * Math.PI; //figure out if drive gear reduction is needed
+    private static final double TICK_COUNT_PER_REVOLUTION = 200;
+    private static final double DIAMETER_OF_ARM_WHEEL = 2;
+    private static final double TICKS_PER_INCH = TICK_COUNT_PER_REVOLUTION/ DIAMETER_OF_ARM_WHEEL * Math.PI; //figure out if drive gear reduction is needed
 
     private DcMotorEx armMotor;
     private Servo handServo;
@@ -151,7 +149,7 @@ public class PlacingArm {
 
             case RUN_TO_POSITION:
                 pidController = new PIDController(P, I, D);
-               /* double t = System.currentTimeMillis() - startTime/ 1000;// start time is used as move the motion state so it is out of its 0 or motion state start position
+               double t = System.currentTimeMillis() - startTime/ 1000;// start time is used as move the motion state so it is out of its 0 or motion state start position
                                                                         // that way pid won't get a 0 error when not at set point. Start time skips over motion state start
                                                                         //position to not confuse pid (only pid sees a skipped motion state start position).
 
@@ -167,7 +165,6 @@ public class PlacingArm {
                     packet.put("complete", true);
 
                     armMode = armMode.HOLD_POSITION;
-                    targetPosition = profile.end().getX();
                     //return;  ???
 
 
@@ -175,7 +172,7 @@ public class PlacingArm {
                     //return; ???????
 
                 }
-                */
+
 
                break;
 
@@ -183,36 +180,26 @@ public class PlacingArm {
     }
 
 
-    public void setMotorEncoders(double distance) {
-        int moveMotorTo = armMotor.getCurrentPosition() + convertToTicks(distance);
+    public void setMotorEncoders(double angle) {
+        int moveMotorTo = armMotor.getCurrentPosition() + convertToTicks(angle);
         armMotor.setTargetPosition(moveMotorTo);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);// figure out the difference of run to position from ArmMode and DcMotor.RunMode
     }
 
-    public int convertToTicks(double distance){
+    public int convertToTicks(double angle){
+        double distance = getArmWheelArc(angle);
+
         int numToTicks = (int)(distance * TICKS_PER_INCH);
         return numToTicks;
     }
 
-    public void goToPosition(double position){
+    public void goToPosition(double angle){
         internalSetVelocity(.25);
-        // initializes motion profiling and starts RUN_TO_POSITION.
-        /*pidController = new PIDController();
-
-
-        profile = MotionProfileGenerator.generateSimpleMotionProfile(
-                new MotionState(getPosition(), 0, 0, 0), //start
-                new MotionState(position, 0, 0, 0),// goal
-                V,A,J
-        );
-        startTime = System.currentTimeMillis(); */
-        armMode = ArmMode.RUN_TO_POSITION;
-
 
         startTime = System.currentTimeMillis();
-        armMode = ArmMode.RUN_TO_POSITION;
-        setMotorEncoders(position);
-        targetPosition = armMotor.getCurrentPosition() + convertToTicks(position);
+        //armMode = ArmMode.RUN_TO_POSITION;
+        setMotorEncoders(angle);
+        targetPosition = armMotor.getCurrentPosition() + convertToTicks(angle);
 
     }
 
@@ -251,9 +238,9 @@ public class PlacingArm {
 
         relocationAngle = getActualAngle(wantRelocationAngle, restingAngle);
 
-        ARM_RELOCATION = getRadianLen(relocationAngle, ARM_LENGTH);
+        //ARM_RELOCATION = getRadianLen(relocationAngle, ARM_LENGTH);
 
-        goToPosition(ARM_RELOCATION);
+        goToPosition(relocationAngle);
         pidController = new PIDController(P, I, D);
 
     }
@@ -263,6 +250,11 @@ public class PlacingArm {
 
         double i =  (angle/360) * 2 * Math.PI * radius;
         return i;
+    }
+
+    public double getArmWheelArc(double angle){
+        double arcLength = getRadianLen(angle, (DIAMETER_OF_ARM_WHEEL/2));
+        return arcLength;
     }
 
     public void setServo(String position){

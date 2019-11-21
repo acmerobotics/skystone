@@ -17,6 +17,11 @@ public class TestArm extends LinearOpMode {
 
         while (!isStopRequested()) {
 
+            if (gamepad1.y){
+                //arm relocation
+                arm.armRelocationPosition();
+            }
+
 
             telemetry.addData("encoder", Double.toString(arm.checkEncoder()));
             telemetry.update();
