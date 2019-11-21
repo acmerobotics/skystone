@@ -22,9 +22,10 @@ public class TestArm extends LinearOpMode {
                 arm.armRelocationPosition();
             }
 
-
             telemetry.addData("encoder", Double.toString(arm.checkEncoder()));
             telemetry.update();
+
+
         }
     }
 }

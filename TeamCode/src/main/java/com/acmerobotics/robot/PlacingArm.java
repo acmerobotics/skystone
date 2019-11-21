@@ -82,7 +82,7 @@ public class PlacingArm {
         handServo = hardwareMap.get(Servo.class, "hand Servo");
 
 
-        armMotor.setDirection(DcMotorEx.Direction.REVERSE);
+        armMotor.setDirection(DcMotorEx.Direction.FORWARD);
         armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
@@ -92,8 +92,6 @@ public class PlacingArm {
     public void resetEncoder(){
         armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-         armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-         armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);// find out what float is
 
     }
 
@@ -101,8 +99,6 @@ public class PlacingArm {
         return armMotor.getCurrentPosition();
 
     }
-
-
 
 
     public double getPosition(){
@@ -149,27 +145,24 @@ public class PlacingArm {
 
             case RUN_TO_POSITION:
                 pidController = new PIDController(P, I, D);
-               double t = System.currentTimeMillis() - startTime/ 1000;// start time is used as move the motion state so it is out of its 0 or motion state start position
+
+                double t = System.currentTimeMillis() - startTime/ 1000;// start time is used as move the motion state so it is out of its 0 or motion state start position
                                                                         // that way pid won't get a 0 error when not at set point. Start time skips over motion state start
                                                                         //position to not confuse pid (only pid sees a skipped motion state start position).
 
-                error = targetPosition - armMotor.getCurrentPosition();
-                packet.put("error", error);
-                correction = pidController.update(error);
+                    error = targetPosition - armMotor.getCurrentPosition();
+                    packet.put("error", error);
+                    correction = pidController.update(error);
 
-                internalSetVelocity(correction); //add feedforward
-                packet.put("arm correction", correction);/////correction might have to be changed to negative or motor should be reversed
-
-
-                if(t > 1){ //how you will know you reached the destination (probably use encoders or time) (the current 2 second time is just so A-S won't through an error)
-                    packet.put("complete", true);
-
-                    armMode = armMode.HOLD_POSITION;
-                    //return;  ???
+                    internalSetVelocity(correction); //add feedforward
+                    packet.put("arm correction", correction);/////correction might have to be changed to negative or motor should be reversed
 
 
-                    armMode = ArmMode.HOLD_POSITION;
-                    //return; ???????
+                    if(t > 1){ //how you will know you reached the destination (probably use encoders or time) (the current 2 second time is just so A-S won't through an error)
+                        packet.put("complete", true);
+
+                        armMode = ArmMode.HOLD_POSITION;
+                        //return; ???????
 
                 }
 
@@ -201,10 +194,10 @@ public class PlacingArm {
         setMotorEncoders(angle);
         targetPosition = armMotor.getCurrentPosition() + convertToTicks(angle);
 
+
     }
 
     public void armGoToIntake(){
-        goToPosition(20);
 
         armMode = ArmMode.RUN_TO_POSITION;
         pidController = new PIDController(P, I, D);
