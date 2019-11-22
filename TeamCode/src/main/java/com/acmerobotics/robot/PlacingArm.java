@@ -38,7 +38,7 @@ public class PlacingArm {
 
     public static double wantInitAngle = 0; //find angle
     public static double wantIntakeAngle = 0; //find angle
-    public static double wantRelocationAngle = 20;
+    public static double wantRelocationAngle = 30;
 
     public static double RADIUS = 0;
 
@@ -166,7 +166,6 @@ public class PlacingArm {
 
                 }
 
-
                break;
 
         }
@@ -187,7 +186,7 @@ public class PlacingArm {
     }
 
     public void goToPosition(double angle){
-        internalSetVelocity(.25);
+        internalSetVelocity(10);
 
         startTime = System.currentTimeMillis();
         //armMode = ArmMode.RUN_TO_POSITION;
