@@ -48,8 +48,12 @@ public class PlacingArm {
     private double targetPosition;
 
     private static final double TICK_COUNT_PER_REVOLUTION = 200;
-    private static final double DIAMETER_OF_ARM_WHEEL = 2;
-    private static final double TICKS_PER_INCH = TICK_COUNT_PER_REVOLUTION/ DIAMETER_OF_ARM_WHEEL * Math.PI; //figure out if drive gear reduction is needed
+
+    private static final double DIAMETER_OF_MOTOR_GEAR = 1;
+    private static final double TICKS_PER_INCH_OF_MOTOR_GEAR = TICK_COUNT_PER_REVOLUTION/ DIAMETER_OF_MOTOR_GEAR * Math.PI;
+
+    private static final double DIAMETER_OF_ARM_GEAR = 2;
+    private static final double TICKS_PER_INCH_OF_ARM_GEAR = TICK_COUNT_PER_REVOLUTION/ DIAMETER_OF_ARM_GEAR * Math.PI; //figure out if drive gear reduction is needed
 
     private DcMotorEx armMotor;
     private Servo handServo;
@@ -182,12 +186,15 @@ public class PlacingArm {
     public int convertToTicks(double angle){
         double distance = getArmWheelArc(angle);
 
-        int numToTicks = (int)(distance * TICKS_PER_INCH);
+        int numToTicks = (int)(distance * TICKS_PER_INCH_OF_MOTOR_GEAR);// or TICKS_PER_INCH_OF_ARM_GEAR ?
         return numToTicks;
     }
 
     public void goToPosition(double angle){
-        internalSetVelocity(.25);
+
+        //TODO check math, look into the 2:1 gear ratio and how it affect the encoder tick count
+
+        internalSetVelocity(.75);
 
         startTime = System.currentTimeMillis();
         //armMode = ArmMode.RUN_TO_POSITION;
@@ -246,7 +253,7 @@ public class PlacingArm {
     }
 
     public double getArmWheelArc(double angle){
-        double arcLength = getRadianLen(angle, (DIAMETER_OF_ARM_WHEEL/2));
+        double arcLength = getRadianLen(angle, (DIAMETER_OF_ARM_GEAR/2));
         return arcLength;
     }
 
