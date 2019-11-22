@@ -1,6 +1,7 @@
 package com.acmerobotics.opmodes;
 
 import com.acmerobotics.robot.Drive;
+import com.acmerobotics.robot.FoundationMover;
 import com.acmerobotics.robot.Lift;
 import com.acmerobotics.robot.PlacingArm;
 import com.acmerobotics.util.Vector2d;
@@ -24,19 +25,14 @@ public class TeleOp extends LinearOpMode {
         Drive drive = new Drive(hardwareMap);
         Lift lift = new Lift(hardwareMap);
         PlacingArm arm = new PlacingArm(hardwareMap);
+        FoundationMover foundationMover = new FoundationMover(hardwareMap);
 
 
         while (!isStopRequested()){
 
             ////////////////////// gamepad1   /////////////////////////////
 
-            drive.setPower(new Vector2d(-gamepad1.left_stick_y, gamepad1.left_stick_x), -gamepad1.right_stick_x);
-
-            //TODO check power that is going to motors (is it between -1 and 1 or -30 and 30)
-            telemetry.addData("0", drive.motors[0].getPower());
-            telemetry.addData("m1", drive.motors[1].getPower());
-            telemetry.addData("m2", drive.motors[2].getPower());
-            telemetry.addData("m3", drive.motors[3].getPower());
+            drive.setPower(new Vector2d(gamepad1.left_stick_y,- gamepad1.left_stick_x), gamepad1.right_stick_x);
 
             if (gamepad1.y){
                 //arm relocation
@@ -51,6 +47,14 @@ public class TeleOp extends LinearOpMode {
             if (gamepad1.right_bumper){
                 /// servo grab block
                 arm.setServo("open");
+            }
+
+            if (gamepad1.x){
+                foundationMover.moveToGrab();
+            }
+
+            if (gamepad1.b){
+                foundationMover.moveToStore();
             }
 
 

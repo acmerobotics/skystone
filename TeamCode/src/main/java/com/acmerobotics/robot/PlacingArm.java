@@ -38,16 +38,16 @@ public class PlacingArm {
 
     public static double wantInitAngle = 0; //find angle
     public static double wantIntakeAngle = 0; //find angle
-    public static double wantRelocationAngle = 30;
+    public static double wantRelocationAngle = 20;
 
-    public static double RADIUS = 0;
+    public static double RADIUS = 1;
 
     private double startTime;
     private double error;
     private double correction;
     private double targetPosition;
 
-    private static final double TICK_COUNT_PER_REVOLUTION = 200;
+    private static final double TICK_COUNT_PER_REVOLUTION = 280;
 
     private static final double DIAMETER_OF_MOTOR_GEAR = 1;
     private static final double TICKS_PER_INCH_OF_MOTOR_GEAR = TICK_COUNT_PER_REVOLUTION/ DIAMETER_OF_MOTOR_GEAR * Math.PI;
@@ -81,9 +81,9 @@ public class PlacingArm {
 
     public PlacingArm(HardwareMap hardwareMap){
 
-        armMotor = hardwareMap.get(DcMotorEx.class, "Arm Motor");
+        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
         pidController = new PIDController(P, I, D);
-        handServo = hardwareMap.get(Servo.class, "hand Servo");
+        handServo = hardwareMap.get(Servo.class, "handServo");
 
 
         armMotor.setDirection(DcMotorEx.Direction.FORWARD);
@@ -102,6 +102,11 @@ public class PlacingArm {
     public double checkEncoder(){
         return armMotor.getCurrentPosition();
 
+    }
+
+    public void stopEncoders(){
+        armMotor.setPower(0);
+        armMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
     }
 
 
@@ -180,6 +185,7 @@ public class PlacingArm {
         int moveMotorTo = armMotor.getCurrentPosition() + convertToTicks(angle);
         armMotor.setTargetPosition(moveMotorTo);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);// figure out the difference of run to position from ArmMode and DcMotor.RunMode
+        targetPosition = moveMotorTo;
     }
 
     public int convertToTicks(double angle){
@@ -241,6 +247,10 @@ public class PlacingArm {
         //ARM_RELOCATION = getRadianLen(relocationAngle, ARM_LENGTH);
 
         goToPosition(relocationAngle);
+
+        if (armMotor.getCurrentPosition() == targetPosition){
+            stopEncoders();
+        }
         pidController = new PIDController(P, I, D);
 
     }
