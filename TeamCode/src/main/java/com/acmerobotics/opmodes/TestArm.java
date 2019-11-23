@@ -8,11 +8,16 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 @TeleOp(name="ArmTeleOp")
 public class TestArm extends LinearOpMode {
 
+    public boolean isYPressed = false;
+    public boolean isAPressed = false;
+
     @Override
     public void runOpMode() throws InterruptedException {
         Arm arm = new Arm();
 
         arm.init(hardwareMap);
+
+
 
         arm.resetEncoder();
 
@@ -20,13 +25,25 @@ public class TestArm extends LinearOpMode {
 
         while (!isStopRequested()) {
 
-            if (gamepad1.y){
+            if (gamepad1.y) {
+
+                isYPressed = true;
+            }
+
+            else if (isYPressed) {
                 /////////////////move 20 degrees from resting point
                 arm.goToPosition(0);
                 //target position should be 31.111
+
+                isYPressed = false;
             }
 
-            if (gamepad1.a){
+
+            if (gamepad1.a) {
+                isAPressed = true;
+            }
+
+            else if (isAPressed){
                 /////////////////move 45 degrees from resting point
                 arm.goToPosition(1);
                 //target position should be 69.99 or approx. 70

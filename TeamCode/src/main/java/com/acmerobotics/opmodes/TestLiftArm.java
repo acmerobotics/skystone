@@ -1,14 +1,14 @@
 package com.acmerobotics.opmodes;
 
 
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.robot.Lift;
-import com.acmerobotics.robot.PlacingArm;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
+//import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+//import com.acmerobotics.robot.Lift;
+//import com.acmerobotics.robot.PlacingArm;
+//import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+//import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+//
+//import org.firstinspires.ftc.robotcore.external.Telemetry;
+//
 
 //@TeleOp(name="TestArm/Lift")
 //public class TestLiftArm extends LinearOpMode {
