@@ -34,9 +34,9 @@ public class Arm {
     }
 
     public void init(HardwareMap hardwareMap){
-        armMotor = hardwareMap.get(DcMotorEx.class, "Arm Motor");
-        handServo = hardwareMap.get(Servo.class, "Hand Servo");
-        rotationServo = hardwareMap.get(Servo.class, "Hand Servo");
+        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
+        handServo = hardwareMap.get(Servo.class, "handServo");
+        rotationServo = hardwareMap.get(Servo.class, "rotationServo");
 
         armMotor.setDirection(DcMotorEx.Direction.FORWARD);
         armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
