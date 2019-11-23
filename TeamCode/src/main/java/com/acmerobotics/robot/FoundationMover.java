@@ -7,12 +7,12 @@ public class FoundationMover {
 
     private Servo servo;
 
-    private static double GRABBING = 0;
-    private static double STORING = 0;
+    private static double GRABBING = 0.12;
+    private static double STORING = 0.6;
 
     public FoundationMover(HardwareMap hardwareMap){
 
-        servo = hardwareMap.servo.get("foundation_servo");
+        servo = hardwareMap.servo.get("foundationServo");
     }
 
     public void moveToGrab(){
