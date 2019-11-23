@@ -7,8 +7,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name="Intake Test")
 public class TestIntake extends LinearOpMode {
 
-    public boolean isXPressed = false;
-    public boolean isBPressed = false;
+
+    public boolean isLeftBumperPressed = false;
+    public boolean isLeftOpen = false;
+    public boolean isRightBumperPressed = false;
+    public boolean isRightOpen = false;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -20,27 +24,49 @@ public class TestIntake extends LinearOpMode {
         while (!isStopRequested()){
 
             if(gamepad1.left_bumper){
-                isXPressed = true;
 
-            } else if (isXPressed) {
+                if (isLeftBumperPressed == false){
 
-                intake.leftOpen();
+                    isLeftBumperPressed = true;
 
-                Thread.sleep(500);
+                    if (isLeftOpen == false){
+                        intake.leftOpen();
+                        isLeftOpen = true;
 
-                intake.rightOpen();
+                    } else {
+                        isLeftOpen = false;
+                        intake.leftClose();
+
+                    }
+
+                }
+
+
+            } else {
+
+                isLeftBumperPressed = false;
             }
 
-            if(gamepad1.b){
-                isBPressed = true;
+            if(gamepad1.right_bumper){
 
-            } else if (isBPressed) {
+                if(isRightBumperPressed == false){
+                    isRightBumperPressed = true;
 
-                intake.leftClose();
+                    if (isRightOpen == false) {
+                        intake.rightOpen();
+                        isRightOpen = true;
 
-                Thread.sleep(500);
+                    } else {
+                        isRightOpen = false;
+                        intake.rightClose();
+                    }
 
-                intake.rightClose();
+                }
+
+
+            } else {
+
+                isRightBumperPressed = false;
             }
 
             intake.setIntakePower(gamepad1.left_stick_y);

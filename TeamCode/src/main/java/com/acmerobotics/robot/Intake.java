@@ -14,9 +14,9 @@ public class Intake {
 
     private double leftIntakePower, rightIntakePower;
 
-    private double leftOpen = 0.3;
+    private double leftOpen = 0.25;
     private double leftClose = 0.98;
-    private double rightOpen = 1;
+    private double rightOpen = 0.95;
     private double rightClose = 0.16;
 
     public Intake(HardwareMap hardwareMap){
