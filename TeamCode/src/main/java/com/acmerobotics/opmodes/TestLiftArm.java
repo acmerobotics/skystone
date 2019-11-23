@@ -1,6 +1,5 @@
 package com.acmerobotics.opmodes;
 
-
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.robot.Lift;
 import com.acmerobotics.robot.PlacingArm;
