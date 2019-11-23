@@ -36,6 +36,11 @@ public class TestArm extends LinearOpMode {
             }
 
             telemetry.addData("encoder", Double.toString(arm.checkEncoder()));
+            telemetry.addData("target_position", arm.targetPosition); // Important
+            if (arm.Here){
+                telemetry.addLine();
+                telemetry.addLine("position has been reached");
+            }
             telemetry.update();
 
 
