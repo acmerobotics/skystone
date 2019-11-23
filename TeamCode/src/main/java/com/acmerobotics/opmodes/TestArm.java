@@ -30,7 +30,8 @@ public class TestArm extends LinearOpMode {
 
             else if (isYPressed) {
                 /////////////////move 20 degrees from resting point
-                arm.goToPosition(0);
+                //arm.goToPosition(0);
+                arm.setVelocity(1);
                 //target position should be 31.111
 
                 isYPressed = false;
