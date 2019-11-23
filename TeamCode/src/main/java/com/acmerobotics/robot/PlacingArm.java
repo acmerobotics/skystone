@@ -19,8 +19,6 @@ public class PlacingArm {
 
     //TODO add feedforward method and add feedforward to RUN_TO_POSITION
 
-    //ToDo talk about angle issue (resting arm angle and desired arm positions)
-
     //ToDo find the vales to all the empty variables
 
     public static double ARM_LENGTH = 15.375;
@@ -45,7 +43,8 @@ public class PlacingArm {
     private double startTime;
     private double error;
     private double correction;
-    private double targetPosition;
+
+    public double targetPosition;
 
     private static final double TICK_COUNT_PER_REVOLUTION = 200;
 
@@ -54,6 +53,8 @@ public class PlacingArm {
 
     private static final double DIAMETER_OF_ARM_GEAR = 2;
     private static final double TICKS_PER_INCH_OF_ARM_GEAR = TICK_COUNT_PER_REVOLUTION/ DIAMETER_OF_ARM_GEAR * Math.PI; //figure out if drive gear reduction is needed
+
+    public boolean Here = false;
 
     private DcMotorEx armMotor;
     private Servo handServo;
@@ -179,14 +180,16 @@ public class PlacingArm {
 
     public void setMotorEncoders(double angle) {
         int moveMotorTo = armMotor.getCurrentPosition() + convertToTicks(angle);
-        armMotor.setTargetPosition(moveMotorTo);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);// figure out the difference of run to position from ArmMode and DcMotor.RunMode
+        int moveGearTo = moveMotorTo *2;//////////////////////////////////////////////////////////
+        armMotor.setTargetPosition(moveGearTo);///////////////////////////////////////////////////
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        targetPosition = moveGearTo;///////////////////////////////////////////////////////////////
     }
 
     public int convertToTicks(double angle){
         double distance = getArmWheelArc(angle);
 
-        int numToTicks = (int)(distance * TICKS_PER_INCH_OF_MOTOR_GEAR);// or TICKS_PER_INCH_OF_ARM_GEAR ?
+        int numToTicks = (int)((distance) * TICKS_PER_INCH_OF_MOTOR_GEAR);
         return numToTicks;
     }
 
@@ -199,8 +202,10 @@ public class PlacingArm {
         startTime = System.currentTimeMillis();
         //armMode = ArmMode.RUN_TO_POSITION;
         setMotorEncoders(angle);
-        targetPosition = armMotor.getCurrentPosition() + convertToTicks(angle);
+        if (armMotor.getCurrentPosition() == targetPosition){
+            Here = true;
 
+        }
 
     }
 
