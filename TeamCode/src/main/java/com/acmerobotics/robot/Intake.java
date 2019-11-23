@@ -2,6 +2,7 @@ package com.acmerobotics.robot;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -13,8 +14,10 @@ public class Intake {
 
     private double leftIntakePower, rightIntakePower;
 
-    private double openPos = 0;
-    private double closePos = 0;
+    private double leftOpen = 0.25;
+    private double leftClose = 0.98;
+    private double rightOpen = 0.95;
+    private double rightClose = 0.16;
 
     public Intake(HardwareMap hardwareMap){
         leftMotor = hardwareMap.get(DcMotorEx.class, "leftMotor");
@@ -22,6 +25,8 @@ public class Intake {
 
         leftServo = hardwareMap.get(Servo.class, "leftServo");
         rightServo = hardwareMap.get(Servo.class, "rightServo");
+
+        rightMotor.setDirection(DcMotorEx.Direction.REVERSE);
 
     }
 
@@ -34,20 +39,21 @@ public class Intake {
 
     }
 
-    public void openLeft(){
-        leftServo.setPosition(openPos);
+    public void leftOpen(){
+        leftServo.setPosition(leftOpen);
     }
 
-    public void openRight(){
-        rightServo.setPosition(openPos);
+    public void rightOpen(){
+        rightServo.setPosition(rightOpen);
     }
 
-    public void closeLeft(){
-        leftServo.setPosition(closePos);
+    public void leftClose(){
+        leftServo.setPosition(leftClose);
     }
 
-    public void closeRight(){
-        rightServo.setPosition(closePos);
+    public void rightClose(){
+        rightServo.setPosition(rightClose);
+
     }
 
     public void setIntakePower(double intakePower) {

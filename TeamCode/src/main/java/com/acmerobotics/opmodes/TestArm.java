@@ -38,7 +38,6 @@ public class TestArm extends LinearOpMode {
                 isYPressed = false;
             }
 
-
             if (gamepad1.a) {
                 isAPressed = true;
             }
@@ -51,6 +50,7 @@ public class TestArm extends LinearOpMode {
 
             telemetry.addData("encoder: ", arm.armMotor.getCurrentPosition());
             telemetry.addData("target_position: ", arm.targetPosition);
+
             telemetry.update();
 
 
