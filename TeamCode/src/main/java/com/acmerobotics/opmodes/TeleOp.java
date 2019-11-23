@@ -93,10 +93,7 @@ public class TeleOp extends LinearOpMode {
             intake.setIntakePower(gamepad1.right_trigger);
 
 
-            ///////////////////// gamepad2   /////////////////////////////
-
-
-
+            ///////////////////// gamepad2   ///////////////////////////
 
         }
 

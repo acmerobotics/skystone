@@ -2,6 +2,7 @@ package com.acmerobotics.robot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -38,7 +39,8 @@ public class Arm {
         handServo = hardwareMap.get(Servo.class, "handServo");
         rotationServo = hardwareMap.get(Servo.class, "rotationServo");
 
-        armMotor.setDirection(DcMotorEx.Direction.FORWARD);
+        armMotor.setDirection(DcMotorEx.Direction.REVERSE);
+        armMotor.setTargetPosition(0);
         armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
@@ -46,7 +48,6 @@ public class Arm {
 
     public void resetEncoder(){
         armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
     }
 

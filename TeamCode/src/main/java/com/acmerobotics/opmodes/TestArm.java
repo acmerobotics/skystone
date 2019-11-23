@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-@TeleOp(name="ArmTeleOp")
+@TeleOp(name="ArmTest")
 public class TestArm extends LinearOpMode {
 
     public boolean isYPressed = false;
@@ -17,37 +17,37 @@ public class TestArm extends LinearOpMode {
 
         arm.init(hardwareMap);
 
-        arm.resetEncoder();
+        // arm.resetEncoder();
 
         waitForStart();
 
         while (!isStopRequested()) {
-
-            if (gamepad1.y) {
-
-                isYPressed = true;
-            }
-
-            else if (isYPressed) {
-                /////////////////move 20 degrees from resting point
-                //arm.goToPosition(0);
-                arm.setVelocity(1);
-                //target position should be 31.111
-
-                isYPressed = false;
-            }
-
-            if (gamepad1.a) {
-
-                isAPressed = true;
-            }
-
-            else if (isAPressed) {
-                /////////////////move x degrees from resting point
-                arm.goToPosition(0);
-
-                isAPressed = false;
-            }
+//
+//            if (gamepad1.y) {
+//
+//                isYPressed = true;
+//            }
+//
+//            else if (isYPressed) {
+//                /////////////////move 20 degrees from resting point
+//                //arm.goToPosition(0);
+                arm.setVelocity(.75);
+//                //target position should be 31.111
+//
+//                isYPressed = false;
+//            }
+//
+//            if (gamepad1.a) {
+//
+//                isAPressed = true;
+//            }
+//
+//            else if (isAPressed) {
+//                /////////////////move 45 degrees from resting point
+//                arm.goToPosition(0);
+//
+//                isAPressed = false;
+//            }
             telemetry.addData("encoder: ", arm.armMotor.getCurrentPosition());
             telemetry.addData("target_position: ", arm.targetPosition);
             telemetry.addData("power", arm.armMotor.getPower());
