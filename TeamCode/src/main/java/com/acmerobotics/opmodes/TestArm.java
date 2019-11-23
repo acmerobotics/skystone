@@ -32,9 +32,9 @@ public class TestArm extends LinearOpMode {
                 arm.armRelocationPosition();
                 isYPressed = false;
 
-
             }
 
+            //telemetry.addData("target pos:" arm.targetPosition);
             telemetry.addData("encoder", Double.toString(arm.checkEncoder()));
             telemetry.update();
 

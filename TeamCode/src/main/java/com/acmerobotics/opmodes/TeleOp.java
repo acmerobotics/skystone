@@ -2,6 +2,7 @@ package com.acmerobotics.opmodes;
 
 import com.acmerobotics.robot.Drive;
 import com.acmerobotics.robot.FoundationMover;
+import com.acmerobotics.robot.Intake;
 import com.acmerobotics.robot.Lift;
 import com.acmerobotics.robot.PlacingArm;
 import com.acmerobotics.util.Vector2d;
@@ -26,6 +27,7 @@ public class TeleOp extends LinearOpMode {
         Lift lift = new Lift(hardwareMap);
         PlacingArm arm = new PlacingArm(hardwareMap);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
+        Intake intake = new Intake(hardwareMap);
 
 
         while (!isStopRequested()){
@@ -46,7 +48,7 @@ public class TeleOp extends LinearOpMode {
 
             if (gamepad1.right_bumper){
                 /// servo grab block
-                arm.setServo("open");
+                arm.setHandServo("open");
             }
 
             if (gamepad1.x){
@@ -90,7 +92,7 @@ public class TeleOp extends LinearOpMode {
 
             if (gamepad2.right_bumper){
                 // grab block, servo stuff
-                arm.setServo("open");
+                arm.setHandServo("open");
             }
 
             //telemetry.addData("Block count ", liftPotentialValue);

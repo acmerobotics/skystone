@@ -45,7 +45,9 @@ public class PlacingArm {
     private double startTime;
     private double error;
     private double correction;
-    private double targetPosition;
+    public double targetPosition;
+
+    public boolean here = false;
 
     private static final double TICK_COUNT_PER_REVOLUTION = 280;
 
@@ -57,6 +59,7 @@ public class PlacingArm {
 
     private DcMotorEx armMotor;
     private Servo handServo;
+    private Servo rotationServo;
 
     private double handOpenPos = 0; //add angle position at which hand will open
     private double handClosePos = 0; // add angle position at which hand will close
@@ -82,9 +85,10 @@ public class PlacingArm {
     public PlacingArm(HardwareMap hardwareMap){
 
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
-        pidController = new PIDController(P, I, D);
         handServo = hardwareMap.get(Servo.class, "handServo");
+        rotationServo = hardwareMap.get(Servo.class, "rotationServo");
 
+        pidController = new PIDController(P, I, D);
 
         armMotor.setDirection(DcMotorEx.Direction.FORWARD);
         armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -106,7 +110,7 @@ public class PlacingArm {
 
     public void stopEncoders(){
         armMotor.setPower(0);
-        armMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        //armMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
     }
 
 
@@ -183,9 +187,10 @@ public class PlacingArm {
 
     public void setMotorEncoders(double angle) {
         int moveMotorTo = armMotor.getCurrentPosition() + convertToTicks(angle);
-        armMotor.setTargetPosition(moveMotorTo);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);// figure out the difference of run to position from ArmMode and DcMotor.RunMode
-        targetPosition = moveMotorTo;
+        int moveGearTo = moveMotorTo * 2;
+        armMotor.setTargetPosition(moveGearTo);
+       // armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        targetPosition = moveGearTo;
     }
 
     public int convertToTicks(double angle){
@@ -201,10 +206,12 @@ public class PlacingArm {
 
         internalSetVelocity(.75);
 
-
         startTime = System.currentTimeMillis();
         //armMode = ArmMode.RUN_TO_POSITION;
-        setMotorEncoders(angle);
+        if (armMotor.getCurrentPosition() == targetPosition){
+            setMotorEncoders(angle);
+            here = true;
+        }
         targetPosition = armMotor.getCurrentPosition() + convertToTicks(angle);
 
 
@@ -267,7 +274,7 @@ public class PlacingArm {
         return arcLength;
     }
 
-    public void setServo(String position){
+    public void setHandServo(String position){
         // take in close or open then set servo position accordingly
 
         if (position.equals("open")){
@@ -280,6 +287,8 @@ public class PlacingArm {
             handServo.setPosition(handClosePos);
         }
     }
+
+    //TODO write methods for the rotation servo aka find out what aidan wants it to do
 
     public double getActualAngle(double angle, double restingAngle){
         // angle is the angle you want the arm to be placed when the lift is angle 0. a is the angle that will actual work with goToPosition

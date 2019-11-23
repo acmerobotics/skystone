@@ -62,6 +62,8 @@ public class TestLiftArm extends LinearOpMode {
                 isDownDown = false;
             }
 
+            //lift that we are not using
+            /*
             if (gamepad2.dpad_right){
                 // accept potential value and change lift value
                 lift.moveTo(liftPotentialValue);
@@ -74,6 +76,8 @@ public class TestLiftArm extends LinearOpMode {
                 liftPotentialValue = 0;
             }
 
+            */
+
             if (gamepad2.y){
                 arm.armInitPosition();
             }
@@ -84,12 +88,12 @@ public class TestLiftArm extends LinearOpMode {
 
             if(gamepad2.left_bumper){
                 //release block, servo stuff
-                arm.setServo("open");
+                arm.setHandServo("open");
             }
 
             if (gamepad2.right_bumper){
                 // grab block, servo stuff
-                arm.setServo("close");
+                arm.setHandServo("close");
             }
 
             telemetry.addData("Block count: ", liftPotentialValue);
