@@ -84,17 +84,16 @@ public class Arm {
 
 
     public void setMotorEncoders(double angle) {
-        int moveMotorTo = armMotor.getCurrentPosition() + convertToTicks(angle);
-        int moveGearTo = moveMotorTo;
-        targetPosition = moveGearTo;
+//        int moveMotorTo = armMotor.getCurrentPosition() + convertToTicks(angle);
+//        int moveGearTo = moveMotorTo;
+//        targetPosition = moveGearTo;
+
+        targetPosition = armMotor.getCurrentPosition() + 100;
 
         armMotor.setTargetPosition(targetPosition);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(1);
 
-        if (armMotor.getCurrentPosition() == targetPosition){
-            stopEncoder();
-        }
     }
 
 
