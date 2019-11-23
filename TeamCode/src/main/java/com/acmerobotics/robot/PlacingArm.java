@@ -25,7 +25,7 @@ public class PlacingArm {
 
     public static double ARM_INIT;
     public static double ARM_INTAKE;
-    public static double ARM_RELOCATION ;
+    public static double ARM_RELOCATION;
 
     public static double ARM_MASS = 0;
 
@@ -37,12 +37,6 @@ public class PlacingArm {
     public static double wantInitAngle = 0; //find angle
     public static double wantIntakeAngle = 0; //find angle
     public static double wantRelocationAngle = 20;
-
-    public static double RADIUS = 0;
-
-    private double startTime;
-    private double error;
-    private double correction;
 
     public double targetPosition;
 
@@ -62,28 +56,15 @@ public class PlacingArm {
     private double handOpenPos = 0; //add angle position at which hand will open
     private double handClosePos = 0; // add angle position at which hand will close
 
-    private PIDController pidController;
-
-    public double offset;
-
     public static double P = 0;
     public static double I = 0;
     public static double D = 0;
     public static double G = 0;
 
-    private enum ArmMode{
-        HOLD_POSITION,
-        RUN_TO_POSITION,
-        DRIVER_CONTROLLED,
-
-    }
-
-    private ArmMode armMode = ArmMode.DRIVER_CONTROLLED;
 
     public PlacingArm(HardwareMap hardwareMap){
 
         armMotor = hardwareMap.get(DcMotorEx.class, "Arm Motor");
-        pidController = new PIDController(P, I, D);
         handServo = hardwareMap.get(Servo.class, "hand Servo");
 
 
@@ -105,79 +86,6 @@ public class PlacingArm {
 
     }
 
-
-    public double getPosition(){
-        return internalGetPosition() + offset;
-
-    }
-
-    public double internalGetPosition(){
-        return ((armMotor.getCurrentPosition() / (armMotor.getMotorType().getTicksPerRev())) * Math.PI * RADIUS * 2);
-
-    }
-
-    public void setPower(double power){
-        internalSetVelocity(power);
-
-    }
-
-    public void setPosition(double position){
-        offset = position - internalGetPosition();
-
-    }
-
-    public void internalSetVelocity(double v){
-        armMotor.setPower(v);
-
-    }
-
-    public void update(TelemetryPacket packet){// telemetry seems to only be used in teleOP. So is
-                                               // telemetryPacket like teleOP but made for code outside TeleOp class?
-        packet.put("arm mode", armMode.toString());
-        packet.put("position", getPosition());
-
-        switch (armMode){
-            case HOLD_POSITION:
-                error = targetPosition - armMotor.getCurrentPosition() ; //find out what to do here now
-                packet.put("error", error);
-
-                correction = pidController.update(error);
-                internalSetVelocity(correction);////////////////////might need to make correction negative or motor should be reversed
-                packet.put("arm correction", correction);
-
-                break;
-
-
-            case RUN_TO_POSITION:
-                pidController = new PIDController(P, I, D);
-
-                double t = System.currentTimeMillis() - startTime/ 1000;// start time is used as move the motion state so it is out of its 0 or motion state start position
-                                                                        // that way pid won't get a 0 error when not at set point. Start time skips over motion state start
-                                                                        //position to not confuse pid (only pid sees a skipped motion state start position).
-
-                    error = targetPosition - armMotor.getCurrentPosition();
-                    packet.put("error", error);
-                    correction = pidController.update(error);
-
-                    internalSetVelocity(correction); //add feedforward
-                    packet.put("arm correction", correction);/////correction might have to be changed to negative or motor should be reversed
-
-
-                    if(t > 1){ //how you will know you reached the destination (probably use encoders or time) (the current 2 second time is just so A-S won't through an error)
-                        packet.put("complete", true);
-
-                        armMode = ArmMode.HOLD_POSITION;
-                        //return; ???????
-
-                }
-
-
-               break;
-
-        }
-    }
-
-
     public void setMotorEncoders(double angle) {
         int moveMotorTo = armMotor.getCurrentPosition() + convertToTicks(angle);
         int moveGearTo = moveMotorTo *2;//////////////////////////////////////////////////////////
@@ -197,10 +105,8 @@ public class PlacingArm {
 
         //TODO check math, look into the 2:1 gear ratio and how it affect the encoder tick count
 
-        internalSetVelocity(.75);
+        armMotor.setPower(.75);
 
-        startTime = System.currentTimeMillis();
-        //armMode = ArmMode.RUN_TO_POSITION;
         setMotorEncoders(angle);
         if (armMotor.getCurrentPosition() == targetPosition){
             Here = true;
@@ -209,34 +115,7 @@ public class PlacingArm {
 
     }
 
-    public void armGoToIntake(){
 
-        armMode = ArmMode.RUN_TO_POSITION;
-        pidController = new PIDController(P, I, D);
-    }
-
-    public void armInitPosition(){
-        //Radian of init is calculated. Motion profiling and pid are initialized. Arm moves to init position.
-
-        initAngle = getActualAngle(wantInitAngle, restingAngle);
-
-        ARM_INIT = getRadianLen(initAngle, ARM_LENGTH);
-
-        goToPosition(ARM_INIT);
-        pidController = new PIDController(P, I, D);
-
-    }
-
-    public void armIntakePosition(){
-        //Radian of intake position is calculated. Motion profiling and pid are initialized. Arm moves to intake position.
-
-        intakeAngle = getActualAngle(wantIntakeAngle, restingAngle);
-
-        ARM_INTAKE = getRadianLen(intakeAngle, ARM_LENGTH);
-
-        goToPosition(ARM_INTAKE);
-        pidController = new PIDController(P, I, D);
-    }
 
     public void armRelocationPosition(){
         //Arm angle is set to 90 degrees. Motion profiling and pid are initialized. Arm moves to relocation position
@@ -246,7 +125,6 @@ public class PlacingArm {
         //ARM_RELOCATION = getRadianLen(relocationAngle, ARM_LENGTH);
 
         goToPosition(relocationAngle);
-        pidController = new PIDController(P, I, D);
 
     }
 
