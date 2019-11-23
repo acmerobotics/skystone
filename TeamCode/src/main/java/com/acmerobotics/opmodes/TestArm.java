@@ -36,7 +36,6 @@ public class TestArm extends LinearOpMode {
                 isYPressed = false;
             }
 
-
             if (gamepad1.a) {
 
                 isAPressed = true;
