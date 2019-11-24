@@ -9,6 +9,8 @@ public class TestLift extends LinearOpMode {
 
     private boolean isUpDown = false;
     private boolean isDownDown = false;
+    private boolean isLeftDown = false;
+    private boolean isRightDown = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -38,6 +40,22 @@ public class TestLift extends LinearOpMode {
             } else if (isDownDown){
                 lift.goToBottom();
                 isDownDown = false;
+            }
+
+            if (gamepad2.dpad_right) {
+                isRightDown = true;
+
+            } else if (isRightDown) {
+                lift.adjustLiftUp();
+                isRightDown = false;
+            }
+
+            if (gamepad2.dpad_left) {
+                isLeftDown = true;
+
+            } else if (isLeftDown) {
+                lift.adjustLiftDown();
+                isLeftDown = false;
             }
 
             telemetry.addData("encoder pos", lift.checkEncoder());
