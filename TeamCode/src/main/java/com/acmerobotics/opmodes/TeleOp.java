@@ -31,12 +31,14 @@ public class TeleOp extends LinearOpMode {
         //SkyStoneRobot robot = new SkyStoneRobot(this);
         Drive drive = new Drive(hardwareMap);
         ////////////////////////////////////////Lift lift = new Lift(hardwareMap);
-        ArmSimple arm = new ArmSimple();
-        BurlingameLift lift = new BurlingameLift(hardwareMap);
+        ArmSimple arm = new ArmSimple(hardwareMap);
+       BurlingameLift lift = new BurlingameLift(hardwareMap);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         Intake intake = new Intake(hardwareMap);
 
-        arm.init(hardwareMap);
+        arm.init();
+        lift.init();
+        lift.resetEncoder();
 
         waitForStart();
 
@@ -104,9 +106,7 @@ public class TeleOp extends LinearOpMode {
             intake.setIntakePower(-gamepad1.left_trigger);
             intake.setIntakePower(gamepad1.right_trigger);
 
-            if (gamepad2.left_bumper){
-                arm.setHand("close");
-            }
+
 
             ///////////////////// gamepad2   ///////////////////////////
             if (gamepad2.dpad_up){
@@ -141,14 +141,26 @@ public class TeleOp extends LinearOpMode {
                 isLeftDown = false;
             }
 
+
             if (gamepad2.x){
                 thePower = arm.armMotor.getPower();
                 arm.armMotor.setPower(thePower);
             }
 
             else {
-                arm.armMotor.setPower(arm.setMotorPower(gamepad2.left_stick_y));
+                arm.setMotorPower(gamepad2.left_stick_y);
             }
+
+            if (gamepad2.right_bumper){
+                arm.setHand("close");
+            }
+
+            if (gamepad2.left_bumper){
+                arm.setHand("open");
+            }
+
+            telemetry.addData("the power", thePower);
+            telemetry.update();
 
 
         }
