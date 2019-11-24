@@ -74,7 +74,7 @@ public class Lift {
 
     public Lift(HardwareMap hardwareMap){
 
-        liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
+        //liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
         bottomHallEffect = hardwareMap.digitalChannel.get("bottomHallEffect");
 
         liftMotor.setPower(0);
@@ -240,9 +240,6 @@ public class Lift {
         placingHeight = BASE_HEIGHT + (INCREMENT * blocks);
         return placingHeight;
     }
-
-
-
 
     public double getMass(){
         double mass = MASS_ARM;

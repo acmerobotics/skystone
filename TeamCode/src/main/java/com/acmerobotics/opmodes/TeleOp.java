@@ -28,6 +28,8 @@ public class TeleOp extends LinearOpMode {
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         Intake intake = new Intake(hardwareMap);
 
+        waitForStart();
+
 
         while (!isStopRequested()){
 
