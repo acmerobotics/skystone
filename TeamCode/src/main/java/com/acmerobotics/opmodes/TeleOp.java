@@ -4,7 +4,7 @@ import com.acmerobotics.robot.Drive;
 import com.acmerobotics.robot.FoundationMover;
 import com.acmerobotics.robot.Intake;
 import com.acmerobotics.robot.Lift;
-import com.acmerobotics.robot.PlacingArm;
+import com.acmerobotics.robot.Arm;
 import com.acmerobotics.util.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -19,14 +19,18 @@ public class TeleOp extends LinearOpMode {
     public boolean isRightBumperPressed = false;
     public boolean isRightOpen = false;
 
+    public double thePower = 0;
+
     @Override
     public void runOpMode() throws InterruptedException {
         //SkyStoneRobot robot = new SkyStoneRobot(this);
         Drive drive = new Drive(hardwareMap);
         Lift lift = new Lift(hardwareMap);
-        PlacingArm arm = new PlacingArm(hardwareMap);
+        Arm arm = new Arm();
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         Intake intake = new Intake(hardwareMap);
+
+        arm.init(hardwareMap);
 
         waitForStart();
 
@@ -94,8 +98,35 @@ public class TeleOp extends LinearOpMode {
             intake.setIntakePower(-gamepad1.left_trigger);
             intake.setIntakePower(gamepad1.right_trigger);
 
+            if (gamepad2.left_bumper){
+                arm.setHand("close");
+            }
+
+            if (gamepad2.right_bumper){
+                arm.setHand("open");
+            }
+
+            if (gamepad2.x){
+                thePower = arm.armMotor.getPower();
+                arm.armMotor.setPower(thePower);
+            }
+
+            else {
+                arm.armMotor.setPower(arm.setMotorPower(gamepad2.left_stick_y));
+            }
+
 
             ///////////////////// gamepad2   ///////////////////////////
+
+            if (gamepad2.x){
+                thePower = arm.armMotor.getPower();
+                arm.armMotor.setPower(thePower);
+            }
+
+            else {
+                arm.armMotor.setPower(arm.setMotorPower(gamepad2.left_stick_y));
+            }
+
 
         }
 

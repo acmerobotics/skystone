@@ -47,6 +47,7 @@ public class Arm {
         armMotor.setTargetPosition(0);
         armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         rotationServo.setPosition(rotateCenter);
 
     }

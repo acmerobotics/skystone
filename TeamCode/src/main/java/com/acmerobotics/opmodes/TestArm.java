@@ -25,18 +25,18 @@ public class TestArm extends LinearOpMode {
 
         while (!isStopRequested()) {
 
-            if (gamepad1.y) {
+            //if (gamepad1.y) {
 
 //                isYPressed = true;
 //            }
 //
 //            else if (isYPressed) {
 //                /////////////////move 20 degrees from resting point
-                arm.goToPosition(0);
+                //arm.goToPosition(0);
                 //target position should be 31.111
 
                 //isYPressed = false;
-            }
+            //}
 
 //            if (gamepad1.a) {
 //
@@ -68,12 +68,9 @@ public class TestArm extends LinearOpMode {
             }
 
 
-
-
             telemetry.addData("encoder: ", arm.armMotor.getCurrentPosition());
             telemetry.addData("target_position: ", arm.targetPosition);
             telemetry.addData("power", arm.armMotor.getPower());
-            telemetry.addData("tolerance", arm.armMotor.getTargetPositionTolerance());
             telemetry.update();
 
 

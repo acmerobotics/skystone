@@ -36,10 +36,12 @@ public class Drive {
     private static double WHEEL_FROM_CENTER = 0; /////////////////find length of wheel from center
 
     private static final double TICK_COUNT = 0;
-    private static final double WHEEL_DIAMETER = 1; //find real wheel diameter
+    private static final double WHEEL_DIAMETER = 2; //find real wheel diameter
     private static final double TICKS_PER_INCH = TICK_COUNT/ WHEEL_DIAMETER * Math.PI; //figure out if drive gear reduction is needed
 
-    public static double AUTO_SPEED = 10;
+    public double wheelOmega = 0;
+    public int MDistance = 0;
+
 
     public static Vector2d[] WHEEL_POSITIONS = {
             new Vector2d(6, 7.5),
@@ -63,7 +65,6 @@ public class Drive {
     private double headingOffset;
     private double rawHeading;
 
-    private ElapsedTime runTime = new ElapsedTime();
 
     public Drive(HardwareMap hardwareMap){
         //super("drive");
@@ -73,33 +74,42 @@ public class Drive {
        motors[2] = robot.getMotor("m2");
        motors[3] = robot.getMotor( "m3");*/
 
-        motors[0] = hardwareMap.get(DcMotorEx.class, "m0");
-        motors[1] = hardwareMap.get(DcMotorEx.class, "m1");
-        motors[2] = hardwareMap.get(DcMotorEx.class, "m2");
-        motors[3] = hardwareMap.get(DcMotorEx.class, "m3");
-
        FtcDashboard dashboard = FtcDashboard.getInstance();
-
-
-       for (int i = 0; i < 4; i++){
-           motors[i].setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-           motors[i].setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-       }
-
-       motors[0].setDirection(DcMotorEx.Direction.FORWARD);
-       motors[1].setDirection(DcMotorEx.Direction.REVERSE);
-       motors[2].setDirection(DcMotorEx.Direction.FORWARD);
-       motors[3].setDirection(DcMotorEx.Direction.REVERSE);
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
+
       /* imu = robot.getRevHubImu(0);
        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
        imu.initialize(parameters); */
+
+    }
+
+    public void init(HardwareMap hardwareMap){
+
+
+        motors[0] = hardwareMap.get(DcMotorEx.class, "m0");
+        motors[1] = hardwareMap.get(DcMotorEx.class, "m1");
+        motors[2] = hardwareMap.get(DcMotorEx.class, "m2");
+        motors[3] = hardwareMap.get(DcMotorEx.class, "m3");
+
+        motors[0].setDirection(DcMotorEx.Direction.FORWARD);
+        motors[1].setDirection(DcMotorEx.Direction.REVERSE);
+        motors[2].setDirection(DcMotorEx.Direction.FORWARD);
+        motors[3].setDirection(DcMotorEx.Direction.REVERSE);
+
+        for(int i=0; i<4; i++){
+            motors[i].setPower(0);
+        }
+
+        for (int i = 0; i < 4; i++){
+            motors[i].setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            motors[i].setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        }
 
     }
 
@@ -114,7 +124,7 @@ public class Drive {
     public void setVelocity(Vector2d v, double omega) {
         for (int i = 0; i < 4; i++) {
             Vector2d wheelVelocity = new Vector2d(v.x() - omega * WHEEL_POSITIONS[i].y(), v.y() + omega * WHEEL_POSITIONS[i].x());
-            double wheelOmega = (wheelVelocity.dot(ROTOR_DIRECTIONS[i]) * Math.sqrt(2)) / RADIUS;
+            wheelOmega = (wheelVelocity.dot(ROTOR_DIRECTIONS[i]) * Math.sqrt(2)) / RADIUS;
             motors[i].setPower(wheelOmega);// divide wheelOmega by 30? to get number between -1 and 1
 
         }
@@ -124,6 +134,12 @@ public class Drive {
 
     /////////////////// Auto specific methods //////////////////////////////////////////////////////
 
+    public void stopAndReset(){
+        for(int i=0; i<4; i++){
+            motors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+    }
+
     public void setPowerA(Vector2d v, double omega){
         setVelocityA(v.times(MAX_V), omega * MAX_O);
     }
@@ -132,7 +148,7 @@ public class Drive {
 
         for (int i = 0; i < 4; i ++){
             Vector2d wheelVelocity = new Vector2d(v.x() - omega * WHEEL_POSITIONS[i].y(), v.y() + omega * WHEEL_POSITIONS[i].x());
-            double wheelOmega = (wheelVelocity.dot(ROTOR_DIRECTIONS[i]) * Math.sqrt(2)/RADIUS);
+            wheelOmega = (wheelVelocity.dot(ROTOR_DIRECTIONS[i]) * Math.sqrt(2)/RADIUS);
             motors[i].setPower(Math.abs(wheelOmega));
         }
     }
@@ -145,7 +161,7 @@ public class Drive {
 
             distance *= setDirections;
 
-            int MDistance = motors[i].getCurrentPosition() + (int) (distance * TICKS_PER_INCH);
+            MDistance = motors[i].getCurrentPosition() + (int) (distance * TICKS_PER_INCH);
             motors[i].setTargetPosition(MDistance);
         }
 
@@ -165,7 +181,7 @@ public class Drive {
         }
     }
 
-    public void moveRobotTo(String move, double distance){// distance is negative if going back,,,,,,possibly add time and speed when testing is successful
+    public void moveRobotTo(String move, double distance){// distance is negative if going back
 
         double y = 0;
         double x = 0;
