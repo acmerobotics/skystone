@@ -17,8 +17,6 @@ public class TestArm extends LinearOpMode {
 
         arm.init(hardwareMap);
 
-
-
         arm.resetEncoder();
 
         waitForStart();
@@ -32,25 +30,27 @@ public class TestArm extends LinearOpMode {
 
             else if (isYPressed) {
                 /////////////////move 20 degrees from resting point
-                arm.goToPosition(0);
+                //arm.goToPosition(0);
+                arm.setVelocity(1);
                 //target position should be 31.111
 
                 isYPressed = false;
             }
 
             if (gamepad1.a) {
+
                 isAPressed = true;
             }
 
-            else if (isAPressed){
-                /////////////////move 45 degrees from resting point
-                arm.goToPosition(1);
-                //target position should be 69.99 or approx. 70
-            }
+            else if (isAPressed) {
+                /////////////////move x degrees from resting point
+                arm.goToPosition(0);
 
+                isAPressed = false;
+            }
             telemetry.addData("encoder: ", arm.armMotor.getCurrentPosition());
             telemetry.addData("target_position: ", arm.targetPosition);
-
+            telemetry.addData("power", arm.armMotor.getPower());
             telemetry.update();
 
 

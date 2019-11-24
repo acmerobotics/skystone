@@ -41,11 +41,12 @@ public class Arm {
         armMotor.setDirection(DcMotorEx.Direction.FORWARD);
         armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+
     }
 
     public void resetEncoder(){
         armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
     }
 
@@ -84,17 +85,19 @@ public class Arm {
 
 
     public void setMotorEncoders(double angle) {
-        int moveMotorTo = armMotor.getCurrentPosition() + convertToTicks(angle);
-        int moveGearTo = moveMotorTo;
-        targetPosition = moveGearTo;
+//        int moveMotorTo = armMotor.getCurrentPosition() + convertToTicks(angle);
+//        int moveGearTo = moveMotorTo;
+//        targetPosition = moveGearTo;
+
+        targetPosition = armMotor.getCurrentPosition() + 100;
 
         armMotor.setTargetPosition(targetPosition);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setPower(1);
+        armMotor.setPower(.95);
 
-        if (armMotor.getCurrentPosition() == targetPosition){
-            stopEncoder();
-        }
+    }
+
+    public void setVelocity(double power){
+        armMotor.setPower(power);
     }
 
 
