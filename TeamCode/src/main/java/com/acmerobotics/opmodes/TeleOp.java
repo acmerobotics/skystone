@@ -1,5 +1,6 @@
 package com.acmerobotics.opmodes;
 
+import com.acmerobotics.robot.BurlingameLift;
 import com.acmerobotics.robot.Drive;
 import com.acmerobotics.robot.FoundationMover;
 import com.acmerobotics.robot.Intake;
@@ -23,7 +24,7 @@ public class TeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         //SkyStoneRobot robot = new SkyStoneRobot(this);
         Drive drive = new Drive(hardwareMap);
-        Lift lift = new Lift(hardwareMap);
+        BurlingameLift lift = new BurlingameLift(hardwareMap);
         PlacingArm arm = new PlacingArm(hardwareMap);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         Intake intake = new Intake(hardwareMap);
@@ -96,6 +97,7 @@ public class TeleOp extends LinearOpMode {
 
 
             ///////////////////// gamepad2   /////////////////////////////
+
 
 
 

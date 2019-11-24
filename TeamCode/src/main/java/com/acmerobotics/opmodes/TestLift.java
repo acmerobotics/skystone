@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name="Lift Testing")
 public class TestLift extends LinearOpMode {
 
+    private boolean isUpDown = false;
+    private boolean isDownDown = false;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -19,14 +22,22 @@ public class TestLift extends LinearOpMode {
 
         while(!isStopRequested()){
 
-            lift.driverControlled(gamepad1.left_stick_y);
+            //lift.set(gamepad1.left_stick_y);
 
-            if(gamepad1.y){
-                lift.goToBottom();
+            if (gamepad2.dpad_up){
+                isUpDown = true;
+
+            } else if (isUpDown){
+                lift.goToIntake();
+                isUpDown = false;
             }
 
-            if(gamepad1.b){
-                lift.goToIntake();
+            if (gamepad2.dpad_down){
+                isDownDown = true;
+
+            } else if (isDownDown){
+                lift.goToBottom();
+                isDownDown = false;
             }
 
             telemetry.addData("encoder pos", lift.checkEncoder());
