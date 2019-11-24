@@ -18,9 +18,7 @@ public class ParkingBlue extends LinearOpMode {
 
             drive.moveRobotTo("forward", 1);
 
-            //drive.turnRobotTo("right", 90); //won't work without adding values to getRadianLength, wheel to center variable
-
-            //drive.moveRobotTo("back", -10);
+            //drive.moveTo(1);
 
 
             telemetry.addData("wheelOmega ", drive.wheelOmega);

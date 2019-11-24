@@ -5,7 +5,7 @@ import com.acmerobotics.robot.Drive;
 import com.acmerobotics.robot.FoundationMover;
 import com.acmerobotics.robot.Intake;
 import com.acmerobotics.robot.Lift;
-import com.acmerobotics.robot.Arm;
+import com.acmerobotics.robot.ArmSimple;
 import com.acmerobotics.util.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -30,8 +30,8 @@ public class TeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         //SkyStoneRobot robot = new SkyStoneRobot(this);
         Drive drive = new Drive(hardwareMap);
-        Lift lift = new Lift(hardwareMap);
-        Arm arm = new Arm();
+        ////////////////////////////////////////Lift lift = new Lift(hardwareMap);
+        ArmSimple arm = new ArmSimple();
         BurlingameLift lift = new BurlingameLift(hardwareMap);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         Intake intake = new Intake(hardwareMap);

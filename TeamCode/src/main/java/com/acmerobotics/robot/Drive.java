@@ -42,6 +42,8 @@ public class Drive {
     public double wheelOmega = 0;
     public int MDistance = 0;
 
+    private ElapsedTime     runtime = new ElapsedTime();
+
 
     public static Vector2d[] WHEEL_POSITIONS = {
             new Vector2d(6, 7.5),
@@ -111,6 +113,18 @@ public class Drive {
             motors[i].setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         }
 
+    }
+
+    public void moveTo(int seconds){
+        double x = 0;
+        double y = 0;
+        runtime.reset();
+
+        Vector2d v = new Vector2d(y,x);
+
+        if (runtime.seconds() > seconds){
+            setPower(v, 0);
+        }
     }
 
     public void setPower(Vector2d v, double omega) {
