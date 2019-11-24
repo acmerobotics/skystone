@@ -11,8 +11,12 @@ public class Arm {
     private Servo handServo;
     private Servo rotationServo;
 
-    private double handOpenPos = 0;
-    private double handClosePos = 0;
+    private double handOpenPos = 0.78;
+    private double handClosePos = 0.33;
+
+    private double rotateRight = 1;
+    private double rotateLeft = 0;
+    private double rotateCenter = 0.53;
 
     private static final double TICK_COUNT_PER_REVOLUTION = 280;
 
@@ -39,10 +43,11 @@ public class Arm {
         handServo = hardwareMap.get(Servo.class, "handServo");
         rotationServo = hardwareMap.get(Servo.class, "rotationServo");
 
-        armMotor.setDirection(DcMotorEx.Direction.REVERSE);
+        armMotor.setDirection(DcMotorEx.Direction.FORWARD);
         armMotor.setTargetPosition(0);
-        armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rotationServo.setPosition(rotateCenter);
 
     }
 
@@ -94,6 +99,8 @@ public class Arm {
 
         armMotor.setTargetPosition(targetPosition);
         armMotor.setPower(.95);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
     }
 
@@ -124,10 +131,36 @@ public class Arm {
         }
     }
 
+//    public void setRotationServo(String position){
+//        if (position.equals("right")){
+//            //right
+//            rotationServo.setPosition(rotateRight);
+//        }
+//
+//        if (position.equals("left")){
+//            //left
+//            rotationServo.setPosition(rotateLeft);
+//        }
+//
+//        if (position.equals("center")){
+//            //center
+//            rotationServo.setPosition(rotateCenter);
+//        }
+//    }
+
     public double getActualAngle(double angle, double restingAngle){
         // angle is the angle you want the arm to be placed when the lift is angle 0. a is the angle that will actual work with goToPosition
         // look at "Actual Angel" paper for details.
         double a = angle - restingAngle;
         return a;
+    }
+
+    public double setMotorPower(double power){
+        return power * -0.80;
+    }
+
+    public void stopMotor(){
+        armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
     }
 }
