@@ -1,5 +1,6 @@
 package com.acmerobotics.opmodes;
 
+import com.acmerobotics.robot.BurlingameLift;
 import com.acmerobotics.robot.Drive;
 import com.acmerobotics.robot.FoundationMover;
 import com.acmerobotics.robot.Intake;
@@ -18,6 +19,10 @@ public class TeleOp extends LinearOpMode {
     public boolean isLeftOpen = false;
     public boolean isRightBumperPressed = false;
     public boolean isRightOpen = false;
+    private boolean isUpDown = false;
+    private boolean isDownDown = false;
+    private boolean isLeftDown = false;
+    private boolean isRightDown = false;
 
     public double thePower = 0;
 
@@ -27,6 +32,7 @@ public class TeleOp extends LinearOpMode {
         Drive drive = new Drive(hardwareMap);
         Lift lift = new Lift(hardwareMap);
         Arm arm = new Arm();
+        BurlingameLift lift = new BurlingameLift(hardwareMap);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         Intake intake = new Intake(hardwareMap);
 
@@ -102,21 +108,38 @@ public class TeleOp extends LinearOpMode {
                 arm.setHand("close");
             }
 
-            if (gamepad2.right_bumper){
-                arm.setHand("open");
-            }
-
-            if (gamepad2.x){
-                thePower = arm.armMotor.getPower();
-                arm.armMotor.setPower(thePower);
-            }
-
-            else {
-                arm.armMotor.setPower(arm.setMotorPower(gamepad2.left_stick_y));
-            }
-
-
             ///////////////////// gamepad2   ///////////////////////////
+            if (gamepad2.dpad_up){
+                isUpDown = true;
+
+            } else if (isUpDown){
+                lift.goToIntake();
+                isUpDown = false;
+            }
+
+            if (gamepad2.dpad_down){
+                isDownDown = true;
+
+            } else if (isDownDown){
+                lift.goToBottom();
+                isDownDown = false;
+            }
+
+            if (gamepad2.dpad_right) {
+                isRightDown = true;
+
+            } else if (isRightDown) {
+                lift.adjustLiftUp();
+                isRightDown = false;
+            }
+
+            if (gamepad2.dpad_left) {
+                isLeftDown = true;
+
+            } else if (isLeftDown) {
+                lift.adjustLiftDown();
+                isLeftDown = false;
+            }
 
             if (gamepad2.x){
                 thePower = arm.armMotor.getPower();
