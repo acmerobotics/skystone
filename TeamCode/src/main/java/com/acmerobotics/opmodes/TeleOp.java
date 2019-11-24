@@ -26,11 +26,16 @@ public class TeleOp extends LinearOpMode {
 
     public double thePower = 0;
 
+    public double incrementUp = 0.1;
+    public double incrementDown = -0.1;
+
+    public boolean stickUp = false;
+    public boolean stickDown = false;
+
     @Override
     public void runOpMode() throws InterruptedException {
         //SkyStoneRobot robot = new SkyStoneRobot(this);
         Drive drive = new Drive(hardwareMap);
-        Lift lift = new Lift(hardwareMap);
         Arm arm = new Arm();
         BurlingameLift lift = new BurlingameLift(hardwareMap);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
@@ -147,8 +152,28 @@ public class TeleOp extends LinearOpMode {
             }
 
             else {
-                arm.armMotor.setPower(arm.setMotorPower(gamepad2.left_stick_y));
+                if (gamepad2.left_stick_y > 0) {
+                    stickUp = true;
+                }
+
+                else if (stickUp) {
+                    arm.armMotor.setPower(arm.armMotor.getPower() + incrementUp);
+                    stickUp = false;
+                }
+
+
+                if (gamepad2.left_stick_y < 0){
+                    stickDown = true;
+                }
+
+                else if (stickDown){
+                    arm.armMotor.setPower(arm.armMotor.getPower() - incrementDown);
+                    stickDown = false;
+                }
             }
+
+            telemetry.addData("arm power", arm.armMotor.getPower());
+            telemetry.update();
 
 
         }

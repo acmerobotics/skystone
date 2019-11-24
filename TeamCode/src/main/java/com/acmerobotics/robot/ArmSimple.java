@@ -15,6 +15,8 @@ public class ArmSimple {
     private double handClosePos = 0.33;
     private double rotateCenter = 0.53;
 
+    public double stablePower = 0;
+
     public ArmSimple(){
 
     }
@@ -30,6 +32,7 @@ public class ArmSimple {
         armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rotationServo.setPosition(rotateCenter);
+        armMotor.setPower(stablePower);
     }
 
 
