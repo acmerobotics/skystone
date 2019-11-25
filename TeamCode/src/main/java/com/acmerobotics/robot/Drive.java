@@ -76,6 +76,13 @@ public class Drive {
        motors[2] = robot.getMotor("m2");
        motors[3] = robot.getMotor( "m3");*/
 
+       FtcDashboard dashboard = FtcDashboard.getInstance();
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
+
 
         motors[0] = hardwareMap.get(DcMotorEx.class, "m0");
         motors[1] = hardwareMap.get(DcMotorEx.class, "m1");
@@ -96,14 +103,6 @@ public class Drive {
             motors[i].setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         }
 
-       FtcDashboard dashboard = FtcDashboard.getInstance();
-
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
-
-
       /* imu = robot.getRevHubImu(0);
        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
@@ -120,8 +119,9 @@ public class Drive {
 
         if (runtime.seconds() > seconds){
             setPower(v, 0);
-        }
+
     }
+
 
     public void setPower(Vector2d v, double omega) {
 

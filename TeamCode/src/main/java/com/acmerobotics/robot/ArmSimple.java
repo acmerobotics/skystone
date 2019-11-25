@@ -16,10 +16,13 @@ public class ArmSimple {
     private double rotateCenter = 0.53;
     private double grabTheCapStone = 0.25;
 
+    public double stablePower = 0.4;
+
     public ArmSimple(HardwareMap hardwareMap){
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
         handServo = hardwareMap.get(Servo.class, "handServo");
         rotationServo = hardwareMap.get(Servo.class, "rotationServo");
+
 
     }
 
@@ -29,8 +32,11 @@ public class ArmSimple {
         armMotor.setDirection(DcMotorEx.Direction.FORWARD);
         armMotor.setTargetPosition(0);
         armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rotationServo.setPosition(rotateCenter);
+        armMotor.setPower(stablePower);
+
+
     }
 
 
