@@ -39,13 +39,14 @@ public class Arm {
     }
 
     public void init(HardwareMap hardwareMap){
-        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
-        handServo = hardwareMap.get(Servo.class, "handServo");
-        rotationServo = hardwareMap.get(Servo.class, "rotationServo");
+        //armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
+        //handServo = hardwareMap.get(Servo.class, "handServo");
+        //.rotationServo = hardwareMap.get(Servo.class, "rotationServo");
 
         armMotor.setDirection(DcMotorEx.Direction.FORWARD);
-        armMotor.setTargetPosition(0);
         armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        setVelocity(0);
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         rotationServo.setPosition(rotateCenter);
@@ -54,7 +55,10 @@ public class Arm {
 
     public void resetEncoder(){
         armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+    }
 
+    public void leaveStopAndResetEncoder(){
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 
@@ -99,9 +103,8 @@ public class Arm {
         targetPosition = armMotor.getCurrentPosition() + 100;
 
         armMotor.setTargetPosition(targetPosition);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(.95);
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
 
     }
 

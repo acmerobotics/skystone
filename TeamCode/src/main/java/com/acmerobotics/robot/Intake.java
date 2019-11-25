@@ -18,6 +18,8 @@ public class Intake {
     private double leftClose = 0.98;
     private double rightOpen = 0.95;
     private double rightClose = 0.16;
+    private double leftOutOfWay = 0;
+    private double rightOutOfWay = 1;
 
     public Intake(HardwareMap hardwareMap){
         leftMotor = hardwareMap.get(DcMotorEx.class, "leftMotor");
@@ -54,6 +56,14 @@ public class Intake {
     public void rightClose(){
         rightServo.setPosition(rightClose);
 
+    }
+
+    public void leftOpenAllWay(){
+        leftServo.setPosition(leftOutOfWay);
+    }
+
+    public void rightOpenAllWay(){
+        rightServo.setPosition(rightOutOfWay);
     }
 
     public void setIntakePower(double intakePower) {

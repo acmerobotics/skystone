@@ -12,20 +12,22 @@ public class ArmSimple {
     private Servo rotationServo;
 
     private double handOpenPos = 0.78;
-    private double handClosePos = 0.33;
+    private double handClosePos = 0.25;
     private double rotateCenter = 0.53;
+    private double grabTheCapStone = 0.25;
 
     public double stablePower = 0.4;
 
-    public ArmSimple(){
+    public ArmSimple(HardwareMap hardwareMap){
+        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
+        handServo = hardwareMap.get(Servo.class, "handServo");
+        rotationServo = hardwareMap.get(Servo.class, "rotationServo");
+
 
     }
 
 
-    public void init(HardwareMap hardwareMap){
-        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
-        handServo = hardwareMap.get(Servo.class, "handServo");
-        rotationServo = hardwareMap.get(Servo.class, "rotationServo");
+    public void init(){
 
         armMotor.setDirection(DcMotorEx.Direction.FORWARD);
         armMotor.setTargetPosition(0);
@@ -52,9 +54,13 @@ public class ArmSimple {
         }
     }
 
+    public void grabTheCapStone(){
+        handServo.setPosition(grabTheCapStone);
+    }
 
-    public double setMotorPower(double power){
-        return power * -0.80;
+
+    public void setMotorPower(double power){
+        armMotor.setPower(power * - 0.80);
     }
 
 }

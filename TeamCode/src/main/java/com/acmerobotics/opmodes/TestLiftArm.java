@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
-@TeleOp(name="TestArm/Lift")
+@TeleOp
 public class TestLiftArm extends LinearOpMode {
 
     public int liftPotentialValue = 0;

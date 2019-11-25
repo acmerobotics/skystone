@@ -6,7 +6,7 @@ import com.acmerobotics.robot.Drive;
 import com.acmerobotics.robot.FoundationMover;
 import com.acmerobotics.robot.Intake;
 import com.acmerobotics.robot.Lift;
-import com.acmerobotics.robot.Arm;
+import com.acmerobotics.robot.ArmSimple;
 import com.acmerobotics.util.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -24,6 +24,8 @@ public class TeleOp extends LinearOpMode {
     private boolean isDownDown = false;
     private boolean isLeftDown = false;
     private boolean isRightDown = false;
+    private boolean isYDown = false;
+    private boolean isYDown2 = false;
 
     public double thePower = 0;
 
@@ -38,13 +40,16 @@ public class TeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //SkyStoneRobot robot = new SkyStoneRobot(this);
-        Drive drive = new Drive(hardwareMap);
-        ArmSimple arm = new ArmSimple();
-        BurlingameLift lift = new BurlingameLift(hardwareMap);
+        ////////////////////////////////////////Lift lift = new Lift(hardwareMap);
+        ArmSimple arm = new ArmSimple(hardwareMap);
+       BurlingameLift lift = new BurlingameLift(hardwareMap);
+
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         Intake intake = new Intake(hardwareMap);
 
-        arm.init(hardwareMap);
+        arm.init();
+        lift.init();
+        lift.resetEncoder();
 
         waitForStart();
 
@@ -112,9 +117,16 @@ public class TeleOp extends LinearOpMode {
             intake.setIntakePower(-gamepad1.left_trigger);
             intake.setIntakePower(gamepad1.right_trigger);
 
-            if (gamepad2.left_bumper){
-                arm.setHand("close");
+            /*
+            if (gamepad1.y){
+                isYDown = true;
+            } else if (isYDown) {
+                intake.leftOpenAllWay();
+                intake.rightOpenAllWay();
             }
+            */
+
+
 
             ///////////////////// gamepad2   ///////////////////////////
             if (gamepad2.dpad_up){
@@ -149,10 +161,12 @@ public class TeleOp extends LinearOpMode {
                 isLeftDown = false;
             }
 
+
             if (gamepad2.x){
                 thePower = arm.armMotor.getPower();
                 arm.armMotor.setPower(arm.stablePower);
             }
+
 
             else
             {
@@ -190,12 +204,15 @@ public class TeleOp extends LinearOpMode {
                 }
             }
 
-            telemetry.addData("arm power", arm.armMotor.getPower());
-            telemetry.addData("stable power", arm.stablePower);
-            telemetry.addData("is stick up stick Up", stickUp);
-            telemetry.addData("is stick down", stickDown);
-            telemetry.addData("incrementLock", incrementLock);
-            telemetry.update();
+
+            if (gamepad2.right_bumper){
+                arm.setHand("close");
+            }
+
+            if (gamepad2.left_bumper){
+                arm.setHand("open");
+            }
+
 
         }
 

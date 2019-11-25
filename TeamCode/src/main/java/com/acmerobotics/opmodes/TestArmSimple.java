@@ -12,9 +12,9 @@ public class TestArmSimple extends LinearOpMode{
 
     @Override
     public void runOpMode() throws InterruptedException {
-        ArmSimple arm = new ArmSimple();
+        ArmSimple arm = new ArmSimple(hardwareMap);
 
-        arm.init(hardwareMap);
+       // arm.init(hardwareMap);
 
         waitForStart();
 
@@ -27,7 +27,7 @@ public class TestArmSimple extends LinearOpMode{
             if (gamepad2.right_bumper){
                 arm.setHand("close");
             }
-
+/*
             if (gamepad2.x){
                 double thePower = arm.armMotor.getPower();
                 arm.armMotor.setPower(thePower);
@@ -36,6 +36,8 @@ public class TestArmSimple extends LinearOpMode{
             else {
                 arm.armMotor.setPower(arm.setMotorPower(gamepad2.left_stick_y));
             }
+
+            */
 
             telemetry.addData("power", arm.armMotor.getPower());
             telemetry.update();

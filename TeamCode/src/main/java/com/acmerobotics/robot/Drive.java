@@ -42,6 +42,8 @@ public class Drive {
     public double wheelOmega = 0;
     public int MDistance = 0;
 
+    private ElapsedTime     runtime = new ElapsedTime();
+
 
     public static Vector2d[] WHEEL_POSITIONS = {
             new Vector2d(6, 7.5),
@@ -81,6 +83,7 @@ public class Drive {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
+
         motors[0] = hardwareMap.get(DcMotorEx.class, "m0");
         motors[1] = hardwareMap.get(DcMotorEx.class, "m1");
         motors[2] = hardwareMap.get(DcMotorEx.class, "m2");
@@ -100,7 +103,6 @@ public class Drive {
             motors[i].setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         }
 
-
       /* imu = robot.getRevHubImu(0);
        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
@@ -108,8 +110,17 @@ public class Drive {
 
     }
 
+    public void moveTo(int seconds){
+        double x = 0;
+        double y = 0;
+        runtime.reset();
 
+        Vector2d v = new Vector2d(y,x);
 
+        if (runtime.seconds() > seconds){
+            setPower(v, 0);
+
+    }
 
 
     public void setPower(Vector2d v, double omega) {
