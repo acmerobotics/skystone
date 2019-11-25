@@ -1,5 +1,6 @@
 package com.acmerobotics.opmodes;
 
+import com.acmerobotics.robot.ArmSimple;
 import com.acmerobotics.robot.BurlingameLift;
 import com.acmerobotics.robot.Drive;
 import com.acmerobotics.robot.FoundationMover;
@@ -26,17 +27,19 @@ public class TeleOp extends LinearOpMode {
 
     public double thePower = 0;
 
-    public double incrementUp = 0.1;
-    public double incrementDown = -0.1;
+    public double incrementUp = 0.5;
+    public double incrementDown = 0.25;
 
     public boolean stickUp = false;
     public boolean stickDown = false;
+
+    public boolean incrementLock = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
         //SkyStoneRobot robot = new SkyStoneRobot(this);
         Drive drive = new Drive(hardwareMap);
-        Arm arm = new Arm();
+        ArmSimple arm = new ArmSimple();
         BurlingameLift lift = new BurlingameLift(hardwareMap);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         Intake intake = new Intake(hardwareMap);
@@ -148,33 +151,51 @@ public class TeleOp extends LinearOpMode {
 
             if (gamepad2.x){
                 thePower = arm.armMotor.getPower();
-                arm.armMotor.setPower(thePower);
+                arm.armMotor.setPower(arm.stablePower);
             }
 
-            else {
-                if (gamepad2.left_stick_y > 0) {
+            else
+            {
+                if ((-gamepad2.left_stick_y) > 0.5) {
                     stickUp = true;
+                    stickDown = false;
+                    //arm.armMotor.setPower(0.4);
+
                 }
 
-                else if (stickUp) {
+                if ((-gamepad2.left_stick_y) < -0.5){
+                    stickDown = true;
+                    stickUp = false;
+                    //arm.armMotor.setPower(0.1);
+                }
+
+                if (stickUp && !incrementLock) {
                     arm.armMotor.setPower(arm.armMotor.getPower() + incrementUp);
                     stickUp = false;
+                    stickDown = false;
+                    incrementLock = true;
                 }
 
-
-                if (gamepad2.left_stick_y < 0){
-                    stickDown = true;
-                }
-
-                else if (stickDown){
+                if (stickDown && !incrementLock){
                     arm.armMotor.setPower(arm.armMotor.getPower() - incrementDown);
+                    stickDown = false;
+                    stickUp = false;
+                    incrementLock = true;
+                }
+
+                if (gamepad2.left_stick_y == 0){
+                    incrementLock = false;
+                    stickUp = false;
                     stickDown = false;
                 }
             }
 
             telemetry.addData("arm power", arm.armMotor.getPower());
+            telemetry.addData("stable power", arm.stablePower);
+            telemetry.addData("is stick up stick Up", stickUp);
+            telemetry.addData("is stick down", stickDown);
+            telemetry.addData("incrementLock", incrementLock);
             telemetry.update();
-
 
         }
 

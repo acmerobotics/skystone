@@ -81,17 +81,6 @@ public class Drive {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
-
-      /* imu = robot.getRevHubImu(0);
-       BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-       parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-       imu.initialize(parameters); */
-
-    }
-
-    public void init(HardwareMap hardwareMap){
-
-
         motors[0] = hardwareMap.get(DcMotorEx.class, "m0");
         motors[1] = hardwareMap.get(DcMotorEx.class, "m1");
         motors[2] = hardwareMap.get(DcMotorEx.class, "m2");
@@ -111,7 +100,17 @@ public class Drive {
             motors[i].setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         }
 
+
+      /* imu = robot.getRevHubImu(0);
+       BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+       parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+       imu.initialize(parameters); */
+
     }
+
+
+
+
 
     public void setPower(Vector2d v, double omega) {
 
