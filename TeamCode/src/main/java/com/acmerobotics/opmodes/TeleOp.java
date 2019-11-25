@@ -23,6 +23,8 @@ public class TeleOp extends LinearOpMode {
     private boolean isDownDown = false;
     private boolean isLeftDown = false;
     private boolean isRightDown = false;
+    private boolean isYDown = false;
+    private boolean isYDown2 = false;
 
     public double thePower = 0;
 
@@ -105,6 +107,15 @@ public class TeleOp extends LinearOpMode {
 
             intake.setIntakePower(-gamepad1.left_trigger);
             intake.setIntakePower(gamepad1.right_trigger);
+
+            /*
+            if (gamepad1.y){
+                isYDown = true;
+            } else if (isYDown) {
+                intake.leftOpenAllWay();
+                intake.rightOpenAllWay();
+            }
+            */
 
 
 
