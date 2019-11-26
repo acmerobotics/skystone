@@ -18,10 +18,10 @@ public class Arm {
     private double rotateLeft = 0;
     private double rotateCenter = 0.53;
 
-    private static final double TICK_COUNT_PER_REVOLUTION = 280;
+    private static double TICK_COUNT_PER_REVOLUTION = 280;
 
-    private static final double DIAMETER_OF_MOTOR_GEAR = 1;
-    private static final double TICKS_PER_INCH_OF_MOTOR_GEAR = TICK_COUNT_PER_REVOLUTION/ DIAMETER_OF_MOTOR_GEAR * Math.PI;
+    private static double DIAMETER_OF_MOTOR_GEAR = 1;
+    private static double TICKS_PER_INCH_OF_MOTOR_GEAR = TICK_COUNT_PER_REVOLUTION/ DIAMETER_OF_MOTOR_GEAR * Math.PI;
 
     private static final double DIAMETER_OF_ARM_GEAR = 2;
 
@@ -39,9 +39,9 @@ public class Arm {
     }
 
     public void init(HardwareMap hardwareMap){
-        //armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
-        //handServo = hardwareMap.get(Servo.class, "handServo");
-        //.rotationServo = hardwareMap.get(Servo.class, "rotationServo");
+        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
+        handServo = hardwareMap.get(Servo.class, "handServo");
+        rotationServo = hardwareMap.get(Servo.class, "rotationServo");
 
         armMotor.setDirection(DcMotorEx.Direction.FORWARD);
         armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
