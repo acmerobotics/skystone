@@ -43,7 +43,7 @@ public class TeleOp extends LinearOpMode {
         ////////////////////////////////////////Lift lift = new Lift(hardwareMap);
         ArmSimple arm = new ArmSimple(hardwareMap);
        BurlingameLift lift = new BurlingameLift(hardwareMap);
-
+       Drive drive = new Drive(hardwareMap);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         Intake intake = new Intake(hardwareMap);
 

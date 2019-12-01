@@ -154,7 +154,7 @@ public class Arm {
 
     public double getActualAngle(double angle, double restingAngle){
         // angle is the angle you want the arm to be placed when the lift is angle 0. a is the angle that will actual work with goToPosition
-        // look at "Actual Angel" paper for details.
+        // look at "Actual Angle" paper for details.
         double a = angle - restingAngle;
         return a;
     }
