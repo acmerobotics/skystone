@@ -28,8 +28,4 @@ allprojects {
     }
 }
 
-allprojects {
-    repositories {
-        jcenter()
-    }
-}
+
