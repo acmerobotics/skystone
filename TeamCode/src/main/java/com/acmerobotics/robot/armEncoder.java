@@ -24,9 +24,16 @@ public class armEncoder {
 
     public int testPosition1 = 45;
 
+    public String initialized = "";
+    public String reset = "";
+    public String leave = "";
+    public String runningTo = "running to position";
+    public String positionReached = "position reached";
+
+
     //^^^^^^^^^^^^^^^used in encoder test^^^^^^^^^^^^^^^//
 
-    public double thePower = 0.85;
+    public double thePower = 0.95;
 
     //^^^^^^^^^^^^general variables^^^^^^^^^^^^^^^^^^^^//
 
@@ -46,6 +53,8 @@ public class armEncoder {
 
         armMotor.setPower(0);
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        initialized = "initialized";
     }
 
 
@@ -53,20 +62,26 @@ public class armEncoder {
         // motor's current encoder position is set as the zero position
 
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        reset = "encoders stopped and reset";
     }
 
 
     public void leaveReset(){
         // motor mode is set to RUN_USING_ENCODER to get motor out of STOP_AND_RESET mode
-        // motor will just continue to hold a 0 power
+        // motor will just continue to hold a power of 0
 
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leave = "left stop and reset encoder";
     }
 
 
     public void runTo(int position, double power) {
         // target position is set and the motor is set to run to that position and a set speed/ power
         // target position is held with pid
+
+        position = armMotor.getCurrentPosition() + position;
 
         armMotor.setTargetPosition(position);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -83,6 +98,12 @@ public class armEncoder {
 
 
     ///////////////////////////^ end of encoder setup and main methods ^//////////////////////////////
+
+
+
+
+
+
 
 
     ///////////////////////////// math to get ticks to move at x angle /////////////////////////////

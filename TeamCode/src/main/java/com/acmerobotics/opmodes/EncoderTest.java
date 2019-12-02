@@ -13,12 +13,24 @@ public class EncoderTest extends LinearOpMode {
         armEncoder arm = new armEncoder();
 
         arm.init(hardwareMap);
+        telemetry.addLine(arm.initialized);//
 
         arm.resetEncoder();
+        telemetry.addLine(arm.reset);//
 
         arm.leaveReset();
+        telemetry.addLine(arm.leave);//
+
+        telemetry.addLine();
+        telemetry.addLine("waiting for start");//
+
+        telemetry.update();
 
         waitForStart();
+
+        telemetry.clear();//
+        telemetry.update();//
+
 
         while(!isStopRequested()){
 
@@ -29,6 +41,14 @@ public class EncoderTest extends LinearOpMode {
 
             telemetry.addData("target position: ", arm.testPosition1);
             telemetry.addLine();
+
+            if (arm.armMotor.isBusy()){
+                telemetry.addLine(arm.runningTo);
+            }
+
+            if (arm.armMotor.getCurrentPosition() == arm.testPosition1){
+                telemetry.addLine(arm.positionReached);
+            }
 
             telemetry.addData("current position: ", arm.armMotor.getCurrentPosition());
             telemetry.addData("power: ", arm.armMotor.getPower());
