@@ -2,6 +2,9 @@ package com.acmerobotics.opmodes;
 
 import com.acmerobotics.robot.armEncoder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="EncoderTest")
 
@@ -44,6 +47,7 @@ public class EncoderTest extends LinearOpMode {
 
             if (arm.armMotor.isBusy()){
                 telemetry.addLine(arm.runningTo);
+                telemetry.addData("run mode", arm.armMotor.getMode());
             }
 
             if (arm.armMotor.getCurrentPosition() == arm.testPosition1){
@@ -52,6 +56,10 @@ public class EncoderTest extends LinearOpMode {
 
             telemetry.addData("current position: ", arm.armMotor.getCurrentPosition());
             telemetry.addData("power: ", arm.armMotor.getPower());
+            telemetry.addLine();
+
+            telemetry.addData("PID Coefficients", arm.armMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+
             telemetry.update();
 
 

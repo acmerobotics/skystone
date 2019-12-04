@@ -3,6 +3,7 @@ package com.acmerobotics.robot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 public class armEncoder {
 
@@ -22,7 +23,7 @@ public class armEncoder {
 
     //^^^^^^^^^^^^^^^^^^^^used in encoder math^^^^^^^^^^^//
 
-    public int testPosition1 = 45;
+    public int testPosition1 = 220;
 
     public String initialized = "";
     public String reset = "";
@@ -34,6 +35,9 @@ public class armEncoder {
     //^^^^^^^^^^^^^^^used in encoder test^^^^^^^^^^^^^^^//
 
     public double thePower = 0.95;
+
+    private PIDFCoefficients motorCoefficients;
+
 
     //^^^^^^^^^^^^general variables^^^^^^^^^^^^^^^^^^^^//
 
@@ -85,6 +89,9 @@ public class armEncoder {
 
         armMotor.setTargetPosition(position);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //setPID(motorCoefficients);
+
         armMotor.setPower(power);
     }
 
@@ -94,6 +101,11 @@ public class armEncoder {
         // hold that position
         armMotor.setPower(0);
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void setPID(PIDFCoefficients pidfCoefficients){
+        //will set the pid coefficients, it is likely that only p will need to be changed for now
+        armMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, pidfCoefficients);
     }
 
 
