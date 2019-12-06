@@ -42,7 +42,7 @@ public class Drive {
     public double wheelOmega = 0;
     public int MDistance = 0;
 
-    private ElapsedTime     runtime = new ElapsedTime();
+    private ElapsedTime runtime = new ElapsedTime();
 
 
     public static Vector2d[] WHEEL_POSITIONS = {

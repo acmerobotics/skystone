@@ -23,11 +23,8 @@ public class armEncoder {
 
     //^^^^^^^^^^^^^^^^^^^^used in encoder math^^^^^^^^^^^//
 
-    public int testPosition1 = 220;
+    public int testPosition1 = 45;
 
-    public String initialized = "";
-    public String reset = "";
-    public String leave = "";
     public String runningTo = "running to position";
     public String positionReached = "position reached";
 
@@ -57,8 +54,6 @@ public class armEncoder {
 
         armMotor.setPower(0);
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        initialized = "initialized";
     }
 
 
@@ -67,7 +62,6 @@ public class armEncoder {
 
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        reset = "encoders stopped and reset";
     }
 
 
@@ -77,7 +71,6 @@ public class armEncoder {
 
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        leave = "left stop and reset encoder";
     }
 
 
@@ -89,8 +82,6 @@ public class armEncoder {
 
         armMotor.setTargetPosition(position);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //setPID(motorCoefficients);
 
         armMotor.setPower(power);
     }
