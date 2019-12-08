@@ -78,7 +78,7 @@ public class Drive {
 
        FtcDashboard dashboard = FtcDashboard.getInstance();
 
-       /*
+
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
@@ -90,7 +90,6 @@ public class Drive {
         motors[2] = hardwareMap.get(DcMotorEx.class, "m2");
         motors[3] = hardwareMap.get(DcMotorEx.class, "m3");
 
-        */
 
         motors[0].setDirection(DcMotorEx.Direction.FORWARD);
         motors[1].setDirection(DcMotorEx.Direction.REVERSE);
@@ -107,9 +106,9 @@ public class Drive {
         }
 
        //imu = robot.getRevHubImu(0);
-       BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-       parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-       imu.initialize(parameters);
+       //BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+      // parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+       //imu.initialize(parameters);
     }
 
     public void moveTo(int seconds){
@@ -140,7 +139,7 @@ public class Drive {
             Vector2d wheelVelocity = new Vector2d(v.x() - omega * WHEEL_POSITIONS[i].y(),
                     v.y() + omega * WHEEL_POSITIONS[i].x());
             wheelOmega = (wheelVelocity.dot(ROTOR_DIRECTIONS[i]) * Math.sqrt(2)) / RADIUS;
-            motors[i].setVelocity(wheelOmega);
+            motors[i].setPower(wheelOmega);
 
         }
 
