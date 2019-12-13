@@ -1,13 +1,17 @@
 package com.acmerobotics.robot;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 
+@Config
 public class armEncoder {
 
     public DcMotorEx armMotor;
+    public Servo rotationServo;
 
     //TODO///////////// NEED REAL VALUES FOR VARIABLES, ALL OF THESE ARE FOR TESTING ONLY //////////
 
@@ -19,21 +23,22 @@ public class armEncoder {
 
     public double testAngle = 10;
 
-    public int testEncoderPosition = 0;
+    public int testEncoderPosition = 0; /////// position were servo is not in way /////////
 
     //^^^^^^^^^^^^^^^^^^^^used in encoder math^^^^^^^^^^^//
 
     public int testPosition1 = 45;
+    public int testPosition2 = 30;
 
     public String runningTo = "running to position";
     public String positionReached = "position reached";
+
+    public double rotateCenter = 0;///////////////////////////////////////////////////////
 
 
     //^^^^^^^^^^^^^^^used in encoder test^^^^^^^^^^^^^^^//
 
     public double thePower = 0.95;
-
-    private PIDFCoefficients motorCoefficients;
 
 
     //^^^^^^^^^^^^general variables^^^^^^^^^^^^^^^^^^^^//
@@ -49,11 +54,14 @@ public class armEncoder {
         // is set to 0 power and is held there by RUN_USING_ENCODER
 
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
+        rotationServo = hardwareMap.get(Servo.class, "rotationServo");
 
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         armMotor.setPower(0);
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        rotationServo.setPosition(rotateCenter);
     }
 
 

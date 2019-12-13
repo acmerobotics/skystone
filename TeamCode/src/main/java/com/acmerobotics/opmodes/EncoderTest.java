@@ -1,5 +1,7 @@
 package com.acmerobotics.opmodes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.robot.armEncoder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,16 +9,30 @@ import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="EncoderTest")
 
+@Config
 public class EncoderTest extends LinearOpMode {
+
+    public static int currentPosition = 0;
+    public static int targetPosition = 45;
+    public static double P = 25;
+    public static double I = 0;
+    public static double D = 0;
+    public static double F = 0;
 
     @Override
     public void runOpMode(){
 
         armEncoder arm = new armEncoder();
 
-        PIDFCoefficients coefficients = new PIDFCoefficients(25, 0,0,0);
+        PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F);
+
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+
+        Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
         arm.init(hardwareMap);
 
@@ -31,33 +47,23 @@ public class EncoderTest extends LinearOpMode {
         waitForStart();
 
 
-
         while(!isStopRequested()){
 
             // description: test to make sure your setup and main encoder code is correct
 
             // outcome: arm should move to the encoder position set (45) and it should hold that position
             arm.setPID(coefficients);
+
+            currentPosition = arm.armMotor.getCurrentPosition();
+
             arm.runTo(arm.testPosition1, arm.thePower);
 
-            telemetry.addData("target position: ", arm.testPosition1);
-            telemetry.addLine();
+            ////////////////////////
+            dashboardTelemetry.addData("target position", targetPosition);
+            dashboardTelemetry.addData("current position", currentPosition);
 
-            if (arm.armMotor.isBusy()){
-                telemetry.addLine(arm.runningTo);
-                telemetry.addData("run mode", arm.armMotor.getMode());
-            }
-
-            if (arm.armMotor.getCurrentPosition() == arm.testPosition1){
-                telemetry.addLine(arm.positionReached);
-            }
-
-            telemetry.addData("current position: ", arm.armMotor.getCurrentPosition());
-            telemetry.addLine();
-
-            telemetry.addData("PID Coefficients", arm.armMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
-
-            telemetry.update();
+            dashboardTelemetry.update();
+            ////////////////////////
 
 
             // ^^^^can delete when testing is successful and uncomment the code below

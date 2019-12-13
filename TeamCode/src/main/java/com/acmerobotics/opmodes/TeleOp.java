@@ -1,5 +1,7 @@
 package com.acmerobotics.opmodes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.robot.BurlingameLift;
 import com.acmerobotics.robot.Drive;
 import com.acmerobotics.robot.FoundationMover;
@@ -13,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp")
+@Config
 public class TeleOp extends LinearOpMode {
 
     public boolean isLeftBumperPressed = false;
