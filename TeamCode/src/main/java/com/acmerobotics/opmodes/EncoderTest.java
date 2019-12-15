@@ -16,19 +16,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class EncoderTest extends LinearOpMode {
 
-    public static int currentPosition = 0;
-    public static int targetPosition = 45;
-    public static double P = 25;
-    public static double I = 0;
-    public static double D = 0;
-    public static double F = 0;
+    public int currentPosition = 0;
 
     @Override
     public void runOpMode(){
 
         armEncoder arm = new armEncoder();
-
-        PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F);
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
 
@@ -40,10 +33,6 @@ public class EncoderTest extends LinearOpMode {
 
         arm.leaveReset();
 
-        telemetry.addLine();
-
-        telemetry.update();
-
         waitForStart();
 
 
@@ -52,15 +41,17 @@ public class EncoderTest extends LinearOpMode {
             // description: test to make sure your setup and main encoder code is correct
 
             // outcome: arm should move to the encoder position set (45) and it should hold that position
-            arm.setPID(coefficients);
 
             currentPosition = arm.armMotor.getCurrentPosition();
 
-            arm.runTo(arm.testPosition1, arm.thePower);
+            arm.runTo(armEncoder.targetPosition, arm.thePower);
 
             ////////////////////////
-            dashboardTelemetry.addData("target position", targetPosition);
+            dashboardTelemetry.addData("target position", armEncoder.targetPosition);
             dashboardTelemetry.addData("current position", currentPosition);
+            dashboardTelemetry.addData("runTo() target position", arm.positionInRunTo); //if my theory is correct then
+                                                                                                //by adding targetPos. and curPos.
+                                                                                                 //then you should get pos.InRunTo
 
             dashboardTelemetry.update();
             ////////////////////////
