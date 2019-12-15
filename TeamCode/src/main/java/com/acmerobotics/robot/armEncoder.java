@@ -15,7 +15,7 @@ public class armEncoder {
 
     //TODO///////////// NEED REAL VALUES FOR VARIABLES, ALL OF THESE ARE FOR TESTING ONLY //////////
 
-    private static double TICKS_PER_REV = 280;
+    private double TICKS_PER_REV = 280;
 
     private double ARM_MOTOR_DIAMETER = 1;
 
@@ -30,15 +30,24 @@ public class armEncoder {
     public int testPosition1 = 45;
     public int testPosition2 = 30;
 
-    public String runningTo = "running to position";
-    public String positionReached = "position reached";
+    public int positionInRunTo = 0;
 
-    public double rotateCenter = 0;///////////////////////////////////////////////////////
+    public double rotateCenter = 140/255;/////////////////////   SERVO   //////////////////////////////////
 
 
     //^^^^^^^^^^^^^^^used in encoder test^^^^^^^^^^^^^^^//
 
-    public double thePower = 0.95;
+    public double thePower = 1;
+
+    public static int targetPosition = 0;
+
+    public static double P = 25;
+    public static double I = 5;
+    public static double D = 0;
+    public static double F = 0;
+
+    public PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F);
+
 
 
     //^^^^^^^^^^^^general variables^^^^^^^^^^^^^^^^^^^^//
@@ -86,9 +95,12 @@ public class armEncoder {
         // target position is set and the motor is set to run to that position and a set speed/ power
         // target position is held with pid
 
-        position = armMotor.getCurrentPosition() + position;
+        setPID(coefficients);
 
-        armMotor.setTargetPosition(position);
+        //TODO remove getCurrentPosition() after telemetryDashboard test
+        positionInRunTo = armMotor.getCurrentPosition() + position; ////////////// remove getCurrentPosition//////////////
+
+        armMotor.setTargetPosition(positionInRunTo);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         armMotor.setPower(power);
