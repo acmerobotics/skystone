@@ -6,8 +6,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 @Config
 public class JoystickTransform {
 
-    //TODO finish this before thursday
-
     public static double exponent = 2;
 
     private boolean ramping = false;
@@ -51,7 +49,6 @@ public class JoystickTransform {
             case EXPONENTIAL:
                 r = Math.pow(r, exponent);
                 omega = Math.pow(omega, exponent);
-
                 break;
 
             case LINEAR:

@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.robomatic.robot.Robot;
 import com.acmerobotics.robomatic.robot.Subsystem;
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -32,6 +34,8 @@ public class Drive {
     public static double MOVE_RIGHT = 0.8;
     public static double MOVE_LEFT = -0.8;
     public static double omegaSpeed = 0.8;
+
+    private Pose2d targetVelocity = new Pose2d(0, 0, 0);
 
     private static double WHEEL_FROM_CENTER = 0; /////////////////find length of wheel from center
 
@@ -109,12 +113,10 @@ public class Drive {
       // BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
        //parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
        //imu.initialize(parameters);
-
-        dashboardTelemetry.addData("Wheel Omega", wheelOmega);
-        dashboardTelemetry.update();
     }
 
 
+    //what is this for?
     public void moveTo(int seconds){
         double x = 0;
         double y = 0;
@@ -123,25 +125,30 @@ public class Drive {
         Vector2d v = new Vector2d(y,x);
 
         if (runtime.seconds() > seconds){
-            setPower(v, 0);
+            //setPower(v, 0);
 
     }
 
     }
 
 
-    public void setPower(Vector2d v, double omega) {
+    public void setPower(Pose2d target) {
 
-            setVelocity(v.times(MAX_V), omega * MAX_O);
+        double v = target.vec().norm();
+        v = Range.clip(v, -1, 1) * MAX_V;
+        double theta = Math.atan2(target.getX(), target.getY());
+        double omega = target.getHeading() * MAX_O;
+
+        targetVelocity = new Pose2d(v * Math.cos(theta), v * Math.sin(theta), omega);
+
+        setVelocity(targetVelocity);
 
     }
 
-    // is the math wrong ?????
-
-    public void setVelocity(Vector2d v, double omega) {
+    public void setVelocity(Pose2d v) {
         for (int i = 0; i < 4; i++) {
-            Vector2d wheelVelocity = new Vector2d(v.getX() - omega * WHEEL_POSITIONS[i].getY(),
-                    v.getY() + omega * WHEEL_POSITIONS[i].getX());
+            Vector2d wheelVelocity = new Vector2d(v.getX() - v.getHeading() * WHEEL_POSITIONS[i].getY(),
+                    v.getY() + v.getHeading() * WHEEL_POSITIONS[i].getX());
             wheelOmega = (wheelVelocity.dot(ROTOR_DIRECTIONS[i]) * Math.sqrt(2)) / RADIUS;
             motors[i].setVelocity(wheelOmega, AngleUnit.RADIANS);
 
