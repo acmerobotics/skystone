@@ -21,10 +21,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @Config
 public class Drive {
 
-    //TODO figure what the heck is happening with the drive like why won't you do the things i need you to do?
-
-
-
     public static double MAX_V = 30;
     public static double MAX_O = 30;
     public static final double RADIUS = 2;
@@ -47,6 +43,9 @@ public class Drive {
     public int MDistance = 0;
 
     private ElapsedTime runtime = new ElapsedTime();
+
+    FtcDashboard dashboard = FtcDashboard.getInstance();
+    TelemetryPacket packet = new TelemetryPacket();
 
 
     public static Vector2d[] WHEEL_POSITIONS = {
@@ -80,8 +79,6 @@ public class Drive {
       // motors[2] = robot.getMotor("m2");
       // motors[3] = robot.getMotor( "m3");
 
-       FtcDashboard dashboard = FtcDashboard.getInstance();
-       Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -133,9 +130,7 @@ public class Drive {
 
 
     public void setPower(Pose2d target) {
-
-        double v = target.vec().norm();
-        v = Range.clip(v, -1, 1) * MAX_V;
+        double v = target.vec().norm() * MAX_V;
         double theta = Math.atan2(target.getX(), target.getY());
         double omega = target.getHeading() * MAX_O;
 
@@ -143,9 +138,14 @@ public class Drive {
 
         setVelocity(targetVelocity);
 
+        packet.put("target velocity", targetVelocity);
+        packet.put("omega", omega);
+        dashboard.sendTelemetryPacket(packet);
+
     }
 
     public void setVelocity(Pose2d v) {
+
         for (int i = 0; i < 4; i++) {
             Vector2d wheelVelocity = new Vector2d(v.getX() - v.getHeading() * WHEEL_POSITIONS[i].getY(),
                     v.getY() + v.getHeading() * WHEEL_POSITIONS[i].getX());
