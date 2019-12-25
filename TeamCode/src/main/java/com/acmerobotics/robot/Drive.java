@@ -134,8 +134,7 @@ public class Drive {
         for (int i = 0; i < 4; i++) {
             Vector2d wheelVelocity = new Vector2d(v.x() - omega * WHEEL_POSITIONS[i].y(), v.y() + omega * WHEEL_POSITIONS[i].x());
             wheelOmega = (wheelVelocity.dot(ROTOR_DIRECTIONS[i]) * Math.sqrt(2)) / RADIUS;
-            motors[i].setPower(wheelOmega);// divide wheelOmega by 30? to get number between -1 and 1
-
+            motors[i].setPower(wheelOmega);
         }
 
     }

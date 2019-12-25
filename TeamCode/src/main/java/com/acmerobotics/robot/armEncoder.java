@@ -1,9 +1,9 @@
 package com.acmerobotics.robot;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -13,7 +13,7 @@ public class armEncoder {
     public DcMotorEx armMotor;
     public Servo rotationServo;
 
-    //TODO///////////// NEED REAL VALUES FOR VARIABLES, ALL OF THESE ARE FOR TESTING ONLY //////////
+    //TODO///////////// NEED REAL VALUES FOR VARIABLES, Many OF THESE ARE FOR TESTING ONLY //////////
 
     private double TICKS_PER_REV = 280;
 
@@ -23,61 +23,58 @@ public class armEncoder {
 
     public double testAngle = 10;
 
-    public int testEncoderPosition = 0; /////// position were servo is not in way /////////
+    public int testEncoderPosition = 0;
 
     //^^^^^^^^^^^^^^^^^^^^used in encoder math^^^^^^^^^^^//
 
-    public int testPosition1 = 45;
-    public int testPosition2 = 30;
-
-    public int positionInRunTo = 0;
-
-    public double rotateCenter = 140/255;/////////////////////   SERVO   //////////////////////////////////
+    public double rotateCenter = 140/255;
 
 
     //^^^^^^^^^^^^^^^used in encoder test^^^^^^^^^^^^^^^//
 
-    public double thePower = 1;
-
     public static int targetPosition = 0;
 
-    public static double P = 25;
-    public static double I = 5;
+    public static double P = 30;
+    public static double I = 10;
     public static double D = 0;
     public static double F = 0;
 
-    public PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F);
+    public static PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F, MotorControlAlgorithm.LegacyPID);
 
 
 
     //^^^^^^^^^^^^general variables^^^^^^^^^^^^^^^^^^^^//
 
 
-    public void armEncoder(){
+    public armEncoder(HardwareMap hardwareMap){
+
+        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
+        //rotationServo = hardwareMap.get(Servo.class, "rotationServo");
     }
 
     ////////////////////////////// encoder setup and main methods //////////////////////////////////
 
-    public void init(HardwareMap hardwareMap){
+    public void init(){
         // motor added to hardware map, arm floats to init position and
         // is set to 0 power and is held there by RUN_USING_ENCODER
 
-        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
-        rotationServo = hardwareMap.get(Servo.class, "rotationServo");
-
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
         armMotor.setPower(0);
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setTargetPosition(0);
 
-        rotationServo.setPosition(rotateCenter);
+        //setPID(coefficients)
+
+        armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+        //rotationServo.setPosition(rotateCenter);
     }
 
 
     public void resetEncoder(){
         // motor's current encoder position is set as the zero position
 
-        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
     }
 
@@ -86,24 +83,21 @@ public class armEncoder {
         // motor mode is set to RUN_USING_ENCODER to get motor out of STOP_AND_RESET mode
         // motor will just continue to hold a power of 0
 
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
     }
 
 
-    public void runTo(int position, double power) {
+    public void runTo(int position) {
         // target position is set and the motor is set to run to that position and a set speed/ power
         // target position is held with pid
 
         setPID(coefficients);
 
-        //TODO remove getCurrentPosition() after telemetryDashboard test
-        positionInRunTo = armMotor.getCurrentPosition() + position; ////////////// remove getCurrentPosition//////////////
+        armMotor.setTargetPosition(position);
+        armMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        armMotor.setTargetPosition(positionInRunTo);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        armMotor.setPower(power);
+        armMotor.setPower(1);
     }
 
 
@@ -111,12 +105,12 @@ public class armEncoder {
         // motor is stopped and its power is set to 0 so it will just fall to its init position and
         // hold that position
         armMotor.setPower(0);
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
 
     public void setPID(PIDFCoefficients pidfCoefficients){
-        //will set the pid coefficients, it is likely that only p will need to be changed for now
-        armMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, pidfCoefficients);
+        //will set the pid coefficients
+        armMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION, pidfCoefficients);
     }
 
 
@@ -187,8 +181,10 @@ public class armEncoder {
 
         testEncoderPosition = position;/////////////////////////////////// used for a telemetry test
 
-        runTo(position, thePower);
+        runTo(position);
     }
+
+
 
     //////////////////////////////////////^ end of encoder math ^/////////////////////////////////////
 }

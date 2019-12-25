@@ -18,16 +18,17 @@ public class EncoderTest extends LinearOpMode {
 
     public int currentPosition = 0;
 
+
     @Override
     public void runOpMode(){
 
-        armEncoder arm = new armEncoder();
+        armEncoder arm = new armEncoder(hardwareMap);
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
 
         Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
-        arm.init(hardwareMap);
+        arm.init();
 
         arm.resetEncoder();
 
@@ -38,20 +39,15 @@ public class EncoderTest extends LinearOpMode {
 
         while(!isStopRequested()){
 
-            // description: test to make sure your setup and main encoder code is correct
+            arm.runTo(armEncoder.targetPosition);
 
-            // outcome: arm should move to the encoder position set (45) and it should hold that position
-
-            currentPosition = arm.armMotor.getCurrentPosition();
-
-            arm.runTo(armEncoder.targetPosition, arm.thePower);
 
             ////////////////////////
-            dashboardTelemetry.addData("target position", armEncoder.targetPosition);
-            dashboardTelemetry.addData("current position", currentPosition);
-            dashboardTelemetry.addData("runTo() target position", arm.positionInRunTo); //if my theory is correct then
-                                                                                                //by adding targetPos. and curPos.
-                                                                                                 //then you should get pos.InRunTo
+            dashboardTelemetry.addData("target position", arm.armMotor.getTargetPosition());
+            dashboardTelemetry.addData("current position", arm.armMotor.getCurrentPosition());
+            dashboardTelemetry.addData("pid", arm.armMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+
+            dashboardTelemetry.addData("is busy", arm.armMotor.isBusy());
 
             dashboardTelemetry.update();
             ////////////////////////
