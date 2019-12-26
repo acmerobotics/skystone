@@ -35,8 +35,8 @@ public class armEncoder {
     public static int targetPosition = 0;
 
     public static double P = 30;
-    public static double I = 10;
-    public static double D = 0;
+    public static double I = 7;
+    public static double D = 0.25;
     public static double F = 0;
 
     public static PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F, MotorControlAlgorithm.LegacyPID);
