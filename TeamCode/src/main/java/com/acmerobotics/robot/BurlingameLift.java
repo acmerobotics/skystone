@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 @Config
 public class BurlingameLift {
 
-    private DcMotorEx liftMotor;
+    public DcMotorEx liftMotor;
 
     private int initPosition = 0;
     private int bottomPosition = 975;

@@ -11,14 +11,14 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 public class liftEncoder {
     public DcMotorEx liftMotor;
 
-    public static double P = 25;
-    public static double I = 0;
+    public static double P = 10;
+    public static double I = 0.05;
     public static double D = 0;
     public static double F = 0;
 
-    public PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F);
+    public static PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F);
 
-    public double blockHeight = 0;
+    public double blockHeight = 5;
     public double foundationHeight = 2.5;
     public double extraHeight = 0.5; // will get height greater than target so it doesn't run into it
 
@@ -26,20 +26,21 @@ public class liftEncoder {
     private int radius = 1;
     private int TICKS_PER_REV = 280;
 
-    public int targetPosition;
+    public int targetPosition = 0;
 
-    public void liftEncoder(){
+    public liftEncoder(HardwareMap hardwareMap){
+        liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
+
     }
 
 
     ////////////////////////////// encoder setup and main methods //////////////////////////////////
 
-    public void init(HardwareMap hardwareMap){
-
-        liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
+    public void init(){
 
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
+        liftMotor.setTargetPosition(0);
         liftMotor.setPower(0);
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
@@ -49,14 +50,6 @@ public class liftEncoder {
         // motor's current encoder position is set as the zero position
 
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
-
-
-    public void leaveReset(){
-        // motor mode is set to RUN_USING_ENCODER to get motor out of STOP_AND_RESET mode
-        // motor will just continue to hold a power of 0
-
-        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 
@@ -82,9 +75,11 @@ public class liftEncoder {
     ////////// encoder math, inches to encoder ticks ///////////////
 
 
+    //TODO test and adjust height math (doesn't seem to be correct)
+
     public double blocksToTotalHeight(double blocks){
         double height = (blocks * blockHeight) + foundationHeight + extraHeight;
-        return height;
+        return (height * -1);
     }
 
 

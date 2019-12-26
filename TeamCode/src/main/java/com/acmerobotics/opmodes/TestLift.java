@@ -1,8 +1,12 @@
 package com.acmerobotics.opmodes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.robot.BurlingameLift;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @TeleOp(name="Lift Testing")
 public class TestLift extends LinearOpMode {
@@ -16,6 +20,9 @@ public class TestLift extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         BurlingameLift lift = new BurlingameLift(hardwareMap);
+
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
         lift.init();
         lift.resetEncoder();
@@ -58,8 +65,10 @@ public class TestLift extends LinearOpMode {
                 isLeftDown = false;
             }
 
-            telemetry.addData("encoder pos", lift.checkEncoder());
-            telemetry.update();
+            dashboardTelemetry.addData("current position", lift.liftMotor.getCurrentPosition());
+            dashboardTelemetry.addData("target position", lift.liftMotor.getTargetPosition());
+            dashboardTelemetry.addData("pid coefficients", lift.liftMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+            dashboardTelemetry.update();
 
         }
 
