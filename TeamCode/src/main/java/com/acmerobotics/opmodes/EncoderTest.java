@@ -16,8 +16,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class EncoderTest extends LinearOpMode {
 
-    public int currentPosition = 0;
-
 
     @Override
     public void runOpMode(){
