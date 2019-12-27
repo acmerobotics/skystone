@@ -1,5 +1,10 @@
 package com.acmerobotics.opmodes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.robomatic.util.StickyGamepad;
 import com.acmerobotics.robot.ArmSimple;
 import com.acmerobotics.robot.BurlingameLift;
 import com.acmerobotics.robot.Drive;
@@ -7,7 +12,7 @@ import com.acmerobotics.robot.FoundationMover;
 import com.acmerobotics.robot.Intake;
 import com.acmerobotics.robot.Lift;
 import com.acmerobotics.robot.ArmSimple;
-import com.acmerobotics.util.Vector2d;
+import com.acmerobotics.util.JoystickTransform;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -39,12 +44,15 @@ public class TeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //SkyStoneRobot robot = new SkyStoneRobot(this);
-        ////////////////////////////////////////Lift lift = new Lift(hardwareMap);
+        //Lift lift = new Lift(hardwareMap);
         ArmSimple arm = new ArmSimple(hardwareMap);
         BurlingameLift lift = new BurlingameLift(hardwareMap);
         Drive drive = new Drive(hardwareMap);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         Intake intake = new Intake(hardwareMap);
+        JoystickTransform transform = new JoystickTransform();
+
+        StickyGamepad stickyGamepad;
 
         arm.init();
         lift.init();
@@ -58,7 +66,10 @@ public class TeleOp extends LinearOpMode {
 
             ////////////////////// gamepad1   /////////////////////////////
 
-            drive.setPower(new Vector2d(gamepad1.left_stick_y,- gamepad1.left_stick_x), gamepad1.right_stick_x);
+            Pose2d v = transform.transform(new Pose2d(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x));
+            drive.setPower(v);
+
+            //drive.setPower(new Vector2d(gamepad1.left_stick_y, -gamepad1.left_stick_x), gamepad1.right_stick_x);
 
             if (gamepad1.a){
                 foundationMover.moveToGrab();
