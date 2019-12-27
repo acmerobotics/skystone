@@ -128,6 +128,23 @@ public class Drive {
 
     }
 
+    public void setPower(Vector2d v, double omega) {
+
+        setVelocity(v.times(MAX_V), omega * MAX_O);
+
+    }
+
+    public void setVelocity(Vector2d v, double omega) {
+        for (int i = 0; i < 4; i++) {
+            Vector2d wheelVelocity = new Vector2d(v.getX() - omega * WHEEL_POSITIONS[i].getY(),
+                    v.getY() + omega * WHEEL_POSITIONS[i].getX());
+            wheelOmega = (wheelVelocity.dot(ROTOR_DIRECTIONS[i]) * Math.sqrt(2)) / RADIUS;
+            motors[i].setVelocity(wheelOmega, AngleUnit.RADIANS);
+
+        }
+
+    }
+
 
     public void setPower(Pose2d target) {
         double v = target.vec().norm() * MAX_V;
@@ -138,14 +155,9 @@ public class Drive {
 
         setVelocity(targetVelocity);
 
-        packet.put("target velocity", targetVelocity);
-        packet.put("omega", omega);
-        dashboard.sendTelemetryPacket(packet);
-
     }
 
     public void setVelocity(Pose2d v) {
-
         for (int i = 0; i < 4; i++) {
             Vector2d wheelVelocity = new Vector2d(v.getX() - v.getHeading() * WHEEL_POSITIONS[i].getY(),
                     v.getY() + v.getHeading() * WHEEL_POSITIONS[i].getX());

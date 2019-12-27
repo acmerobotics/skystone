@@ -12,7 +12,6 @@ public class JoystickTransform {
 
     public static double r;
     public static double omega;
-    public static double sigOmega;
 
     private boolean ramping = false;
 
@@ -52,8 +51,6 @@ public class JoystickTransform {
 
         r = original.vec().norm();
         omega = original.getHeading();
-        sigOmega = Math.signum(omega);
-        dashboard.sendTelemetryPacket(packet);
 
 
         switch (mode) {
@@ -61,20 +58,18 @@ public class JoystickTransform {
             case EXPONENTIAL:
                 r = Math.pow(r, exponent);
                 omega = Math.pow(omega, exponent);
-                packet.put("r", r);
-                packet.put("omega", omega);
-                dashboard.sendTelemetryPacket(packet);
                 break;
 
             case LINEAR:
                 break;
         }
 
-        Pose2d command = new Pose2d(original.vec().times(r / original.vec().norm()), omega * sigOmega);
+        Pose2d command = new Pose2d(original.vec().times(r / original.vec().norm()), omega);
         if (r == 0){
-            command = new Pose2d(0, 0, omega * sigOmega);
+            command = new Pose2d(0, 0, omega);
 
         }
+
         return command;
 
 
