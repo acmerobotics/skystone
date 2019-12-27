@@ -79,7 +79,6 @@ public class Drive {
       // motors[2] = robot.getMotor("m2");
       // motors[3] = robot.getMotor( "m3");
 
-
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
@@ -109,6 +108,9 @@ public class Drive {
        //imu = robot.getRevHubImu(0);
       // BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
        //parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+       //BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+      // parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+
        //imu.initialize(parameters);
     }
 
@@ -163,6 +165,7 @@ public class Drive {
                     v.getY() + v.getHeading() * WHEEL_POSITIONS[i].getX());
             wheelOmega = (wheelVelocity.dot(ROTOR_DIRECTIONS[i]) * Math.sqrt(2)) / RADIUS;
             motors[i].setVelocity(wheelOmega, AngleUnit.RADIANS);
+
 
         }
 

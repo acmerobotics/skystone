@@ -14,6 +14,7 @@ import com.acmerobotics.robot.Lift;
 import com.acmerobotics.robot.ArmSimple;
 import com.acmerobotics.util.JoystickTransform;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -29,8 +30,6 @@ public class TeleOp extends LinearOpMode {
     private boolean isDownDown = false;
     private boolean isLeftDown = false;
     private boolean isRightDown = false;
-    private boolean isYDown = false;
-    private boolean isYDown2 = false;
 
     public double thePower = 0;
 
@@ -64,6 +63,7 @@ public class TeleOp extends LinearOpMode {
 
         while (!isStopRequested()){
 
+
             ////////////////////// gamepad1   /////////////////////////////
 
             Pose2d v = transform.transform(new Pose2d(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x));
@@ -79,6 +79,14 @@ public class TeleOp extends LinearOpMode {
                 foundationMover.moveToStore();
             }
 
+            if(gamepad1.x){
+                intake.leftClose();
+            }
+
+            if(gamepad1.y){
+                intake.rightClose();
+            }
+
             if(gamepad1.left_bumper){
 
                 if (isLeftBumperPressed == false){
@@ -91,7 +99,7 @@ public class TeleOp extends LinearOpMode {
 
                     } else {
                         isLeftOpen = false;
-                        intake.leftClose();
+                        intake.leftOpenAllWay();
 
                     }
 
@@ -114,7 +122,7 @@ public class TeleOp extends LinearOpMode {
 
                     } else {
                         isRightOpen = false;
-                        intake.rightClose();
+                        intake.rightOpenAllWay();
                     }
 
                 }
