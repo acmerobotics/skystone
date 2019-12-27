@@ -39,41 +39,24 @@ public class EncoderTest extends LinearOpMode {
 
         while(!isStopRequested()){
 
-            arm.runTo(armEncoder.targetPosition);
+            //arm.encoderRunTo(arm.testAngle);
 
+            arm.runTo(arm.testEncoderPosition);
 
-            ////////////////////////
             dashboardTelemetry.addData("target position", arm.armMotor.getTargetPosition());
             dashboardTelemetry.addData("current position", arm.armMotor.getCurrentPosition());
             dashboardTelemetry.addData("pid", arm.armMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
 
-            dashboardTelemetry.addData("is busy", arm.armMotor.isBusy());
+//            dashboardTelemetry.addData("ticksPerInch", arm.ticksPerInch);
+//            dashboardTelemetry.addData("arcLength", arm.arcLength);
+//            dashboardTelemetry.addData("arcInchesToTicks", arm.arcInchesToTicks );
+//            dashboardTelemetry.addData("toArmGearTicks", arm.toArmGearTicks);
+//            dashboardTelemetry.addData("setEncoderTicks", arm.setEncoderTicks);
+//            dashboardTelemetry.addData("finalPosition", arm.finalPosition);
 
             dashboardTelemetry.update();
-            ////////////////////////
 
 
-            // ^^^^can delete when testing is successful and uncomment the code below
-
-
-            /*
-
-            // TODO get the real ticks per rev value
-
-            // description/ outcome: arm will raise to a 45 degree angle from the init position
-
-
-            arm.encoderRunTo(arm.testAngle);
-
-            telemetry.addData("angle: ", arm.testAngle);
-            telemetry.addData("target position: ", arm.testEncoderPosition);
-            telemetry.addLine();
-
-            telemetry.addData("current position: ", arm.armMotor.getCurrentPosition());
-            telemetry.addData("power: ", arm.armMotor.getPower());
-            telemetry.update();
-
-             */
         }
     }
 }

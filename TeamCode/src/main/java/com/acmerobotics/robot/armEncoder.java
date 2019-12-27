@@ -1,5 +1,6 @@
 package com.acmerobotics.robot;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -7,13 +8,15 @@ import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 @Config
 public class armEncoder {
 
     public DcMotorEx armMotor;
     public Servo rotationServo;
 
-    //TODO///////////// NEED REAL VALUES FOR VARIABLES, Many OF THESE ARE FOR TESTING ONLY //////////
+    //TODO///////////// Find the needed angles //////////
 
     private double TICKS_PER_REV = 280;
 
@@ -30,10 +33,6 @@ public class armEncoder {
     public double rotateCenter = 140/255;
 
 
-    //^^^^^^^^^^^^^^^used in encoder test^^^^^^^^^^^^^^^//
-
-    public static int targetPosition = 0;
-
     public static double P = 30;
     public static double I = 7;
     public static double D = 0.25;
@@ -44,6 +43,19 @@ public class armEncoder {
 
 
     //^^^^^^^^^^^^general variables^^^^^^^^^^^^^^^^^^^^//
+
+
+
+    ///////////////////////////
+
+    public double ticksPerInch;
+    public double arcLength;
+    public double arcInchesToTicks;
+    public double toArmGearTicks;
+    public int setEncoderTicks;
+    public int finalPosition;
+
+    ///////////////////
 
 
     public armEncoder(HardwareMap hardwareMap){
@@ -101,13 +113,6 @@ public class armEncoder {
     }
 
 
-    public void stopMotors(){
-        // motor is stopped and its power is set to 0 so it will just fall to its init position and
-        // hold that position
-        armMotor.setPower(0);
-        armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-    }
-
     public void setPID(PIDFCoefficients pidfCoefficients){
         //will set the pid coefficients
         armMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION, pidfCoefficients);
@@ -128,7 +133,7 @@ public class armEncoder {
     public double ticksPerInch(){
         // number of ticks per inch based on the arm gear circumference
 
-        return TICKS_PER_REV/ Math.PI * ARM_MOTOR_DIAMETER;
+        return ticksPerInch = TICKS_PER_REV/ Math.PI * ARM_MOTOR_DIAMETER;
         // (to test if this is really ticks per inch: take the number that results from the equation above (x) and
         // multiply it by the circumference, this number will tell you the total number of ticks around the circumference.)
     }
@@ -137,33 +142,33 @@ public class armEncoder {
     public double arcLength(double angle ){
         // get the length of the arc, in inches, of the arm motor gear based on an angle
 
-        return (angle/ 360) * (Math.PI * ARM_MOTOR_DIAMETER);
+        return arcLength = (angle/ 360) * (Math.PI * ARM_MOTOR_DIAMETER);
         //     ^portion of circumference          ^circumference
     }
 
 
-    public int arcInchesToTicks(double angle){
+    public double arcInchesToTicks(double angle){
         // get ticks of arc
 
         double ticksPerInch = ticksPerInch();
 
         double arcLength = arcLength(angle);
 
-        int ticksForArc = (int) ticksPerInch * (int) arcLength;
+        double ticksForArc = ticksPerInch * arcLength;
 
-        return ticksForArc; // ticks to get to the arc length, arc is based on given angle. (result is for motor gear)
+        return arcInchesToTicks = ticksForArc; // ticks to get to the arc length, arc is based on given angle. (result is for motor gear)
     }
 
 
-    public int ToArmGearTicks(double angle){
+    public double toArmGearTicks(double angle){
         // convert motor gear ticks to the ticks needed to get the same result on the arm gear, this is done
         // by multipling the motor gear ticks by the 2 because the arm to motor gear ratio is 2:1
 
-        int motorGearTicks = arcInchesToTicks(angle);
+        double motorGearTicks = arcInchesToTicks(angle);
 
-        int armGearTicks = motorGearTicks * gearRatio;
+        double armGearTicks = motorGearTicks * gearRatio;
 
-        return armGearTicks;
+        return toArmGearTicks = armGearTicks;
     }
 
 
@@ -172,14 +177,15 @@ public class armEncoder {
         // and this has been converted to find the ticks needed for the arm gear which is 2 times
         // more than the motor gear arc tick count.
 
-        return ToArmGearTicks(angle);
+        return setEncoderTicks = (int) toArmGearTicks(angle); //TODO find out how to round up before converting to int
     }
 
 
     public void encoderRunTo(double angle){
+
         int position = setEncoderTicks(angle);
 
-        testEncoderPosition = position;/////////////////////////////////// used for a telemetry test
+        finalPosition = position;
 
         runTo(position);
     }
