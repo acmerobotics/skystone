@@ -15,6 +15,7 @@ public class armEncoder {
 
     public DcMotorEx armMotor;
     public Servo rotationServo;
+    public Servo handServo;
 
     //TODO///////////// Find the needed angles //////////
 
@@ -26,7 +27,11 @@ public class armEncoder {
 
     public double testAngle = 10;
 
-    public int testEncoderPosition = 0;
+    public static int grabPosition = 0;
+    public static int underBridge = 0; //
+    public static int liftPosition = 0; //
+    public static int placePosition = 0; //
+
 
     //^^^^^^^^^^^^^^^^^^^^used in encoder math^^^^^^^^^^^//
 
@@ -40,28 +45,20 @@ public class armEncoder {
 
     public static PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F, MotorControlAlgorithm.LegacyPID);
 
+    private double handOpenPos = 0.98;
+    private double handClosePos = 0.47;
+
 
 
     //^^^^^^^^^^^^general variables^^^^^^^^^^^^^^^^^^^^//
-
-
-
-    ///////////////////////////
-
-    public double ticksPerInch;
-    public double arcLength;
-    public double arcInchesToTicks;
-    public double toArmGearTicks;
-    public int setEncoderTicks;
-    public int finalPosition;
-
-    ///////////////////
 
 
     public armEncoder(HardwareMap hardwareMap){
 
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
         //rotationServo = hardwareMap.get(Servo.class, "rotationServo");
+        handServo = hardwareMap.get(Servo.class, "handServo");
+
     }
 
     ////////////////////////////// encoder setup and main methods //////////////////////////////////
@@ -118,6 +115,20 @@ public class armEncoder {
         armMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION, pidfCoefficients);
     }
 
+    public void setHand(String position){
+        // take in close or open then set servo position accordingly
+
+        if (position.equals("open")){
+            //open hand
+            handServo.setPosition(handOpenPos);
+        }
+
+        if (position.equals("close")){
+            //close hand
+            handServo.setPosition(handClosePos);
+        }
+    }
+
 
     ///////////////////////////^ end of encoder setup and main methods ^//////////////////////////////
 
@@ -133,7 +144,7 @@ public class armEncoder {
     public double ticksPerInch(){
         // number of ticks per inch based on the arm gear circumference
 
-        return ticksPerInch = TICKS_PER_REV/ Math.PI * ARM_MOTOR_DIAMETER;
+        return TICKS_PER_REV/ Math.PI * ARM_MOTOR_DIAMETER;
         // (to test if this is really ticks per inch: take the number that results from the equation above (x) and
         // multiply it by the circumference, this number will tell you the total number of ticks around the circumference.)
     }
@@ -142,7 +153,7 @@ public class armEncoder {
     public double arcLength(double angle ){
         // get the length of the arc, in inches, of the arm motor gear based on an angle
 
-        return arcLength = (angle/ 360) * (Math.PI * ARM_MOTOR_DIAMETER);
+        return (angle/ 360) * (Math.PI * ARM_MOTOR_DIAMETER);
         //     ^portion of circumference          ^circumference
     }
 
@@ -156,7 +167,7 @@ public class armEncoder {
 
         double ticksForArc = ticksPerInch * arcLength;
 
-        return arcInchesToTicks = ticksForArc; // ticks to get to the arc length, arc is based on given angle. (result is for motor gear)
+        return ticksForArc; // ticks to get to the arc length, arc is based on given angle. (result is for motor gear)
     }
 
 
@@ -168,7 +179,7 @@ public class armEncoder {
 
         double armGearTicks = motorGearTicks * gearRatio;
 
-        return toArmGearTicks = armGearTicks;
+        return armGearTicks;
     }
 
 
@@ -177,15 +188,13 @@ public class armEncoder {
         // and this has been converted to find the ticks needed for the arm gear which is 2 times
         // more than the motor gear arc tick count.
 
-        return setEncoderTicks = (int) toArmGearTicks(angle); //TODO find out how to round up before converting to int
+        return (int) toArmGearTicks(angle); //TODO find out how to round up before converting to int
     }
 
 
     public void encoderRunTo(double angle){
 
         int position = setEncoderTicks(angle);
-
-        finalPosition = position;
 
         runTo(position);
     }

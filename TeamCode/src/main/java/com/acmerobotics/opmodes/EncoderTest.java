@@ -39,18 +39,42 @@ public class EncoderTest extends LinearOpMode {
 
             //arm.encoderRunTo(arm.testAngle);
 
-            arm.runTo(arm.testEncoderPosition);
+
+            //////////////////////////// ARM //////////////////////////
+
+            if (gamepad2.a){
+                arm.runTo(arm.grabPosition);
+            }
+
+            if (gamepad2.x){
+                arm.runTo(arm.underBridge);
+            }
+
+            if (gamepad2.y){
+                arm.runTo(arm.liftPosition);
+            }
+
+            if (gamepad2.b){
+                arm.runTo(arm.placePosition);
+            }
+
+            ///////////////////////////////////////////////////////////////
+
+            ////////////////////////////// HAND ////////////////////////////
+
+            if (gamepad2.right_bumper){
+                arm.setHand("open");
+            }
+
+            if (gamepad2.left_bumper){
+                arm.setHand("close");      //TODO why won't hand close?
+            }
+
+            //////////////////////////////////////////////////////////////////
 
             dashboardTelemetry.addData("target position", arm.armMotor.getTargetPosition());
             dashboardTelemetry.addData("current position", arm.armMotor.getCurrentPosition());
             dashboardTelemetry.addData("pid", arm.armMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
-
-//            dashboardTelemetry.addData("ticksPerInch", arm.ticksPerInch);
-//            dashboardTelemetry.addData("arcLength", arm.arcLength);
-//            dashboardTelemetry.addData("arcInchesToTicks", arm.arcInchesToTicks );
-//            dashboardTelemetry.addData("toArmGearTicks", arm.toArmGearTicks);
-//            dashboardTelemetry.addData("setEncoderTicks", arm.setEncoderTicks);
-//            dashboardTelemetry.addData("finalPosition", arm.finalPosition);
 
             dashboardTelemetry.update();
 
