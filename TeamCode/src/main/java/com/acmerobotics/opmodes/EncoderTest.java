@@ -55,7 +55,7 @@ public class EncoderTest extends LinearOpMode {
             }
 
             if (gamepad2.b){
-                arm.runTo(arm.placePosition);
+                arm.runTo(arm.allTheWayPosition);
             }
 
             ///////////////////////////////////////////////////////////////

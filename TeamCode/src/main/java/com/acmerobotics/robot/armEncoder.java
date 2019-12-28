@@ -28,9 +28,9 @@ public class armEncoder {
     public double testAngle = 10;
 
     public static int grabPosition = 0;
-    public static int underBridge = 0; //
-    public static int liftPosition = 0; //
-    public static int placePosition = 0; //
+    public static int underBridge = 180; //
+    public static int liftPosition = 90; //
+    public static int allTheWayPosition = 270; //placePosition
 
 
     //^^^^^^^^^^^^^^^^^^^^used in encoder math^^^^^^^^^^^//
