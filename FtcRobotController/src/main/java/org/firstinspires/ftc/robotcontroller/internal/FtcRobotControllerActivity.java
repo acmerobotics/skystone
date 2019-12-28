@@ -62,6 +62,9 @@ import android.widget.TextView;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.robomatic.config.OpModeConfigurationActivity;
+import com.google.blocks.ftcrobotcontroller.BlocksActivity;
+import com.google.blocks.ftcrobotcontroller.ProgrammingModeActivity;
+import com.google.blocks.ftcrobotcontroller.ProgrammingModeControllerImpl;
 import com.google.blocks.ftcrobotcontroller.ProgrammingWebHandlers;
 import com.google.blocks.ftcrobotcontroller.runtime.BlocksOpMode;
 import com.qualcomm.ftccommon.ClassManagerFactory;
@@ -384,7 +387,6 @@ public class FtcRobotControllerActivity extends Activity
     if (preferencesHelper.readBoolean(getString(R.string.pref_wifi_automute), false)) {
       initWifiMute(true);
     }
-
     FtcDashboard.start();
   }
 
@@ -674,7 +676,6 @@ public class FtcRobotControllerActivity extends Activity
         return service.getRobot().eventLoopManager;
       }
     });
-
     FtcDashboard.attachWebServer(service.getWebServer());
   }
 

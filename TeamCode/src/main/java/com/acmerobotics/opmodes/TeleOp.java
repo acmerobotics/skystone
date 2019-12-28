@@ -1,6 +1,7 @@
 package com.acmerobotics.opmodes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp")
+@Config
 public class TeleOp extends LinearOpMode {
 
     public boolean isLeftBumperPressed = false;

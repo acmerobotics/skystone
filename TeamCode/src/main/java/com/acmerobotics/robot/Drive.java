@@ -23,6 +23,7 @@ public class Drive {
 
     public static double MAX_V = 30;
     public static double MAX_O = 30;
+  
     public static final double RADIUS = 2;
 
     public static double MOVE_FORWARD = -0.8;
@@ -36,14 +37,14 @@ public class Drive {
     private static double WHEEL_FROM_CENTER = 0; /////////////////find length of wheel from center
 
     private static final double TICK_COUNT = 0;
-    private static final double WHEEL_DIAMETER = 4; //find real wheel diameter
-    private static final double TICKS_PER_INCH = TICK_COUNT/ WHEEL_DIAMETER * Math.PI; //figure out if drive gear reduction is needed
+    private static final double WHEEL_DIAMETER = 2; ////////real diameter is 4
+    private static final double TICKS_PER_INCH = TICK_COUNT/ WHEEL_DIAMETER * Math.PI;
 
     public double wheelOmega = 0;
     public int MDistance = 0;
 
     private ElapsedTime runtime = new ElapsedTime();
-
+  
     FtcDashboard dashboard = FtcDashboard.getInstance();
     TelemetryPacket packet = new TelemetryPacket();
 
@@ -135,6 +136,7 @@ public class Drive {
         setVelocity(v.times(MAX_V), omega * MAX_O);
 
     }
+
 
     public void setVelocity(Vector2d v, double omega) {
         for (int i = 0; i < 4; i++) {
