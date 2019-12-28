@@ -14,7 +14,7 @@ public class BurlingameLift {
     private int initPosition = 0;
     private int bottomPosition = 975;
     private int intakePosition = -680;
-    private int liftAdjustment = 100;
+    private int liftAdjustment = 200;
 
     public static double RADIUS = 1;
 
@@ -60,12 +60,12 @@ public class BurlingameLift {
     }
 
     public void adjustLiftUp(){
-        setMotorEncoders(liftMotor.getCurrentPosition() + liftAdjustment);
+        setMotorEncoders(liftMotor.getCurrentPosition() - liftAdjustment);
 
     }
 
     public void adjustLiftDown(){
-        setMotorEncoders(liftMotor.getCurrentPosition() - liftAdjustment);
+        setMotorEncoders(liftMotor.getCurrentPosition() + liftAdjustment);
     }
 
 

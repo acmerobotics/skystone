@@ -18,11 +18,13 @@ public class PIDController {
     private boolean updated;
     private boolean isBounded;
 
-    public PIDController(double kP, double kI, double kD){
+    /*public PIDController(double kP, double kI, double kD){
         PIDController.kP = kP;
         PIDController.kI = kI;
         PIDController.kD = kD;
     }
+
+     */
 
     public void setPoint(double setPoint){
         this.setPoint = setPoint;
