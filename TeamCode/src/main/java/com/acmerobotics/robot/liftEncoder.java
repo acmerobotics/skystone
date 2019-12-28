@@ -11,22 +11,25 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 public class liftEncoder {
     public DcMotorEx liftMotor;
 
-    public static double P = 10;
-    public static double I = 0.05;
-    public static double D = 0;
-    public static double F = 0;
-
-    public static PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F);
-
     public double blockHeight = 5;
-    public double foundationHeight = 2.5;
+    public double foundationHeight = 2;
     public double extraHeight = 0.5; // will get height greater than target so it doesn't run into it
+    public static int startHeight = 0; ////////////////TODO get starting height /////////////////////
 
 
     private int radius = 1;
     private int TICKS_PER_REV = 280;
 
     public int targetPosition = 0;
+    public double liftPower = 1;
+
+    public enum Mode{
+        BLOCKS,
+        BOTTOM,
+        DIRECT
+    }
+
+    public Mode mode;
 
     public liftEncoder(HardwareMap hardwareMap){
         liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
@@ -53,22 +56,44 @@ public class liftEncoder {
     }
 
 
-    public void runTo(double blocks, double power){
-
-        //TODO might need to setPID() to change PID coefficients
-
-        targetPosition = inchesToTicks(blocks);
-
-        liftMotor.setTargetPosition(targetPosition);
-        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        liftMotor.setPower(power);
+    public void goToStartHeight(){
+        runTo(startHeight, liftPower, liftEncoder.Mode.DIRECT);
     }
 
 
-    public void setPID(PIDFCoefficients pidfCoefficients){
-        //will set the pid coefficients, it is likely that only p will need to be changed for now
-        liftMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, pidfCoefficients);
+    public void runTo(int position, double power, Mode mode){
+                     // blocks can also be used as a direct encoder position if the mode is set to DIRECT
+
+        setMode(mode);
+
+        switch (mode){
+            case BOTTOM:
+                targetPosition = 0;
+
+                liftMotor.setTargetPosition(targetPosition);
+                liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                liftMotor.setPower(power);
+
+            case BLOCKS:
+                int blocks = position;
+
+                targetPosition = inchesToTicks(blocks);
+
+                liftMotor.setTargetPosition(targetPosition);
+                liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                liftMotor.setPower(power);
+
+            case DIRECT:
+                targetPosition = position;
+
+                liftMotor.setTargetPosition(targetPosition);
+                liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                liftMotor.setPower(power);
+        }
+
     }
 
 
@@ -77,13 +102,13 @@ public class liftEncoder {
 
     //TODO test and adjust height math (doesn't seem to be correct)
 
-    public double blocksToTotalHeight(double blocks){
+    public double blocksToTotalHeight(int blocks){
         double height = (blocks * blockHeight) + foundationHeight + extraHeight;
         return (height * -1);
     }
 
 
-    public int inchesToTicks(double blocks){
+    public int inchesToTicks(int blocks){
 
         double targetHeight = blocksToTotalHeight(blocks);
 
@@ -91,5 +116,14 @@ public class liftEncoder {
 
         return ticks;
     }
+
+
+    /////////////////////// other methods //////////////////////////
+
+    private void setMode(Mode mode){
+        this.mode = mode;
+    }
+
+    /////////////////////////////////////////////////
 
 }

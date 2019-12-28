@@ -13,13 +13,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class liftEncoderTest extends LinearOpMode{
 
-    public boolean isDpadUp = false;
-    public boolean isDpadDown = false;
-    public boolean isDpadLeft = false;
+    private boolean isDpadUp = false;
+    private boolean isDpadDown = false;
+    private boolean isDpadLeft = false;
 
-    public int blocks = 0;
-    public double liftPower = 1;
-    public boolean atZeroBlocks = true; // true
+    private int blocks = 0;
+    private boolean atZeroBlocks = true;
 
     @Override
     public void runOpMode(){
@@ -30,7 +29,9 @@ public class liftEncoderTest extends LinearOpMode{
 
         lift.init();
 
-        lift.resetEncoder();
+        lift.resetEncoder(); // sets 0 position
+
+        lift.goToStartHeight(); // raise lift so arm is ready for blocks coming in from intake
 
         while (!isStopRequested()) {
 
@@ -44,17 +45,17 @@ public class liftEncoderTest extends LinearOpMode{
                     isDpadDown = false;
                 }
             }
-            ////////// code is activated when isDpadUp is true ///////////////
+
 
             if (isDpadUp == true) {
                 if (atZeroBlocks) {
 
-                    lift.runTo(blocks, liftPower);
+                    lift.runTo(blocks, lift.liftPower, liftEncoder.Mode.BLOCKS);
                     atZeroBlocks = false;
                 } else {
 
                     blocks += 1;
-                    lift.runTo(blocks, liftPower);
+                    lift.runTo(blocks, lift.liftPower, liftEncoder.Mode.BLOCKS);
                 }
 
                 isDpadUp = false; // allows runTo to be used after every press
@@ -74,12 +75,11 @@ public class liftEncoderTest extends LinearOpMode{
                 }
             }
 
-            ////////// code is activated when isDpadDown is true ///////////////
 
             if (isDpadDown == true) {
 
                 blocks -= 1;
-                lift.runTo(blocks, liftPower);
+                lift.runTo(blocks, lift.liftPower, liftEncoder.Mode.BLOCKS);
 
                 isDpadDown = false;
             }
@@ -88,32 +88,28 @@ public class liftEncoderTest extends LinearOpMode{
 
 
             //TODO why does lift move during init when this code is uncommented?
-//            if (gamepad2.dpad_left) {
-//
-//                if (isDpadLeft == false) {
-//                    isDpadLeft = true;
-//                    isDpadUp = false;
-//                    isDpadDown = false;
-//                }
-//            }
-//
-//
-//            ///// code is activated when isDpadLeft is true ///////
-//
-//            ///////// resets lift height ////////
-//            if (isDpadLeft = true) {
-//
-//                blocks = 0;
-//                lift.runTo(blocks, liftPower);
-//
-//                double resetToBase = -1 * (lift.foundationHeight + lift.extraHeight) / lift.blockHeight; // will make the
-//                // target position equal to 0
-//                lift.runTo(resetToBase, liftPower);
-//
-//                isDpadLeft = false;
-//                isDpadUp = false;
-//                isDpadDown = false;
-//           }
+            if (gamepad2.dpad_left) {
+
+                if (isDpadLeft == false) {
+
+                    isDpadLeft = true;
+
+                    isDpadUp = false;
+                    isDpadDown = false;
+                }
+            }
+
+
+            ///////// resets lift height ////////
+            if (isDpadLeft = true) {
+
+                blocks = 0;
+                lift.runTo(blocks, lift.liftPower, liftEncoder.Mode.BOTTOM);
+
+                isDpadLeft = false;
+                isDpadUp = false;
+                isDpadDown = false;
+           }
 
 
             dashboardTelemetry.addData("current position ", lift.liftMotor.getCurrentPosition());
@@ -126,5 +122,14 @@ public class liftEncoderTest extends LinearOpMode{
             dashboardTelemetry.addData("dpad left", isDpadLeft);
             dashboardTelemetry.update();
         }
+
+        // Moves lift back to bottom after stop is pressed, prevents positions from being changed and
+        // keeps everything the same as the time before the robot was turned on.
+
+        // NOTE: might have to add break statement to exit while loop and run the following code.
+
+        //if (!isStarted()) {
+            lift.runTo(0, lift.liftPower, liftEncoder.Mode.BOTTOM);
+        //}
     }
 }
