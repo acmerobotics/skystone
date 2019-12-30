@@ -12,9 +12,10 @@ import com.acmerobotics.robot.Drive;
 import com.acmerobotics.robot.FoundationMover;
 import com.acmerobotics.robot.Intake;
 import com.acmerobotics.robot.Lift;
-import com.acmerobotics.robot.ArmSimple;
+import com.acmerobotics.robot.armEncoder;
 import com.acmerobotics.util.JoystickTransform;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -47,17 +48,22 @@ public class TeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         //SkyStoneRobot robot = new SkyStoneRobot(this);
         //Lift lift = new Lift(hardwareMap);
-        ArmSimple arm = new ArmSimple(hardwareMap);
+        armEncoder arm = new armEncoder(hardwareMap);
         BurlingameLift lift = new BurlingameLift(hardwareMap);
         Drive drive = new Drive(hardwareMap);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         Intake intake = new Intake(hardwareMap);
         JoystickTransform transform = new JoystickTransform();
 
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        Telemetry dashboardTelemetry = dashboard.getTelemetry();
+
         StickyGamepad stickyGamepad;
 
         arm.init();
         lift.init();
+
+        arm.resetEncoder();
         lift.resetEncoder();
 
         waitForStart();
@@ -183,57 +189,44 @@ public class TeleOp extends LinearOpMode {
             }
 
 
+            /////////////////////////// ARM //////////////////////////
+
+            if (gamepad2.a){
+                arm.runTo(arm.grabPosition);
+            }
+
             if (gamepad2.x){
-                thePower = arm.armMotor.getPower();
-                arm.armMotor.setPower(arm.stablePower);
+                arm.runTo(arm.underBridge);
             }
 
-
-            else
-            {
-                if ((-gamepad2.left_stick_y) > 0.5) {
-                    stickUp = true;
-                    stickDown = false;
-                    //arm.armMotor.setPower(0.4);
-
-                }
-
-                if ((-gamepad2.left_stick_y) < -0.5){
-                    stickDown = true;
-                    stickUp = false;
-                    //arm.armMotor.setPower(0.1);
-                }
-
-                if (stickUp && !incrementLock) {
-                    arm.armMotor.setPower(arm.armMotor.getPower() + incrementUp);
-                    stickUp = false;
-                    stickDown = false;
-                    incrementLock = true;
-                }
-
-                if (stickDown && !incrementLock){
-                    arm.armMotor.setPower(arm.armMotor.getPower() - incrementDown);
-                    stickDown = false;
-                    stickUp = false;
-                    incrementLock = true;
-                }
-
-                if (gamepad2.left_stick_y == 0){
-                    incrementLock = false;
-                    stickUp = false;
-                    stickDown = false;
-                }
+            if (gamepad2.y){
+                arm.runTo(arm.liftPosition);
             }
+
+            if (gamepad2.b){
+                arm.runTo(arm.allTheWayPosition);
+            }
+
+            ///////////////////////////////////////////////////////////////
+
+            ////////////////////////////// HAND ////////////////////////////
 
 
             if (gamepad2.right_bumper){
-                arm.setHand("close");
-            }
-
-            if (gamepad2.left_bumper){
                 arm.setHand("open");
             }
 
+            if (gamepad2.left_bumper){
+                arm.setHand("close");
+            }
+
+            ///////////////////////////////////////////////////////////////
+
+            dashboardTelemetry.addData("target position", arm.armMotor.getTargetPosition());
+            dashboardTelemetry.addData("current position", arm.armMotor.getCurrentPosition());
+            dashboardTelemetry.addData("pid", arm.armMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+
+            dashboardTelemetry.update();
 
         }
 
