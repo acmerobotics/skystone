@@ -1,19 +1,23 @@
 package com.acmerobotics.robot;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
 public class armEncoder {
 
     public DcMotorEx armMotor;
     public Servo rotationServo;
+    public Servo handServo;
 
-    //TODO///////////// NEED REAL VALUES FOR VARIABLES, ALL OF THESE ARE FOR TESTING ONLY //////////
+    //TODO///////////// Find the needed angles //////////
 
     private double TICKS_PER_REV = 280;
 
@@ -23,61 +27,62 @@ public class armEncoder {
 
     public double testAngle = 10;
 
-    public int testEncoderPosition = 0; /////// position were servo is not in way /////////
+    public static int grabPosition = 0;
+    public static int underBridge = 180; //
+    public static int liftPosition = 90; //
+    public static int allTheWayPosition = 270; //placePosition
+
 
     //^^^^^^^^^^^^^^^^^^^^used in encoder math^^^^^^^^^^^//
 
-    public int testPosition1 = 45;
-    public int testPosition2 = 30;
-
-    public int positionInRunTo = 0;
-
-    public double rotateCenter = 140/255;/////////////////////   SERVO   //////////////////////////////////
+    public double rotateCenter = 140/255;
 
 
-    //^^^^^^^^^^^^^^^used in encoder test^^^^^^^^^^^^^^^//
-
-    public double thePower = 1;
-
-    public static int targetPosition = 0;
-
-    public static double P = 25;
-    public static double I = 5;
-    public static double D = 0;
+    public static double P = 30;
+    public static double I = 7;
+    public static double D = 0.25;
     public static double F = 0;
 
-    public PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F);
+    public static PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F, MotorControlAlgorithm.LegacyPID);
 
+    private double handOpenPos = 0.98;
+    private double handClosePos = 0.47;
 
 
     //^^^^^^^^^^^^general variables^^^^^^^^^^^^^^^^^^^^//
 
 
-    public void armEncoder(){
+    public armEncoder(HardwareMap hardwareMap){
+
+        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
+        //rotationServo = hardwareMap.get(Servo.class, "rotationServo");
+        handServo = hardwareMap.get(Servo.class, "handServo");
+
     }
 
     ////////////////////////////// encoder setup and main methods //////////////////////////////////
 
-    public void init(HardwareMap hardwareMap){
+    public void init(){
         // motor added to hardware map, arm floats to init position and
         // is set to 0 power and is held there by RUN_USING_ENCODER
 
-        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
-        rotationServo = hardwareMap.get(Servo.class, "rotationServo");
-
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
         armMotor.setPower(0);
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setTargetPosition(0);
 
-        rotationServo.setPosition(rotateCenter);
+        //setPID(coefficients)
+
+        armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+        //rotationServo.setPosition(rotateCenter);
     }
 
 
     public void resetEncoder(){
         // motor's current encoder position is set as the zero position
 
-        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
     }
 
@@ -86,37 +91,41 @@ public class armEncoder {
         // motor mode is set to RUN_USING_ENCODER to get motor out of STOP_AND_RESET mode
         // motor will just continue to hold a power of 0
 
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
     }
 
 
-    public void runTo(int position, double power) {
+    public void runTo(int position) {
         // target position is set and the motor is set to run to that position and a set speed/ power
         // target position is held with pid
 
         setPID(coefficients);
 
-        //TODO remove getCurrentPosition() after telemetryDashboard test
-        positionInRunTo = armMotor.getCurrentPosition() + position; ////////////// remove getCurrentPosition//////////////
+        armMotor.setTargetPosition(position);
+        armMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        armMotor.setTargetPosition(positionInRunTo);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        armMotor.setPower(power);
+        armMotor.setPower(1);
     }
 
-
-    public void stopMotors(){
-        // motor is stopped and its power is set to 0 so it will just fall to its init position and
-        // hold that position
-        armMotor.setPower(0);
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
 
     public void setPID(PIDFCoefficients pidfCoefficients){
-        //will set the pid coefficients, it is likely that only p will need to be changed for now
-        armMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, pidfCoefficients);
+        //will set the pid coefficients
+        armMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION, pidfCoefficients);
+    }
+
+    public void setHand(String position){
+        // take in close or open then set servo position accordingly
+
+        if (position.equals("open")){
+            //open hand
+            handServo.setPosition(handOpenPos);
+        }
+
+        if (position.equals("close")){
+            //close hand
+            handServo.setPosition(handClosePos);
+        }
     }
 
 
@@ -148,26 +157,26 @@ public class armEncoder {
     }
 
 
-    public int arcInchesToTicks(double angle){
+    public double arcInchesToTicks(double angle){
         // get ticks of arc
 
         double ticksPerInch = ticksPerInch();
 
         double arcLength = arcLength(angle);
 
-        int ticksForArc = (int) ticksPerInch * (int) arcLength;
+        double ticksForArc = ticksPerInch * arcLength;
 
         return ticksForArc; // ticks to get to the arc length, arc is based on given angle. (result is for motor gear)
     }
 
 
-    public int ToArmGearTicks(double angle){
+    public double toArmGearTicks(double angle){
         // convert motor gear ticks to the ticks needed to get the same result on the arm gear, this is done
         // by multipling the motor gear ticks by the 2 because the arm to motor gear ratio is 2:1
 
-        int motorGearTicks = arcInchesToTicks(angle);
+        double motorGearTicks = arcInchesToTicks(angle);
 
-        int armGearTicks = motorGearTicks * gearRatio;
+        double armGearTicks = motorGearTicks * gearRatio;
 
         return armGearTicks;
     }
@@ -178,17 +187,18 @@ public class armEncoder {
         // and this has been converted to find the ticks needed for the arm gear which is 2 times
         // more than the motor gear arc tick count.
 
-        return ToArmGearTicks(angle);
+        return (int) toArmGearTicks(angle); //TODO find out how to round up before converting to int
     }
 
 
     public void encoderRunTo(double angle){
+
         int position = setEncoderTicks(angle);
 
-        testEncoderPosition = position;/////////////////////////////////// used for a telemetry test
-
-        runTo(position, thePower);
+        runTo(position);
     }
+
+
 
     //////////////////////////////////////^ end of encoder math ^/////////////////////////////////////
 }

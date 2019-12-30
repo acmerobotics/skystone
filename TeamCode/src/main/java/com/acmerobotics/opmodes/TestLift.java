@@ -1,6 +1,7 @@
 package com.acmerobotics.opmodes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.robot.BurlingameLift;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -9,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @TeleOp(name="Lift Testing")
+@Config
 public class TestLift extends LinearOpMode {
 
     private boolean isUpDown = false;
@@ -68,6 +70,12 @@ public class TestLift extends LinearOpMode {
             dashboardTelemetry.addData("current position", lift.liftMotor.getCurrentPosition());
             dashboardTelemetry.addData("target position", lift.liftMotor.getTargetPosition());
             dashboardTelemetry.addData("pid coefficients", lift.liftMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+            dashboardTelemetry.update();
+
+            dashboardTelemetry.addData("current position", lift.checkEncoder());
+            dashboardTelemetry.addData("target position", lift.liftMotor.getTargetPosition());
+            dashboardTelemetry.addData("pid", lift.liftMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+
             dashboardTelemetry.update();
 
         }

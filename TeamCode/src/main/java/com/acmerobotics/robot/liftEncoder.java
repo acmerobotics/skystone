@@ -4,12 +4,15 @@ package com.acmerobotics.robot;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config
 public class liftEncoder {
     public DcMotorEx liftMotor;
+    private DigitalChannel bottomHallEffect;
+
 
     public double blockHeight = 5;
     public double foundationHeight = 2;
@@ -33,7 +36,7 @@ public class liftEncoder {
 
     public liftEncoder(HardwareMap hardwareMap){
         liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
-
+        bottomHallEffect = hardwareMap.digitalChannel.get("bottomHallEffect");
     }
 
 
@@ -122,6 +125,20 @@ public class liftEncoder {
 
     private void setMode(Mode mode){
         this.mode = mode;
+    }
+
+    public boolean isAtBottom(){
+        boolean state = bottomHallEffect.getState();
+        boolean inverseState = false;
+
+        if (state == true){
+            inverseState = false;
+        }
+        if (state == false){
+            inverseState = true;
+        }
+
+        return inverseState; // is at bottom
     }
 
     /////////////////////////////////////////////////

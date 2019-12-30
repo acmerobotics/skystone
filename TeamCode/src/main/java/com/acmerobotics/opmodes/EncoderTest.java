@@ -16,18 +16,17 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class EncoderTest extends LinearOpMode {
 
-    public int currentPosition = 0;
 
     @Override
     public void runOpMode(){
 
-        armEncoder arm = new armEncoder();
+        armEncoder arm = new armEncoder(hardwareMap);
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
 
         Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
-        arm.init(hardwareMap);
+        arm.init();
 
         arm.resetEncoder();
 
@@ -38,46 +37,47 @@ public class EncoderTest extends LinearOpMode {
 
         while(!isStopRequested()){
 
-            // description: test to make sure your setup and main encoder code is correct
+            //arm.encoderRunTo(arm.testAngle);
 
-            // outcome: arm should move to the encoder position set (45) and it should hold that position
+            //////////////////////////// ARM //////////////////////////
 
-            currentPosition = arm.armMotor.getCurrentPosition();
+            if (gamepad2.a){
+                arm.runTo(arm.grabPosition);
+            }
 
-            arm.runTo(armEncoder.targetPosition, arm.thePower);
+            if (gamepad2.x){
+                arm.runTo(arm.underBridge);
+            }
 
-            ////////////////////////
-            dashboardTelemetry.addData("target position", armEncoder.targetPosition);
-            dashboardTelemetry.addData("current position", currentPosition);
-            dashboardTelemetry.addData("runTo() target position", arm.positionInRunTo); //if my theory is correct then
-                                                                                                //by adding targetPos. and curPos.
-                                                                                                 //then you should get pos.InRunTo
+            if (gamepad2.y){
+                arm.runTo(arm.liftPosition);
+            }
+
+            if (gamepad2.b){
+                arm.runTo(arm.allTheWayPosition);
+            }
+
+            ///////////////////////////////////////////////////////////////
+
+            ////////////////////////////// HAND ////////////////////////////
+
+            if (gamepad2.right_bumper){
+                arm.setHand("open");
+            }
+
+            if (gamepad2.left_bumper){
+                arm.setHand("close");      //TODO why won't hand close?
+            }
+
+            //////////////////////////////////////////////////////////////////
+
+            dashboardTelemetry.addData("target position", arm.armMotor.getTargetPosition());
+            dashboardTelemetry.addData("current position", arm.armMotor.getCurrentPosition());
+            dashboardTelemetry.addData("pid", arm.armMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
 
             dashboardTelemetry.update();
-            ////////////////////////
 
 
-            // ^^^^can delete when testing is successful and uncomment the code below
-
-
-            /*
-
-            // TODO get the real ticks per rev value
-
-            // description/ outcome: arm will raise to a 45 degree angle from the init position
-
-
-            arm.encoderRunTo(arm.testAngle);
-
-            telemetry.addData("angle: ", arm.testAngle);
-            telemetry.addData("target position: ", arm.testEncoderPosition);
-            telemetry.addLine();
-
-            telemetry.addData("current position: ", arm.armMotor.getCurrentPosition());
-            telemetry.addData("power: ", arm.armMotor.getPower());
-            telemetry.update();
-
-             */
         }
     }
 }

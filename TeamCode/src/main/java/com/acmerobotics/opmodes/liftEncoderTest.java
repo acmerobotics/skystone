@@ -2,6 +2,7 @@ package com.acmerobotics.opmodes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.robot.armEncoder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.acmerobotics.robot.liftEncoder;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -27,9 +28,13 @@ public class liftEncoderTest extends LinearOpMode{
 
         liftEncoder lift = new liftEncoder(hardwareMap);
 
+        armEncoder arm = new armEncoder();
+
         lift.init();
+        arm.init(hardwareMap);
 
         lift.resetEncoder(); // sets 0 position
+        arm.resetEncoder();
 
         lift.goToStartHeight(); // raise lift so arm is ready for blocks coming in from intake
 
@@ -50,12 +55,12 @@ public class liftEncoderTest extends LinearOpMode{
             if (isDpadUp == true) {
                 if (atZeroBlocks) {
 
-                    lift.runTo(blocks, lift.liftPower, liftEncoder.Mode.BLOCKS);
-                    atZeroBlocks = false;
-                } else {
+//                    lift.runTo(blocks, lift.liftPower, liftEncoder.Mode.BLOCKS);
+//                    atZeroBlocks = false;
+//                } else {
 
-                    blocks += 1;
-                    lift.runTo(blocks, lift.liftPower, liftEncoder.Mode.BLOCKS);
+                    blocks -= 50;
+                    lift.runTo(blocks, lift.liftPower, liftEncoder.Mode.DIRECT);
                 }
 
                 isDpadUp = false; // allows runTo to be used after every press
@@ -88,38 +93,40 @@ public class liftEncoderTest extends LinearOpMode{
 
 
             //TODO why does lift move during init when this code is uncommented?
-            if (gamepad2.dpad_left) {
+//            if (gamepad2.dpad_left) {
+//
+//                if (isDpadLeft == false) {
+//
+//                    isDpadLeft = true;
+//
+//                    isDpadUp = false;
+//                    isDpadDown = false;
+//                }
+//            }
+//
+//
+//            ///////// resets lift height ////////
+//            if (isDpadLeft = true) {
+//
+//                blocks = 0;
+//                lift.runTo(0, lift.liftPower, liftEncoder.Mode.DIRECT);
+//
+//                isDpadLeft = false;
+//                isDpadUp = false;
+//                isDpadDown = false;
+//           }
 
-                if (isDpadLeft == false) {
-
-                    isDpadLeft = true;
-
-                    isDpadUp = false;
-                    isDpadDown = false;
-                }
-            }
-
-
-            ///////// resets lift height ////////
-            if (isDpadLeft = true) {
-
-                blocks = 0;
-                lift.runTo(blocks, lift.liftPower, liftEncoder.Mode.BOTTOM);
-
-                isDpadLeft = false;
-                isDpadUp = false;
-                isDpadDown = false;
-           }
+            arm.runTo(armEncoder.targetPosition, arm.thePower);
 
 
             dashboardTelemetry.addData("current position ", lift.liftMotor.getCurrentPosition());
             dashboardTelemetry.addData("target position ", lift.liftMotor.getTargetPosition());
+            dashboardTelemetry.addData("mode", lift.liftMotor.getMode());
+            dashboardTelemetry.addData("is busy", lift.liftMotor.isBusy());
+            dashboardTelemetry.addData("mode", lift.mode);
             dashboardTelemetry.addData("pid coefficients", lift.liftMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+            dashboardTelemetry.addData("hall effect sensor", lift.isAtBottom());
 
-
-            dashboardTelemetry.addData("dpad up", isDpadUp);
-            dashboardTelemetry.addData("dpad down", isDpadDown);
-            dashboardTelemetry.addData("dpad left", isDpadLeft);
             dashboardTelemetry.update();
         }
 
