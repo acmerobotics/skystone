@@ -2,30 +2,39 @@ package com.acmerobotics.opmodes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.robot.BurlingameLift;
+import com.acmerobotics.robot.liftEncoder;
 import com.acmerobotics.robot.Drive;
 import com.acmerobotics.robot.FoundationMover;
 import com.acmerobotics.robot.Intake;
-import com.acmerobotics.robot.Lift;
-import com.acmerobotics.robot.ArmSimple;
+import com.acmerobotics.robot.armEncoder;
 import com.acmerobotics.util.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp")
 @Config
+
 public class TeleOp extends LinearOpMode {
 
     public boolean isLeftBumperPressed = false;
     public boolean isLeftOpen = false;
     public boolean isRightBumperPressed = false;
     public boolean isRightOpen = false;
-    private boolean isUpDown = false;
-    private boolean isDownDown = false;
-    private boolean isLeftDown = false;
-    private boolean isRightDown = false;
+
+    public boolean isRightTriggerPressed = false;
+    public boolean isLeftTriggerPressed = false;
+
+    private boolean isDpadUp = false;
+    private boolean isDpadDown = false;
+    private boolean isDpadLeft = false;
+
+    private int blocks = 0;
+
+    public static int foundation = 150; // 2 in. from ground
+    public static int above = 15; // 1 in. from ground
 
     public double thePower = 0;
 
@@ -33,20 +42,47 @@ public class TeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         //SkyStoneRobot robot = new SkyStoneRobot(this);
         Drive drive = new Drive(hardwareMap);
-        ////////////////////////////////////////Lift lift = new Lift(hardwareMap);
-        ArmSimple arm = new ArmSimple(hardwareMap);
-       BurlingameLift lift = new BurlingameLift(hardwareMap);
+        armEncoder arm = new armEncoder(hardwareMap);
+       liftEncoder lift = new liftEncoder(hardwareMap);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         Intake intake = new Intake(hardwareMap);
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
-        arm.init();
         lift.init();
-        lift.resetEncoder();
+        arm.init();
 
-        waitForStart();
+        lift.resetEncoder(); // sets 0 position
+        arm.resetEncoder();
+
+        while(true) {
+            lift.tightenLiftString();
+            arm.runTo(50);
+            lift.goToBottom();
+
+            if(lift.bottomSet){
+                break;
+            }
+        }
+
+        lift.goToStartHeight(); // raise lift so arm is ready for blocks coming in from intake
+
+        arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm.armMotor.setPower(0.1);
+
+        while(true) {
+            if (!lift.liftMotor.isBusy()) {
+                arm.resetEncoder();
+                break;
+            }
+        }
 
 
         while (!isStopRequested()){
+
+            lift.setPID();
+
+            //TODO do something to stop the lift from getting to and passing its max height
 
             ////////////////////// gamepad1   /////////////////////////////
 
@@ -112,47 +148,86 @@ public class TeleOp extends LinearOpMode {
 
 
             ///////////////////// gamepad2   ///////////////////////////
-            if (gamepad2.dpad_up){
-                isUpDown = true;
+            if (gamepad2.dpad_up) {
+                if (isDpadUp == false) {
 
-            } else if (isUpDown){
-                lift.goToIntake();
-                isUpDown = false;
+                    isDpadUp = true;
+
+                    isDpadDown = false;
+
+                    blocks += 1;
+                    //lift.runTo(blocks, lift.liftPower, liftEncoder.Mode.BLOCKS);
+                    lift.runToBlocks(blocks, lift.liftPower);
+                }
             }
 
-            if (gamepad2.dpad_down){
-                isDownDown = true;
-
-            } else if (isDownDown){
-                lift.goToBottom();
-                isDownDown = false;
+            else{
+                isDpadUp = false; // allows runTo to be used after every press
             }
 
-            if (gamepad2.dpad_right) {
-                isRightDown = true;
 
-            } else if (isRightDown) {
-                lift.adjustLiftUp();
-                isRightDown = false;
+            if (gamepad2.dpad_down) {
+
+                if (isDpadDown == false) {
+
+                    isDpadDown = true;
+
+                    isDpadUp = false;
+
+                    blocks -= 1;
+                    //lift.runTo(blocks, lift.liftPower, liftEncoder.Mode.BLOCKS);
+                    lift.runToBlocks(blocks, lift.liftPower);
+                }
             }
 
-            if (gamepad2.dpad_left) {
-                isLeftDown = true;
+            else{
+                isDpadDown = false;
+            }
 
-            } else if (isLeftDown) {
-                lift.adjustLiftDown();
-                isLeftDown = false;
+            //////////////////////////////////////////////////////////////////
+
+
+            if (gamepad2.a){
+                //starting height, arm at rest (at hard stop)
+
+                //hand will grab block
+
+                lift.runTo(liftEncoder.startHeight, lift.liftPower, liftEncoder.Mode.DIRECT);
+
+                arm.runTo(10);
+
+                if (arm.armMotor.isBusy() == false){
+                    arm.armMotor.setPower(0);
+                }
             }
 
 
             if (gamepad2.x){
-                thePower = arm.armMotor.getPower();
-                arm.armMotor.setPower(thePower);
+                // lift goes to bottom, arm moves to a position where it is greater than the foundation (2 in) and 1 in above f
+                // the foundation so it can block a block
+
+                // allows robot to go under bridge
+
+                int blockLifted = foundation + above;
+
+                arm.runTo(blockLifted);    // moves 2 in. plus 1 in. above ground
+                lift.runTo(0, lift.liftPower, liftEncoder.Mode.DIRECT);
             }
 
-            else {
-                arm.setMotorPower(gamepad2.left_stick_y);
+
+            if (gamepad2.b){
+                // arm moves down 1 in. to place block on foundation
+
+                // hand releases block
+
+                int blockPlaced = foundation;
+
+                arm.runTo(blockPlaced);
             }
+
+
+            /////////////////////////////////////////////////////////////////
+
 
             if (gamepad2.right_bumper){
                 arm.setHand("close");
@@ -162,7 +237,43 @@ public class TeleOp extends LinearOpMode {
                 arm.setHand("open");
             }
 
-            telemetry.addData("the power", thePower);
+
+            ////////////////////////////////////////////////////////////////
+
+
+            if (gamepad2.right_trigger > 0){
+                if (!isRightTriggerPressed){
+                    isRightTriggerPressed = true;
+                    lift.runToIncrement(100);
+                }
+            }
+
+            else{
+                isRightTriggerPressed = false;
+            }
+
+
+            if (gamepad2.left_trigger > 0){
+                if (!isLeftTriggerPressed){
+                    isLeftTriggerPressed = true;
+                    lift.runToIncrement(-100);
+                }
+            }
+
+            else{
+                isLeftTriggerPressed = false;
+            }
+
+            dashboardTelemetry.addData("current position ", lift.liftMotor.getCurrentPosition());
+            dashboardTelemetry.addData("target position ", lift.liftMotor.getTargetPosition());
+            dashboardTelemetry.addData("pid coefficients", lift.liftMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+            dashboardTelemetry.addData("blocks", blocks);
+
+            dashboardTelemetry.addData("arm current position", arm.armMotor.getCurrentPosition());
+            dashboardTelemetry.addData("arm target position", arm.armMotor.getTargetPosition());
+
+            dashboardTelemetry.update();
+            telemetry.addData("blocks", blocks);
             telemetry.update();
 
 

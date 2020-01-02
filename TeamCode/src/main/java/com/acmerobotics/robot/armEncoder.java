@@ -2,6 +2,7 @@ package com.acmerobotics.robot;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
@@ -32,6 +33,8 @@ public class armEncoder {
     public static int liftPosition = 90; //
     public static int allTheWayPosition = 270; //placePosition
 
+    public static int targetPosition = 0;
+
 
     //^^^^^^^^^^^^^^^^^^^^used in encoder math^^^^^^^^^^^//
 
@@ -45,8 +48,8 @@ public class armEncoder {
 
     public static PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F, MotorControlAlgorithm.LegacyPID);
 
-    private double handOpenPos = 0.98;
-    private double handClosePos = 0.47;
+    private double handOpenPos = 0.78;
+    private double handClosePos = 0.08;
 
 
     //^^^^^^^^^^^^general variables^^^^^^^^^^^^^^^^^^^^//
@@ -73,7 +76,7 @@ public class armEncoder {
 
         //setPID(coefficients)
 
-        armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         //rotationServo.setPosition(rotateCenter);
     }

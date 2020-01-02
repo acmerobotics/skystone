@@ -4,8 +4,10 @@ package com.acmerobotics.robot;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config
@@ -17,13 +19,21 @@ public class liftEncoder {
     public double blockHeight = 5;
     public double foundationHeight = 2;
     public double extraHeight = 0.5; // will get height greater than target so it doesn't run into it
-    public static int startHeight = 0; ////////////////TODO get starting height /////////////////////
+    public static int startHeight = 1560;
+    public static int bottomPosition = 0;
+
+    public  boolean stringTightened = false;
+    public boolean bottomSet = false;
+
+    //////////////////////
+    public int blockPosition = 0;
+
+    public static int blockEncoderHeight = 1130;
 
 
     private int radius = 1;
     private int TICKS_PER_REV = 280;
 
-    public int targetPosition = 0;
     public double liftPower = 1;
 
     public enum Mode{
@@ -34,9 +44,14 @@ public class liftEncoder {
 
     public Mode mode;
 
+    public static PIDFCoefficients coefficients = new PIDFCoefficients(10, 0.05, 0, 0, MotorControlAlgorithm.LegacyPID);
+
+
     public liftEncoder(HardwareMap hardwareMap){
         liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
         bottomHallEffect = hardwareMap.digitalChannel.get("bottomHallEffect");
+
+        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
 
@@ -48,19 +63,14 @@ public class liftEncoder {
 
         liftMotor.setTargetPosition(0);
         liftMotor.setPower(0);
-        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
 
 
     public void resetEncoder(){
         // motor's current encoder position is set as the zero position
 
-        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
-
-
-    public void goToStartHeight(){
-        runTo(startHeight, liftPower, liftEncoder.Mode.DIRECT);
+        liftMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
     }
 
 
@@ -71,32 +81,92 @@ public class liftEncoder {
 
         switch (mode){
             case BOTTOM:
-                targetPosition = 0;
+                int targetPosition = 0;
 
                 liftMotor.setTargetPosition(targetPosition);
-                liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
                 liftMotor.setPower(power);
 
             case BLOCKS:
-                int blocks = position;
 
-                targetPosition = inchesToTicks(blocks);
+//                int foundation = 226;
+//                int block = 1130;
+//
+//                blockPosition = (block * position);
+//                plusFoundation = blockPosition + foundation;
+//                plusStartingHeight = plusFoundation + startHeight;
+//
+//                liftMotor.setTargetPosition(plusStartingHeight);
+//                liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//                liftMotor.setPower(power);
 
-                liftMotor.setTargetPosition(targetPosition);
-                liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                liftMotor.setPower(power);
+//                int blocks = position;
+//
+//                targetPosition = inchesToTicks(blocks);
+//
+//                liftMotor.setTargetPosition(targetPosition);
+//                liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//
+//                liftMotor.setPower(power);
 
             case DIRECT:
-                targetPosition = position;
 
-                liftMotor.setTargetPosition(targetPosition);
-                liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                liftMotor.setTargetPosition(position);
+                liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
                 liftMotor.setPower(power);
         }
 
+    }
+
+
+    public void runToBlocks(int position, double power){
+
+        blockPosition = (blockEncoderHeight * position);// + startHeight;
+
+        liftMotor.setTargetPosition(blockPosition);
+        liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        liftMotor.setPower(power);
+    }
+
+
+    public void runToIncrement(int position){
+        int targetPosition = liftMotor.getCurrentPosition() + position;
+
+        runTo(targetPosition, liftPower, Mode.DIRECT);
+    }
+
+
+    public void goToStartHeight(){
+        runTo(startHeight, liftPower, Mode.DIRECT);
+    }
+
+    public void tightenLiftString(){
+        int tightPosition = 150;
+        if(stringTightened == false) {
+            runTo(tightPosition, liftPower, Mode.DIRECT);
+
+            if (!liftMotor.isBusy()) {
+                stringTightened = true;
+            }
+        }
+    }
+
+
+    public void goToBottom(){
+        boolean isAtBottom = isAtBottom();
+        if(bottomSet == false && stringTightened == true) {
+            if (!isAtBottom) {
+                bottomPosition = liftMotor.getCurrentPosition();
+                bottomPosition -= 5;
+                runTo(bottomPosition, liftPower, Mode.DIRECT);
+            } else {
+                bottomPosition = 0;
+                liftMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+                bottomSet = true;
+            }
+        }
     }
 
 
@@ -107,7 +177,7 @@ public class liftEncoder {
 
     public double blocksToTotalHeight(int blocks){
         double height = (blocks * blockHeight) + foundationHeight + extraHeight;
-        return (height * -1);
+        return (height);
     }
 
 
@@ -142,5 +212,10 @@ public class liftEncoder {
     }
 
     /////////////////////////////////////////////////
+
+
+    public void setPID(){//PIDFCoefficients coefficients){
+        liftMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coefficients);
+    }
 
 }
