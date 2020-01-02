@@ -10,6 +10,11 @@ import com.acmerobotics.robot.armEncoder;
 import com.acmerobotics.util.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.robomatic.util.StickyGamepad;
+import com.acmerobotics.util.JoystickTransform;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -38,22 +43,34 @@ public class TeleOp extends LinearOpMode {
 
     public double thePower = 0;
 
+    public double incrementUp = 0.5;
+    public double incrementDown = 0.25;
+
+    public boolean stickUp = false;
+    public boolean stickDown = false;
+
+    public boolean incrementLock = false;
+
     @Override
     public void runOpMode() throws InterruptedException {
         //SkyStoneRobot robot = new SkyStoneRobot(this);
         Drive drive = new Drive(hardwareMap);
         armEncoder arm = new armEncoder(hardwareMap);
-       liftEncoder lift = new liftEncoder(hardwareMap);
+        liftEncoder lift = new liftEncoder(hardwareMap);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         Intake intake = new Intake(hardwareMap);
+
+        JoystickTransform transform = new JoystickTransform();
         FtcDashboard dashboard = FtcDashboard.getInstance();
         Telemetry dashboardTelemetry = dashboard.getTelemetry();
+        StickyGamepad stickyGamepad;
 
         lift.init();
         arm.init();
 
         lift.resetEncoder(); // sets 0 position
         arm.resetEncoder();
+
 
         while(true) {
             lift.tightenLiftString();
@@ -83,10 +100,12 @@ public class TeleOp extends LinearOpMode {
             lift.setPID();
 
             //TODO do something to stop the lift from getting to and passing its max height
-
             ////////////////////// gamepad1   /////////////////////////////
 
-            drive.setPower(new Vector2d(gamepad1.left_stick_y,- gamepad1.left_stick_x), gamepad1.right_stick_x);
+            Pose2d v = transform.transform(new Pose2d(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x));
+            drive.setPower(v);
+
+            //drive.setPower(new Vector2d(gamepad1.left_stick_y, -gamepad1.left_stick_x), gamepad1.right_stick_x);
 
             if (gamepad1.a){
                 foundationMover.moveToGrab();
@@ -94,6 +113,14 @@ public class TeleOp extends LinearOpMode {
 
             if (gamepad1.b){
                 foundationMover.moveToStore();
+            }
+
+            if(gamepad1.x){
+                intake.leftClose();
+            }
+
+            if(gamepad1.y){
+                intake.rightClose();
             }
 
             if(gamepad1.left_bumper){
@@ -108,7 +135,7 @@ public class TeleOp extends LinearOpMode {
 
                     } else {
                         isLeftOpen = false;
-                        intake.leftClose();
+                        intake.leftOpenAllWay();
 
                     }
 
@@ -131,7 +158,7 @@ public class TeleOp extends LinearOpMode {
 
                     } else {
                         isRightOpen = false;
-                        intake.rightClose();
+                        intake.rightOpenAllWay();
                     }
 
                 }
@@ -144,6 +171,15 @@ public class TeleOp extends LinearOpMode {
 
             intake.setIntakePower(-gamepad1.left_trigger);
             intake.setIntakePower(gamepad1.right_trigger);
+
+            /*
+            if (gamepad1.y){
+                isYDown = true;
+            } else if (isYDown) {
+                intake.leftOpenAllWay();
+                intake.rightOpenAllWay();
+            }
+            */
 
 
 
@@ -184,7 +220,7 @@ public class TeleOp extends LinearOpMode {
                 isDpadDown = false;
             }
 
-            //////////////////////////////////////////////////////////////////
+            /////////////////////////// ARM //////////////////////////
 
 
             if (gamepad2.a){
@@ -228,15 +264,16 @@ public class TeleOp extends LinearOpMode {
 
             /////////////////////////////////////////////////////////////////
 
+            ////////////////////////////// HAND ////////////////////////////
+
 
             if (gamepad2.right_bumper){
-                arm.setHand("close");
-            }
-
-            if (gamepad2.left_bumper){
                 arm.setHand("open");
             }
 
+            if (gamepad2.left_bumper){
+                arm.setHand("close");
+            }
 
             ////////////////////////////////////////////////////////////////
 
@@ -275,7 +312,6 @@ public class TeleOp extends LinearOpMode {
             dashboardTelemetry.update();
             telemetry.addData("blocks", blocks);
             telemetry.update();
-
 
         }
 
