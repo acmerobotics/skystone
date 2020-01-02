@@ -123,49 +123,70 @@ public class TeleOp extends LinearOpMode {
                 intake.rightClose();
             }
 
-            if(gamepad1.left_bumper){
+            if (gamepad1.left_bumper) {
 
-                if (isLeftBumperPressed == false){
+                if (isLeftBumperPressed == false) {
 
                     isLeftBumperPressed = true;
 
-                    if (isLeftOpen == false){
-                        intake.leftOpen();
-                        isLeftOpen = true;
-
-                    } else {
-                        isLeftOpen = false;
-                        intake.leftOpenAllWay();
-
-                    }
-
-                }
-
-
-            } else {
-
-                isLeftBumperPressed = false;
-            }
-
-            if(gamepad1.right_bumper){
-
-                if(isRightBumperPressed == false){
-                    isRightBumperPressed = true;
-
                     if (isRightOpen == false) {
+
                         intake.rightOpen();
                         isRightOpen = true;
-
-                    } else {
-                        isRightOpen = false;
-                        intake.rightOpenAllWay();
                     }
 
+                    else{
+                        intake.rightClose();
+                        isRightOpen = false;
+                        isRfullyOpen = false;
+                    }
+                }
+            }
+
+            else {
+
+                isLeftBumperPressed = false;
+
+                if (isRightOpen == true){
+
+                    intake.leftOpen();
+                    isLeftOpen = true;
                 }
 
+                else{
+                    intake.leftClose();
+                    isLeftOpen = false;
+                    isLfullyOpen = false;
+                }
+            }
 
-            } else {
 
+            if (gamepad1.right_bumper) {
+
+                if (isRightBumperPressed == false) {
+
+                    isRightBumperPressed = true;
+
+                    if(isRfullyOpen == false) {
+
+                        intake.rightFullyOpen();
+                        intake.leftFullyOpen();
+
+                        isRfullyOpen = true;
+                        isLfullyOpen = true;
+                    }
+
+                    else{
+                        intake.rightOpen();
+                        intake.leftOpen();
+
+                        isRfullyOpen = false;
+                        isLfullyOpen = false;
+                    }
+                }
+            }
+
+            else {
                 isRightBumperPressed = false;
             }
 
