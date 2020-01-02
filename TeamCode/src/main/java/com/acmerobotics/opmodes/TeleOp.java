@@ -29,6 +29,9 @@ public class TeleOp extends LinearOpMode {
     public boolean isRightBumperPressed = false;
     public boolean isRightOpen = false;
 
+    private boolean isRfullyOpen = false;
+    private boolean isLfullyOpen = false;
+
     public boolean isRightTriggerPressed = false;
     public boolean isLeftTriggerPressed = false;
 
@@ -40,16 +43,6 @@ public class TeleOp extends LinearOpMode {
 
     public static int foundation = 150; // 2 in. from ground
     public static int above = 15; // 1 in. from ground
-
-    public double thePower = 0;
-
-    public double incrementUp = 0.5;
-    public double incrementDown = 0.25;
-
-    public boolean stickUp = false;
-    public boolean stickDown = false;
-
-    public boolean incrementLock = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
