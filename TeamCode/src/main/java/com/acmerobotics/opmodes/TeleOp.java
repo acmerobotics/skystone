@@ -52,8 +52,8 @@ public class TeleOp extends LinearOpMode {
         liftEncoder lift = new liftEncoder(hardwareMap);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         Intake intake = new Intake(hardwareMap);
-
         JoystickTransform transform = new JoystickTransform();
+        
         FtcDashboard dashboard = FtcDashboard.getInstance();
         Telemetry dashboardTelemetry = dashboard.getTelemetry();
         StickyGamepad stickyGamepad;
@@ -64,11 +64,23 @@ public class TeleOp extends LinearOpMode {
         lift.resetEncoder(); // sets 0 position
         arm.resetEncoder();
 
+        arm.runTo(120); // gets arm out of the intake's way
+
+        intake.rightFullyOpen();
+        isRightOpen = true;
+        isRfullyOpen = true;
 
         while(true) {
             lift.tightenLiftString();
-            arm.runTo(50);
+
+            if (lift.liftMotor.isBusy() == false){
+                intake.leftFullyOpen();
+                isLeftOpen = true;
+                isLfullyOpen = true;
+            }
+
             lift.goToBottom();
+
 
             if(lift.bottomSet){
                 break;
@@ -78,11 +90,11 @@ public class TeleOp extends LinearOpMode {
         lift.goToStartHeight(); // raise lift so arm is ready for blocks coming in from intake
 
         arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        arm.armMotor.setPower(0.1);
+        arm.armMotor.setPower(0.12); // arm goes to place were the 0 position will be at
 
         while(true) {
             if (!lift.liftMotor.isBusy()) {
-                arm.resetEncoder();
+                arm.resetEncoder(); // 0 position is set
                 break;
             }
         }
