@@ -120,14 +120,6 @@ public class TeleOp extends LinearOpMode {
                 foundationMover.moveToStore();
             }
 
-            if(gamepad1.x){
-                intake.leftClose();
-            }
-
-            if(gamepad1.y){
-                intake.rightClose();
-            }
-
             if (gamepad1.left_bumper) {
 
                 if (isLeftBumperPressed == false) {
@@ -198,18 +190,11 @@ public class TeleOp extends LinearOpMode {
             intake.setIntakePower(-gamepad1.left_trigger);
             intake.setIntakePower(gamepad1.right_trigger);
 
-            /*
-            if (gamepad1.y){
-                isYDown = true;
-            } else if (isYDown) {
-                intake.leftOpenAllWay();
-                intake.rightOpenAllWay();
-            }
-            */
-
-
 
             ///////////////////// gamepad2   ///////////////////////////
+
+
+            ////////////////////// Main Lift Code ///////////////////////
             if (gamepad2.dpad_up) {
                 if (isDpadUp == false) {
 
@@ -246,62 +231,8 @@ public class TeleOp extends LinearOpMode {
                 isDpadDown = false;
             }
 
-            /////////////////////////// ARM //////////////////////////
 
-
-            if (gamepad2.a){
-                //starting height, arm at rest (at hard stop)
-
-                //hand will grab block
-
-                lift.runTo(liftEncoder.startHeight, lift.liftPower, liftEncoder.Mode.DIRECT);
-
-                arm.runTo(10);
-
-                if (arm.armMotor.isBusy() == false){
-                    arm.armMotor.setPower(0);
-                }
-            }
-
-
-            if (gamepad2.x){
-                // lift goes to bottom, arm moves to a position where it is greater than the foundation (2 in) and 1 in above f
-                // the foundation so it can block a block
-
-                // allows robot to go under bridge
-
-                int blockLifted = foundation + above;
-
-                arm.runTo(blockLifted);    // moves 2 in. plus 1 in. above ground
-                lift.runTo(0, lift.liftPower, liftEncoder.Mode.DIRECT);
-            }
-
-
-            if (gamepad2.b){
-                // arm moves down 1 in. to place block on foundation
-
-                // hand releases block
-
-                int blockPlaced = foundation;
-
-                arm.runTo(blockPlaced);
-            }
-
-
-            /////////////////////////////////////////////////////////////////
-
-            ////////////////////////////// HAND ////////////////////////////
-
-
-            if (gamepad2.right_bumper){
-                arm.setHand("open");
-            }
-
-            if (gamepad2.left_bumper){
-                arm.setHand("close");
-            }
-
-            ////////////////////////////////////////////////////////////////
+            ////////////////////// Lift Error Prevention /////////////////////////
 
 
             if (gamepad2.right_trigger > 0){
@@ -327,6 +258,61 @@ public class TeleOp extends LinearOpMode {
                 isLeftTriggerPressed = false;
             }
 
+            //////////////////////// ARM //////////////////////////
+
+
+            if (gamepad2.a){
+                //starting height, arm at rest (at hard stop)
+
+                //hand will grab block
+
+                lift.runTo(liftEncoder.startHeight, lift.liftPower, liftEncoder.Mode.DIRECT);
+
+                arm.runTo(10);
+
+                if (arm.armMotor.isBusy() == false){
+                    arm.armMotor.setPower(0);
+                }
+            }
+
+
+            if (gamepad2.x){
+                // lift goes to bottom, arm moves to a position where it is greater than the foundation (2 in) and 1 in above
+                // the foundation so it can block a block
+
+                // allows robot to go under bridge
+
+                int blockLifted = foundation + above;
+
+                arm.runTo(blockLifted);    // moves 2 in. + 1 in. above ground
+                lift.runTo(0, lift.liftPower, liftEncoder.Mode.DIRECT);
+            }
+
+
+            if (gamepad2.b){
+                // arm moves down 1 in. to place block on foundation
+
+                // hand releases block
+
+                int blockPlaced = foundation;
+
+                arm.runTo(blockPlaced);
+            }
+
+
+            ////////////////////////////// HAND ////////////////////////////
+
+
+            if (gamepad2.right_bumper){
+                arm.setHand("open");
+            }
+
+            if (gamepad2.left_bumper){
+                arm.setHand("close");
+            }
+
+            ////////////////////////////////////////////////////////////////
+
             dashboardTelemetry.addData("current position ", lift.liftMotor.getCurrentPosition());
             dashboardTelemetry.addData("target position ", lift.liftMotor.getTargetPosition());
             dashboardTelemetry.addData("pid coefficients", lift.liftMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
@@ -336,6 +322,8 @@ public class TeleOp extends LinearOpMode {
             dashboardTelemetry.addData("arm target position", arm.armMotor.getTargetPosition());
 
             dashboardTelemetry.update();
+
+            ////////////////////////// Telemetry //////////////////////////////
             telemetry.addData("blocks", blocks);
             telemetry.update();
 
