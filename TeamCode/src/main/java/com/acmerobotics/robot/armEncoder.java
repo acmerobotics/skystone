@@ -2,6 +2,7 @@ package com.acmerobotics.robot;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
@@ -27,19 +28,13 @@ public class armEncoder {
 
     public double testAngle = 10;
 
-    public static int grabPosition = 0;
-    public static int underBridge = 180; //
-    public static int liftPosition = 90; //
-    public static int allTheWayPosition = 270; //placePosition
-
-
     //^^^^^^^^^^^^^^^^^^^^used in encoder math^^^^^^^^^^^//
 
     public double rotateCenter = 140/255;
 
 
     public static double P = 30;
-    public static double I = 7;
+    public static double I = 4; // 7
     public static double D = 0.25;
     public static double F = 0;
 
@@ -47,9 +42,12 @@ public class armEncoder {
 
     private double handOpenPos = 0.78;
     private double handClosePos = 0.08;
+<<<<<<< HEAD
 
     //0.47
 
+=======
+>>>>>>> 67dc2df39be20389ae79e9a5b7a7562d44a7ca16
 
 
     //^^^^^^^^^^^^general variables^^^^^^^^^^^^^^^^^^^^//
@@ -76,7 +74,7 @@ public class armEncoder {
 
         //setPID(coefficients)
 
-        armMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         //rotationServo.setPosition(rotateCenter);
     }
