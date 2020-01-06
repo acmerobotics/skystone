@@ -23,12 +23,11 @@ public class TestLift extends LinearOpMode {
 
         BurlingameLift lift = new BurlingameLift(hardwareMap);
 
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        Telemetry dashboardTelemetry = dashboard.getTelemetry();
+
         lift.init();
         lift.resetEncoder();
-
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-
-        Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
         waitForStart();
 
@@ -68,8 +67,10 @@ public class TestLift extends LinearOpMode {
                 isLeftDown = false;
             }
 
-            telemetry.addData("encoder pos", lift.checkEncoder());
-            telemetry.update();
+            dashboardTelemetry.addData("current position", lift.liftMotor.getCurrentPosition());
+            dashboardTelemetry.addData("target position", lift.liftMotor.getTargetPosition());
+            dashboardTelemetry.addData("pid coefficients", lift.liftMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+            dashboardTelemetry.update();
 
             dashboardTelemetry.addData("current position", lift.checkEncoder());
             dashboardTelemetry.addData("target position", lift.liftMotor.getTargetPosition());
