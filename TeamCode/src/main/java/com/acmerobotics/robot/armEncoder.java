@@ -28,21 +28,13 @@ public class armEncoder {
 
     public double testAngle = 10;
 
-    public static int grabPosition = 0;
-    public static int underBridge = 180; //
-    public static int liftPosition = 90; //
-    public static int allTheWayPosition = 270; //placePosition
-
-    public static int targetPosition = 0;
-
-
     //^^^^^^^^^^^^^^^^^^^^used in encoder math^^^^^^^^^^^//
 
     public double rotateCenter = 140/255;
 
 
     public static double P = 30;
-    public static double I = 7;
+    public static double I = 4; // 7
     public static double D = 0.25;
     public static double F = 0;
 

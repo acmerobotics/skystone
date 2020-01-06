@@ -36,7 +36,6 @@ public class Intake {
     public void internalSetVelocity(double leftIntakePower, double rightIntakePower){
         leftMotor.setPower(leftIntakePower);
         rightMotor.setPower(rightIntakePower);
-
     }
 
     public void leftOpen(){

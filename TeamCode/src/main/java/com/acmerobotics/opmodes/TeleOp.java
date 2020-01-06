@@ -19,6 +19,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
+//TODO do something to stop the lift from getting to and passing its max height
+
+
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp")
 @Config
 
@@ -38,6 +41,10 @@ public class TeleOp extends LinearOpMode {
     private boolean isDpadUp = false;
     private boolean isDpadDown = false;
     private boolean isDpadLeft = false;
+
+    private boolean armReady = false;
+    public int armReadyCount = 0;
+    public static int armReadyCounter = 40;
 
     private int blocks = 0;
 
@@ -90,21 +97,23 @@ public class TeleOp extends LinearOpMode {
         lift.goToStartHeight(); // raise lift so arm is ready for blocks coming in from intake
 
         arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        arm.armMotor.setPower(0.12); // arm goes to place were the 0 position will be at
-
-        while(true) {
-            if (!lift.liftMotor.isBusy()) {
-                arm.resetEncoder(); // 0 position is set
-                break;
-            }
-        }
-
+        arm.armMotor.setPower(0.08); // arm goes to place where the 0 position will be
 
         while (!isStopRequested()){
 
+            if (!armReady){
+                if (armReadyCount > armReadyCounter) {
+                    arm.resetEncoder();
+                    armReady = true;
+                }
+
+                else{
+                    armReadyCount += 1;
+                }
+            }
+
             lift.setPID();
 
-            //TODO do something to stop the lift from getting to and passing its max height
             ////////////////////// gamepad1   /////////////////////////////
 
             Pose2d v = transform.transform(new Pose2d(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x));
@@ -270,9 +279,8 @@ public class TeleOp extends LinearOpMode {
 
                 arm.runTo(10);
 
-                if (arm.armMotor.isBusy() == false){
-                    arm.armMotor.setPower(0);
-                }
+                arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                arm.armMotor.setPower(0);
             }
 
 
@@ -311,20 +319,15 @@ public class TeleOp extends LinearOpMode {
                 arm.setHand("close");
             }
 
-            ////////////////////////////////////////////////////////////////
-
-            dashboardTelemetry.addData("current position ", lift.liftMotor.getCurrentPosition());
-            dashboardTelemetry.addData("target position ", lift.liftMotor.getTargetPosition());
-            dashboardTelemetry.addData("pid coefficients", lift.liftMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
-            dashboardTelemetry.addData("blocks", blocks);
-
-            dashboardTelemetry.addData("arm current position", arm.armMotor.getCurrentPosition());
-            dashboardTelemetry.addData("arm target position", arm.armMotor.getTargetPosition());
-
-            dashboardTelemetry.update();
 
             ////////////////////////// Telemetry //////////////////////////////
+
             telemetry.addData("blocks", blocks);
+
+            telemetry.addLine();
+
+            telemetry.addData("arm ready", armReady);
+
             telemetry.update();
 
         }

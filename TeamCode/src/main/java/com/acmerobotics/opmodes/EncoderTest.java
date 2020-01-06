@@ -41,21 +41,6 @@ public class EncoderTest extends LinearOpMode {
 
             //////////////////////////// ARM //////////////////////////
 
-            if (gamepad2.a){
-                arm.runTo(arm.grabPosition);
-            }
-
-            if (gamepad2.x){
-                arm.runTo(arm.underBridge);
-            }
-
-            if (gamepad2.y){
-                arm.runTo(arm.liftPosition);
-            }
-
-            if (gamepad2.b){
-                arm.runTo(arm.allTheWayPosition);
-            }
 
             ///////////////////////////////////////////////////////////////
 
