@@ -42,10 +42,6 @@ public class TeleOp extends LinearOpMode {
     private boolean isDpadDown = false;
     private boolean isDpadLeft = false;
 
-    private boolean armReady = false;
-    public int armReadyCount = 0;
-    public static int armReadyCounter = 40;
-
     private int blocks = 0;
 
     public static int foundation = 150; // 2 in. from ground
@@ -99,18 +95,12 @@ public class TeleOp extends LinearOpMode {
         arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         arm.armMotor.setPower(0.08); // arm goes to place where the 0 position will be
 
+        waitForStart();
+
         while (!isStopRequested()){
 
-            if (!armReady){
-                if (armReadyCount > armReadyCounter) {
-                    arm.resetEncoder();
-                    armReady = true;
-                }
+            arm.resetEncoder();
 
-                else{
-                    armReadyCount += 1;
-                }
-            }
 
             lift.setPID();
 
@@ -325,8 +315,6 @@ public class TeleOp extends LinearOpMode {
             telemetry.addData("blocks", blocks);
 
             telemetry.addLine();
-
-            telemetry.addData("arm ready", armReady);
 
             telemetry.update();
 

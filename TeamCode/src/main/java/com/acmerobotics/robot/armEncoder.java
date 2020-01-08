@@ -42,12 +42,8 @@ public class armEncoder {
 
     private double handOpenPos = 0.78;
     private double handClosePos = 0.08;
-<<<<<<< HEAD
 
     //0.47
-
-=======
->>>>>>> 67dc2df39be20389ae79e9a5b7a7562d44a7ca16
 
 
     //^^^^^^^^^^^^general variables^^^^^^^^^^^^^^^^^^^^//
