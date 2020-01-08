@@ -2,7 +2,7 @@ package com.acmerobotics.util;
 
 public class PIDcontroller {
 
-    public void PIDcontroller(){
+    public PIDcontroller(){
     }
 
     public void capI(){

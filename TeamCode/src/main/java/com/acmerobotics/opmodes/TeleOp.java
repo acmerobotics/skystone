@@ -99,18 +99,12 @@ public class TeleOp extends LinearOpMode {
         arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         arm.armMotor.setPower(0.08); // arm goes to place where the 0 position will be
 
+        waitForStart();
+
         while (!isStopRequested()){
 
-            if (!armReady){
-                if (armReadyCount > armReadyCounter) {
-                    arm.resetEncoder();
-                    armReady = true;
-                }
-
-                else{
-                    armReadyCount += 1;
-                }
-            }
+            arm.resetEncoder();
+            armReady = true;
 
             lift.setPID();
 
@@ -326,7 +320,7 @@ public class TeleOp extends LinearOpMode {
 
             telemetry.addLine();
 
-            telemetry.addData("arm ready", armReady);
+            telemetry.addData("arm pos", arm.armMotor.getCurrentPosition());
 
             telemetry.update();
 
