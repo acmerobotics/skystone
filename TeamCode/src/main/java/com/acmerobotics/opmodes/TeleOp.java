@@ -41,6 +41,7 @@ public class TeleOp extends LinearOpMode {
     private boolean isDpadUp = false;
     private boolean isDpadDown = false;
     private boolean isDpadLeft = false;
+    private boolean armReady = false;
 
     private int blocks = 0;
 
@@ -99,8 +100,10 @@ public class TeleOp extends LinearOpMode {
 
         while (!isStopRequested()){
 
-            arm.resetEncoder();
-
+            if(!armReady){
+                arm.resetEncoder();
+                armReady = true;
+            }
 
             lift.setPID();
 
