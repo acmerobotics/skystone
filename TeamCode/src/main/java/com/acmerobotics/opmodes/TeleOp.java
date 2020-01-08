@@ -32,9 +32,6 @@ public class TeleOp extends LinearOpMode {
     public boolean isRightBumperPressed = false;
     public boolean isRightOpen = false;
 
-    private boolean isRfullyOpen = false;
-    private boolean isLfullyOpen = false;
-
     private boolean isFullyOpen = false;
 
     public boolean isRightTriggerPressed = false;
@@ -76,7 +73,6 @@ public class TeleOp extends LinearOpMode {
 
         intake.rightFullyOpen();
         isRightOpen = true;
-        isRfullyOpen = true;
 
         time.reset();
 
@@ -86,7 +82,6 @@ public class TeleOp extends LinearOpMode {
             if(time.seconds() > 1){
                 intake.leftFullyOpen();
                 isLeftOpen = true;
-                isLfullyOpen = true;
             }
 
             lift.goToBottom();
