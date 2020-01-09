@@ -82,6 +82,7 @@ public class TeleOp extends LinearOpMode {
             if(time.seconds() > 1){
                 intake.leftFullyOpen();
                 isLeftOpen = true;
+                isFullyOpen = true;
             }
 
             lift.goToBottom();
@@ -143,7 +144,7 @@ public class TeleOp extends LinearOpMode {
                 }
             }
 
-            else if (gamepad1.left_bumper && !isFullyOpen) {
+            else if (!gamepad1.left_bumper && !isFullyOpen) {
 
                 isLeftBumperPressed = false;
 
