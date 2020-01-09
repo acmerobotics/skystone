@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class EncoderTest extends LinearOpMode {
 
+    public static int targetPosition = 0;
 
     @Override
     public void runOpMode(){
@@ -41,20 +42,11 @@ public class EncoderTest extends LinearOpMode {
 
             //////////////////////////// ARM //////////////////////////
 
+            arm.runTo(targetPosition);
 
             ///////////////////////////////////////////////////////////////
 
-            ////////////////////////////// HAND ////////////////////////////
 
-            if (gamepad2.right_bumper){
-                arm.setHand("open");
-            }
-
-            if (gamepad2.left_bumper){
-                arm.setHand("close");      //TODO why won't hand close?
-            }
-
-            //////////////////////////////////////////////////////////////////
 
             dashboardTelemetry.addData("target position", arm.armMotor.getTargetPosition());
             dashboardTelemetry.addData("current position", arm.armMotor.getCurrentPosition());
