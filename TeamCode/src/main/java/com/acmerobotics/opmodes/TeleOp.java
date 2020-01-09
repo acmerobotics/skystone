@@ -32,16 +32,13 @@ public class TeleOp extends LinearOpMode {
     public boolean isRightBumperPressed = false;
     public boolean isRightOpen = false;
 
-    private boolean isRfullyOpen = false;
-    private boolean isLfullyOpen = false;
+    private boolean isFullyOpen = false;
 
     public boolean isRightTriggerPressed = false;
     public boolean isLeftTriggerPressed = false;
 
     private boolean isDpadUp = false;
     private boolean isDpadDown = false;
-    private boolean isDpadLeft = false;
-    private boolean armReady = false;
 
     private int blocks = 0;
 
@@ -57,6 +54,7 @@ public class TeleOp extends LinearOpMode {
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         Intake intake = new Intake(hardwareMap);
         JoystickTransform transform = new JoystickTransform();
+        ElapsedTime time = new ElapsedTime();
         
         FtcDashboard dashboard = FtcDashboard.getInstance();
         Telemetry dashboardTelemetry = dashboard.getTelemetry();
@@ -72,15 +70,16 @@ public class TeleOp extends LinearOpMode {
 
         intake.rightFullyOpen();
         isRightOpen = true;
-        isRfullyOpen = true;
+
+        time.reset();
 
         while(true) {
             lift.tightenLiftString();
 
-            if (lift.liftMotor.isBusy() == false){
+            if(time.seconds() > 1){
                 intake.leftFullyOpen();
                 isLeftOpen = true;
-                isLfullyOpen = true;
+                isFullyOpen = true;
             }
 
             lift.goToBottom();
@@ -98,12 +97,10 @@ public class TeleOp extends LinearOpMode {
 
         waitForStart();
 
-        while (!isStopRequested()){
+        arm.resetEncoder();
 
-            if(!armReady){
-                arm.resetEncoder();
-                armReady = true;
-            }
+        while (!isStopRequested()){
+            time.reset();
 
             lift.setPID();
 
@@ -137,12 +134,12 @@ public class TeleOp extends LinearOpMode {
                     else{
                         intake.rightClose();
                         isRightOpen = false;
-                        isRfullyOpen = false;
+                        isFullyOpen = false;
                     }
                 }
             }
 
-            else {
+            else if (!gamepad1.left_bumper && !isFullyOpen) {
 
                 isLeftBumperPressed = false;
 
@@ -155,10 +152,8 @@ public class TeleOp extends LinearOpMode {
                 else{
                     intake.leftClose();
                     isLeftOpen = false;
-                    isLfullyOpen = false;
                 }
             }
-
 
             if (gamepad1.right_bumper) {
 
@@ -166,21 +161,18 @@ public class TeleOp extends LinearOpMode {
 
                     isRightBumperPressed = true;
 
-                    if(isRfullyOpen == false) {
+                    if(isFullyOpen == false) {
+                        isFullyOpen = true;
 
                         intake.rightFullyOpen();
                         intake.leftFullyOpen();
-
-                        isRfullyOpen = true;
-                        isLfullyOpen = true;
                     }
 
                     else{
+                        isFullyOpen = false;
+
                         intake.rightOpen();
                         intake.leftOpen();
-
-                        isRfullyOpen = false;
-                        isLfullyOpen = false;
                     }
                 }
             }
