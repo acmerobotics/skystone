@@ -26,11 +26,9 @@ public class armEncoder {
 
     private int gearRatio = 2;
 
-    public double testAngle = 10;
-
     //^^^^^^^^^^^^^^^^^^^^used in encoder math^^^^^^^^^^^//
 
-    public double rotateCenter = 140/255;
+    public double rotateCenter = 0.55;
 
 
     public static double P = 30;
@@ -43,8 +41,6 @@ public class armEncoder {
     private double handOpenPos = 0.78;
     private double handClosePos = 0.08;
 
-    //0.47
-
 
     //^^^^^^^^^^^^general variables^^^^^^^^^^^^^^^^^^^^//
 
@@ -52,7 +48,7 @@ public class armEncoder {
     public armEncoder(HardwareMap hardwareMap){
 
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
-        //rotationServo = hardwareMap.get(Servo.class, "rotationServo");
+        rotationServo = hardwareMap.get(Servo.class, "rotationServo");
         handServo = hardwareMap.get(Servo.class, "handServo");
 
     }
@@ -72,7 +68,7 @@ public class armEncoder {
 
         armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-        //rotationServo.setPosition(rotateCenter);
+        rotationServo.setPosition(rotateCenter);
     }
 
 
