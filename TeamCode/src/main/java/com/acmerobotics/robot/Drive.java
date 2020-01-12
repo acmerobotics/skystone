@@ -176,163 +176,24 @@ public class Drive {
 
     /////////////////// Auto specific methods //////////////////////////////////////////////////////
 
-    public void stopAndReset(){
-        for(int i=0; i<4; i++){
-            motors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
+        public double getRawHeading(){
+        return rawHeading;
+
     }
 
-    public void setPowerA(Vector2d v, double omega){
-        setVelocityA(v.times(MAX_V), omega * MAX_O);
+    public double getHeading(){
+        return getRawHeading() + headingOffset;
     }
 
-    public void setVelocityA(Vector2d v, double omega){
-
-        for (int i = 0; i < 4; i ++){
-            Vector2d wheelVelocity = new Vector2d(v.getX() - omega * WHEEL_POSITIONS[i].getY(), v.getX() + omega * WHEEL_POSITIONS[i].getY());
-            wheelOmega = (wheelVelocity.dot(ROTOR_DIRECTIONS[i]) * Math.sqrt(2)/RADIUS);
-            motors[i].setPower(Math.abs(wheelOmega));
-        }
+   public void setHeading(double heading){
+        headingOffset = heading - getRawHeading();
     }
 
-    public void setMDistance(Vector2d v, double distance) { //right now only does forward and back but after testing it add right and left
-        //sets 1)direction 2)distance with direction 3)target position
+    public void turn(double angle){
+        turning = true;
+        targetHeading = getHeading() + angle;
 
-        for(int i=0; i<4; i++) {
-            double setDirections = v.dot(ROTOR_DIRECTIONS[i]) * Math.sqrt(2);
-
-            distance *= setDirections;
-
-            MDistance = motors[i].getCurrentPosition() + (int) (distance * TICKS_PER_INCH);
-            motors[i].setTargetPosition(MDistance);
-        }
-
-        for(int i=0; i<4; i++) {
-            motors[i].setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
     }
-
-    public void stopMotors(){
-        for (int i = 0; i < 4; i++) {
-            if (!(motors[i].isBusy())) {
-
-                //sets everything to zero because destination was reached
-                setPowerA(new Vector2d(0, 0), 0);
-                motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            }
-        }
-    }
-
-    public void moveRobotTo(String move, double distance){// distance is negative if going back
-
-        double y = 0;
-        double x = 0;
-
-        if (move.equals("forward")) {
-            y = 1;
-
-            Vector2d v = new Vector2d(y,x); //sets vector based on move
-
-            setMDistance(v, distance);
-
-            setPowerA(v, 0);
-
-            stopMotors();
-        }
-
-        if (move.equals("back")) {
-            y = -1;
-
-            Vector2d v = new Vector2d(y,x); //sets vector based on move
-
-            setMDistance(v, distance);
-
-            setPowerA(v, 0);
-
-            stopMotors();
-        }
-
-        if (move.equals("right")) {
-            x = 1;
-
-            Vector2d v = new Vector2d(y,x); //sets vector based on move
-
-            setMDistance(v, distance);
-
-            setPowerA(v, 0);
-
-            stopMotors();
-        }
-
-        if (move.equals("left")) {
-            x = -1;
-
-            Vector2d v = new Vector2d(y,x); //sets vector based on move
-
-            setMDistance(v, distance);
-
-            setPowerA(v, 0);
-
-            stopMotors();
-        }
-    }
-
-    public void turnRobotTo(String move, double angle ){
-        //turns robot
-        Vector2d v = new Vector2d(0,0); //sets vector based on move
-
-        double omega = 0;
-        double distance = getRadianLen(angle, WHEEL_FROM_CENTER); //find wheel's distance from center so it acts as radius
-
-        if (move.equals("right")) {
-
-            omega = 1 * omegaSpeed;
-
-            setMDistance(v, distance);
-
-            setPowerA(v, omega);
-
-            stopMotors();
-        }
-
-        if (move.equals("left")) {
-
-            omega = -1 * omegaSpeed;
-
-            setMDistance(v, distance);
-
-            setPowerA(v, omega);
-
-            stopMotors();
-        }
-    }
-
-
-    public double getRadianLen(double angle, double radius){
-        // returns radian length (wheel movement curve length)
-
-        double i =  (angle/360) * 2 * Math.PI * radius;
-        return i;
-    }
-
-//    public double getRawHeading(){
-//        return rawHeading;
-//
-//    }
-//
-//    public double getHeading(){
-//        return getRawHeading() + headingOffset;
-//    }
-//
-//    public void setHeading(double heading){
-//        headingOffset = heading - getRawHeading();
-//    }
-//
-//    public void turn(double angle){
-//        turning = true;
-//        targetHeading = getHeading() + angle;
-//
-//    }
 
 //////////////////////// Auto specific methods end//////////////////////////////////////////////////
 
