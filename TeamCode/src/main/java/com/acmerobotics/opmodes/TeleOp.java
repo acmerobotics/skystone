@@ -270,7 +270,7 @@ public class TeleOp extends LinearOpMode {
                 arm.runTo(10);
 
                 arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                arm.armMotor.setPower(0);
+                arm.armMotor.setPower(0.08);
             }
 
 
@@ -314,15 +314,6 @@ public class TeleOp extends LinearOpMode {
 
             telemetry.addData("blocks", blocks);
 
-            telemetry.addLine();
-
-            telemetry.addData("left open", isLeftOpen);
-
-            telemetry.addData("left fully open", isFullyOpen);
-
-            telemetry.addLine();
-
-            telemetry.addData("left position", intake.leftServo.getPosition());
 
             telemetry.update();
         }
