@@ -131,6 +131,8 @@ public class Drive {
 
     }
 
+    /*
+
     public void setPower(Vector2d v, double omega) {
 
         setVelocity(v.times(MAX_V), omega * MAX_O);
@@ -148,6 +150,8 @@ public class Drive {
         }
 
     }
+
+     */
 
 
     public void setPower(Pose2d target) {
@@ -176,7 +180,7 @@ public class Drive {
 
     /////////////////// Auto specific methods //////////////////////////////////////////////////////
 
-        public double getRawHeading(){
+    public double getRawHeading(){
         return rawHeading;
 
     }
