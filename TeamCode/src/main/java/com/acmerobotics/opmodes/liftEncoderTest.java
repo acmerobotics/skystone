@@ -20,10 +20,8 @@ public class liftEncoderTest extends LinearOpMode{
 
     private int blocks = 0;
 
-    public static int foundation = 150; // 2 in. from ground
-    public static int above = 15; // 1 in. from ground
-
     public static int targetPosition = 0;
+    public static double thePower = 0;
 
     @Override
     public void runOpMode(){
@@ -44,7 +42,7 @@ public class liftEncoderTest extends LinearOpMode{
 
             lift.setPID();
 
-            lift.runTo(targetPosition, 1, liftEncoder.Mode.DIRECT);
+            lift.runTo(targetPosition, thePower);
 
 
             dashboardTelemetry.addData("current position ", lift.liftMotor.getCurrentPosition());

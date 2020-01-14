@@ -41,12 +41,19 @@ public class TeleOp extends LinearOpMode {
     private boolean isDpadDown = false;
     private boolean isDpadLeft = false;
 
+    private boolean isYPressed = false;
+
     private boolean armReady = false;
 
     private int blocks = 0;
 
-    public static int foundation = 150; // 2 in. from ground
-    public static int above = 15; // 1 in. from ground
+    public static int foundation = 50; // 2 in. from ground
+    public static int above = 17; // 1 in. from ground
+
+    public static int oneExtraBlock = 88;
+    public static int twoExtraBlock = 95;
+
+    public int extraBlocks = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -69,7 +76,7 @@ public class TeleOp extends LinearOpMode {
         lift.resetEncoder(); // sets 0 position
         arm.resetEncoder();
 
-        arm.runTo(120); // gets arm out of the intake's way
+        arm.runTo(70); // gets arm out of the intake's way
 
         intake.rightFullyOpen();
         isRightOpen = true;
@@ -265,9 +272,9 @@ public class TeleOp extends LinearOpMode {
 
                 //hand will grab block
 
-                lift.runTo(liftEncoder.startHeight, lift.liftPower, liftEncoder.Mode.DIRECT);
+                lift.runTo(liftEncoder.startHeight, lift.liftPower);
 
-                arm.runTo(10);
+                arm.runTo(5);
 
                 arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 arm.armMotor.setPower(0.08);
@@ -283,7 +290,7 @@ public class TeleOp extends LinearOpMode {
                 int blockLifted = foundation + above;
 
                 arm.runTo(blockLifted);    // moves 2 in. + 1 in. above ground
-                lift.runTo(0, lift.liftPower, liftEncoder.Mode.DIRECT);
+                lift.runTo(0, lift.liftPower);
             }
 
 
@@ -295,6 +302,26 @@ public class TeleOp extends LinearOpMode {
                 int blockPlaced = foundation;
 
                 arm.runTo(blockPlaced);
+            }
+
+            if (gamepad2.y){
+                if (!isYPressed) {
+                    isYPressed = true;
+
+                    if (extraBlocks == 0) {
+                        arm.runTo(oneExtraBlock);
+                        extraBlocks = 1;
+                    }
+
+                    else if (extraBlocks == 1){
+                        arm.runTo(twoExtraBlock);
+                        extraBlocks = 0;
+                    }
+                }
+            }
+
+            else{
+                isYPressed = false;
             }
 
 
@@ -314,8 +341,15 @@ public class TeleOp extends LinearOpMode {
 
             telemetry.addData("blocks", blocks);
 
-
             telemetry.update();
+
+            dashboardTelemetry.addData("arm current position", arm.armMotor.getCurrentPosition());
+            dashboardTelemetry.addData("arm target position", arm.armMotor.getTargetPosition());
+
+            dashboardTelemetry.addData("isYPressed", isYPressed);
+            dashboardTelemetry.addData("extra blocks", extraBlocks);
+
+            dashboardTelemetry.update();
         }
     }
 }

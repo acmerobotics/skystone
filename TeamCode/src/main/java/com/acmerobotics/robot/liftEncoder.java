@@ -19,7 +19,7 @@ public class liftEncoder {
     public double blockHeight = 5;
     public double foundationHeight = 2;
     public double extraHeight = 0.5; // will get height greater than target so it doesn't run into it
-    public static int startHeight = 1560;
+    public static int startHeight = 1870;
     public static int bottomPosition = 0;
 
     public  boolean stringTightened = false;
@@ -28,21 +28,13 @@ public class liftEncoder {
     //////////////////////
     public int blockPosition = 0;
 
-    public static int blockEncoderHeight = 1130;
+    public static int blockEncoderHeight = 1530; //1130
 
 
     private int radius = 1;
     private int TICKS_PER_REV = 280;
 
     public double liftPower = 1;
-
-    public enum Mode{
-        BLOCKS,
-        BOTTOM,
-        DIRECT
-    }
-
-    public Mode mode;
 
     public static PIDFCoefficients coefficients = new PIDFCoefficients(10, 0.05, 0, 0, MotorControlAlgorithm.LegacyPID);
 
@@ -51,7 +43,7 @@ public class liftEncoder {
         liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
         bottomHallEffect = hardwareMap.digitalChannel.get("bottomHallEffect");
 
-        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
 
@@ -74,49 +66,14 @@ public class liftEncoder {
     }
 
 
-    public void runTo(int position, double power, Mode mode){
-                     // blocks can also be used as a direct encoder position if the mode is set to DIRECT
+    public void runTo(int position, double power){
 
-        setMode(mode);
-
-        switch (mode){
-            case BOTTOM:
-                int targetPosition = 0;
-
-                liftMotor.setTargetPosition(targetPosition);
-                liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-                liftMotor.setPower(power);
-
-            case BLOCKS:
-
-//                int foundation = 226;
-//                int block = 1130;
-//
-//                blockPosition = (block * position);
-//                plusFoundation = blockPosition + foundation;
-//                plusStartingHeight = plusFoundation + startHeight;
-//
-//                liftMotor.setTargetPosition(plusStartingHeight);
-//                liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//                liftMotor.setPower(power);
-
-//                int blocks = position;
-//
-//                targetPosition = inchesToTicks(blocks);
-//
-//                liftMotor.setTargetPosition(targetPosition);
-//                liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//
-//                liftMotor.setPower(power);
-
-            case DIRECT:
+                setPID();
 
                 liftMotor.setTargetPosition(position);
                 liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
                 liftMotor.setPower(power);
-        }
 
     }
 
@@ -134,18 +91,18 @@ public class liftEncoder {
     public void runToIncrement(int position){
         int targetPosition = liftMotor.getCurrentPosition() + position;
 
-        runTo(targetPosition, liftPower, Mode.DIRECT);
+        runTo(targetPosition, liftPower);
     }
 
 
     public void goToStartHeight(){
-        runTo(startHeight, liftPower, Mode.DIRECT);
+        runTo(startHeight, liftPower);
     }
 
     public void tightenLiftString(){
         int tightPosition = 150;
         if(stringTightened == false) {
-            runTo(tightPosition, liftPower, Mode.DIRECT);
+            runTo(tightPosition, liftPower);
 
             if (!liftMotor.isBusy()) {
                 stringTightened = true;
@@ -160,7 +117,7 @@ public class liftEncoder {
             if (!isAtBottom) {
                 bottomPosition = liftMotor.getCurrentPosition();
                 bottomPosition -= 5;
-                runTo(bottomPosition, liftPower, Mode.DIRECT);
+                runTo(bottomPosition, liftPower);
             } else {
                 bottomPosition = 0;
                 liftMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -192,10 +149,6 @@ public class liftEncoder {
 
 
     /////////////////////// other methods //////////////////////////
-
-    private void setMode(Mode mode){
-        this.mode = mode;
-    }
 
     public boolean isAtBottom(){
         boolean state = bottomHallEffect.getState();
