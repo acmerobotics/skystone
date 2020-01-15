@@ -42,15 +42,17 @@ public class EncoderTest extends LinearOpMode {
 
             //////////////////////////// ARM //////////////////////////
 
-            arm.runTo(targetPosition);
+            //arm.runTo(targetPosition);
 
             ///////////////////////////////////////////////////////////////
+
+            arm.armMotor.setPower(1);
 
 
 
             dashboardTelemetry.addData("target position", arm.armMotor.getTargetPosition());
             dashboardTelemetry.addData("current position", arm.armMotor.getCurrentPosition());
-            dashboardTelemetry.addData("pid", arm.armMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+            dashboardTelemetry.addData("pid", arm.armMotor.getPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION));
 
             dashboardTelemetry.update();
 

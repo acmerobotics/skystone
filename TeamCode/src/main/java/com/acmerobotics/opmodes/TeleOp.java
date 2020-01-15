@@ -346,9 +346,6 @@ public class TeleOp extends LinearOpMode {
             dashboardTelemetry.addData("arm current position", arm.armMotor.getCurrentPosition());
             dashboardTelemetry.addData("arm target position", arm.armMotor.getTargetPosition());
 
-            dashboardTelemetry.addData("isYPressed", isYPressed);
-            dashboardTelemetry.addData("extra blocks", extraBlocks);
-
             dashboardTelemetry.update();
         }
     }
