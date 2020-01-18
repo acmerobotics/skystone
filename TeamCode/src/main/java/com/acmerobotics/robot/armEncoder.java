@@ -27,8 +27,6 @@ public class armEncoder {
 
     private int gearRatio = 2;
 
-    public double testAngle = 10;
-
     //^^^^^^^^^^^^^^^^^^^^used in encoder math^^^^^^^^^^^//
 
     public double rotateCenter = 140/255;
@@ -62,7 +60,7 @@ public class armEncoder {
         // motor added to hardware map, arm floats to init position and
         // is set to 0 power and is held there by RUN_USING_ENCODER
 
-        armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 

@@ -28,13 +28,21 @@ public class liftEncoder {
     //////////////////////
     public int blockPosition = 0;
 
-    public static int blockEncoderHeight = 1530; //1130
+    public static int blockEncoderHeight = 1530;
 
 
     private int radius = 1;
     private int TICKS_PER_REV = 280;
 
     public double liftPower = 1;
+
+    public enum Mode{
+        BLOCKS,
+        BOTTOM,
+        DIRECT
+    }
+
+    public Mode mode;
 
     public static PIDFCoefficients coefficients = new PIDFCoefficients(10, 0.05, 0, 0, MotorControlAlgorithm.LegacyPID);
 
@@ -43,7 +51,7 @@ public class liftEncoder {
         liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
         bottomHallEffect = hardwareMap.digitalChannel.get("bottomHallEffect");
 
-        liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
 
@@ -66,15 +74,11 @@ public class liftEncoder {
     }
 
 
-    public void runTo(int position, double power){
+    public void runTo(int position, double power) {
 
-                setPID();
-
-                liftMotor.setTargetPosition(position);
-                liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-                liftMotor.setPower(power);
-
+        liftMotor.setTargetPosition(position);
+        liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        liftMotor.setPower(power);
     }
 
 
@@ -149,6 +153,10 @@ public class liftEncoder {
 
 
     /////////////////////// other methods //////////////////////////
+
+    private void setMode(Mode mode){
+        this.mode = mode;
+    }
 
     public boolean isAtBottom(){
         boolean state = bottomHallEffect.getState();

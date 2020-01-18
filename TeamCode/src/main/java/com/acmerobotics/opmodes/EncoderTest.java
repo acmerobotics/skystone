@@ -42,11 +42,9 @@ public class EncoderTest extends LinearOpMode {
 
             //////////////////////////// ARM //////////////////////////
 
-            //arm.runTo(targetPosition);
+            arm.runTo(targetPosition);
 
             ///////////////////////////////////////////////////////////////
-
-            arm.armMotor.setPower(1);
 
 
 
