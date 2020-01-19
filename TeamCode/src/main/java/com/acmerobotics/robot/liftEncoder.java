@@ -19,7 +19,7 @@ public class liftEncoder {
     public double blockHeight = 5;
     public double foundationHeight = 2;
     public double extraHeight = 0.5; // will get height greater than target so it doesn't run into it
-    public static int startHeight = 1870;
+    public static int startHeight = 1920;
     public static int bottomPosition = 0;
 
     public  boolean stringTightened = false;
@@ -28,7 +28,7 @@ public class liftEncoder {
     //////////////////////
     public int blockPosition = 0;
 
-    public static int blockEncoderHeight = 1530;
+    public static int blockEncoderHeight = 1560;
 
 
     private int radius = 1;
@@ -51,7 +51,7 @@ public class liftEncoder {
         liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
         bottomHallEffect = hardwareMap.digitalChannel.get("bottomHallEffect");
 
-        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
 
@@ -93,7 +93,7 @@ public class liftEncoder {
 
 
     public void runToIncrement(int position){
-        int targetPosition = liftMotor.getCurrentPosition() + position;
+        int targetPosition = liftMotor.getCurrentPosition() + position; //make 50 to 150
 
         runTo(targetPosition, liftPower);
     }
@@ -104,7 +104,7 @@ public class liftEncoder {
     }
 
     public void tightenLiftString(){
-        int tightPosition = 150;
+        int tightPosition = 100;
         if(stringTightened == false) {
             runTo(tightPosition, liftPower);
 
@@ -120,7 +120,7 @@ public class liftEncoder {
         if(bottomSet == false && stringTightened == true) {
             if (!isAtBottom) {
                 bottomPosition = liftMotor.getCurrentPosition();
-                bottomPosition -= 5;
+                bottomPosition -= 10;
                 runTo(bottomPosition, liftPower);
             } else {
                 bottomPosition = 0;

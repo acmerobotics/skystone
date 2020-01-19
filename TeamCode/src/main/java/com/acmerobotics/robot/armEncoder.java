@@ -19,8 +19,6 @@ public class armEncoder {
     public Servo rotationServo;
     public Servo handServo;
 
-    //TODO///////////// Find the needed angles //////////
-
     private double TICKS_PER_REV = 280;
 
     private double ARM_MOTOR_DIAMETER = 1;
@@ -32,9 +30,9 @@ public class armEncoder {
     public double rotateCenter = 140/255;
 
 
-    public static double P = 30;
-    public static double I = 4; // 7
-    public static double D = 0.25;
+    public static double P = 12;
+    public static double I = 0.5;
+    public static double D = 0;
     public static double F = 0;
 
     public static PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F, MotorControlAlgorithm.LegacyPID);
