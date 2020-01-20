@@ -16,7 +16,7 @@ public class ParkingBlue extends LinearOpMode {
 
             //none of the encoder movement will work without the encoder info such as tick count (found in drive)
 
-            drive.moveRobotTo("forward", 4);
+         //   drive.moveRobotTo("forward", 4);
 
             //drive.moveTo(1);
 

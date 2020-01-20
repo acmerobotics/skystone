@@ -1,21 +1,16 @@
 package com.acmerobotics.robot;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.robomatic.robot.Robot;
-import com.acmerobotics.robomatic.robot.Subsystem;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Config
@@ -42,6 +37,8 @@ public class Drive {
 
     public double wheelOmega = 0;
     public int MDistance = 0;
+
+    public double ticksPerRev = 560.0;
 
     private ElapsedTime runtime = new ElapsedTime();
   
@@ -93,8 +90,8 @@ public class Drive {
 
 
         motors[0].setDirection(DcMotorEx.Direction.FORWARD);
-        motors[1].setDirection(DcMotorEx.Direction.REVERSE);
-        motors[2].setDirection(DcMotorEx.Direction.FORWARD);
+        motors[1].setDirection(DcMotorEx.Direction.FORWARD);
+        motors[2].setDirection(DcMotorEx.Direction.REVERSE);
         motors[3].setDirection(DcMotorEx.Direction.REVERSE);
 
         for(int i=0; i<4; i++){
@@ -177,6 +174,12 @@ public class Drive {
 
     }
 
+    public double degreesToRadians(double degrees){
+        double toRadians = degrees/180 * Math.PI;
+        return toRadians;
+    }
+
+
 
     /////////////////// Auto specific methods //////////////////////////////////////////////////////
 
@@ -190,19 +193,62 @@ public class Drive {
     }
 
    public void setHeading(double heading){
-        headingOffset = heading - getRawHeading();
+        headingOffset = degreesToRadians(heading) - getRawHeading();
     }
 
-    public void turn(double angle){
-        turning = true;
-        targetHeading = getHeading() + angle;
+    public void setIMU(int angle){
+        for(int i = 0; i < 4; i++){
+            motors[i].setTargetPosition(angle);
+            motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+            motors[i].setPower(0.5);
+        }
 
     }
+
+    public void turn(int degrees){
+        imu.getPosition();
+    }
+
+
+    public void stopMotors(){
+        for (int i = 0; i < 4; i++){
+            motors[i].setPower(0);
+        }
+    }
+
+    public void setEncoders(int distance){
+        for (int i = 0; i < 4; i++){
+            motors[i].setTargetPosition(distance);
+            motors[i].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            motors[i].setPower(0.5);
+        }
+
+    }
+
+    public void resetEncoders(){
+        for(int i = 0; i < 4; i++){
+            motors[i].setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        }
+    }
+
+    private double ticksToInches(int ticks) {
+        double revs = ticks / ticksPerRev;
+        return 2 * Math.PI * RADIUS * revs;
+
+    }
+
+    private int inchesToTicks(double inches) {
+        double circumference = 2 * Math.PI * RADIUS;
+        return (int) Math.round(inches * ticksPerRev / circumference);
+    }
+
+    public void goToPosition(double position){
+        setEncoders(inchesToTicks(position));
+
+    }
+
 
 //////////////////////// Auto specific methods end//////////////////////////////////////////////////
-
-
-    //TODO robomatic probably needs the update function ha ha ha
 
     public void update(){
 
