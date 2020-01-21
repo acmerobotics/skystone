@@ -12,6 +12,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @Config
 public class Drive {
@@ -35,10 +38,16 @@ public class Drive {
     private static final double WHEEL_DIAMETER = 2; ////////real diameter is 4
     private static final double TICKS_PER_INCH = TICK_COUNT/ WHEEL_DIAMETER * Math.PI;
 
+    Orientation lastAngle = new Orientation();
+
     public double wheelOmega = 0;
     public int MDistance = 0;
+    private double currentPos;
+    private double error;
+    private double degrees;
+    private double globalAngle;
 
-    public double ticksPerRev = 560.0;
+    private double ticksPerRev = 560.0;
 
     private ElapsedTime runtime = new ElapsedTime();
   
@@ -46,14 +55,14 @@ public class Drive {
     TelemetryPacket packet = new TelemetryPacket();
 
 
-    public static Vector2d[] WHEEL_POSITIONS = {
+    private static Vector2d[] WHEEL_POSITIONS = {
             new Vector2d(6, 7.5),
             new Vector2d(-6, 7.5),
             new Vector2d(-6, -7.5),
             new Vector2d(6, -7.5)
     };
 
-    public static Vector2d[] ROTOR_DIRECTIONS = {
+    private static Vector2d[] ROTOR_DIRECTIONS = {
       new Vector2d(1, 1),
       new Vector2d(-1, 1),
       new Vector2d(-1, -1),
@@ -196,17 +205,75 @@ public class Drive {
         headingOffset = degreesToRadians(heading) - getRawHeading();
     }
 
-    public void setIMU(int angle){
-        for(int i = 0; i < 4; i++){
-            motors[i].setTargetPosition(angle);
-            motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-            motors[i].setPower(0.5);
-        }
+    public void setDegrees(double degrees){
+        this.degrees = degreesToRadians(degrees);
+    }
+
+    public double getRadians(){
+        return degrees;
+    }
+
+    public void resetAngle(){
+       lastAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+
+       globalAngle = degreesToRadians(0);
 
     }
 
+    public double getAngle(){
+
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+
+        double deltaAngle = angles.firstAngle - lastAngle.firstAngle;
+
+
+        if (deltaAngle < degreesToRadians(-180))
+            deltaAngle += degreesToRadians(360);
+        else if (deltaAngle > degreesToRadians(180))
+            deltaAngle -= degreesToRadians(360);
+
+        globalAngle += deltaAngle;
+
+        lastAngle = angles;
+
+        return globalAngle;
+
+    }
+
+    public double calculateError(){
+        error = -getAngle() + getRadians();
+        return error;
+    }
+
+
+/*
     public void turn(int degrees){
-        imu.getPosition();
+        turning = true;
+        targetHeading = getHeading() + degreesToRadians(degrees);
+    }
+
+ */
+
+    public void clockwise(){
+        for(int i = 0; i < 4; i++){
+            motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        }
+        motors[0].setPower(0.25);
+        motors[1].setPower(0.25);
+        motors[2].setPower(-0.25);
+        motors[3].setPower(-0.25);
+
+    }
+
+    public void counterClockwise(){
+        for(int i = 0; i < 4; i++){
+            motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        motors[0].setPower(-0.25);
+        motors[1].setPower(-0.25);
+        motors[2].setPower(0.25);
+        motors[3].setPower(0.25);
     }
 
 
