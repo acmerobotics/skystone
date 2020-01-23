@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -24,11 +25,9 @@ public class Drive {
   
     public static final double RADIUS = 2;
 
-    public static double MOVE_FORWARD = -0.8;
-    public static double MOVE_BACK = 0.8;
-    public static double MOVE_RIGHT = 0.8;
-    public static double MOVE_LEFT = -0.8;
-    public static double omegaSpeed = 0.8;
+    public double targetPos;
+
+    public boolean atTargetPos = false;
 
     private Pose2d targetVelocity = new Pose2d(0, 0, 0);
 
@@ -99,8 +98,8 @@ public class Drive {
 
 
         motors[0].setDirection(DcMotorEx.Direction.FORWARD);
-        motors[1].setDirection(DcMotorEx.Direction.FORWARD);
-        motors[2].setDirection(DcMotorEx.Direction.REVERSE);
+        motors[1].setDirection(DcMotorEx.Direction.REVERSE);
+        motors[2].setDirection(DcMotorEx.Direction.FORWARD);
         motors[3].setDirection(DcMotorEx.Direction.REVERSE);
 
         for(int i=0; i<4; i++){
@@ -276,6 +275,29 @@ public class Drive {
         motors[3].setPower(0.25);
     }
 
+    public void strafeLeft(){
+        for(int i = 0; i < 4; i++){
+            motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        motors[0].setPower(-0.25);
+        motors[1].setPower(0.25);
+        motors[2].setPower(-0.25);
+        motors[3].setPower(0.25);
+    }
+
+    public void strafeRight(){
+        for(int i = 0; i < 4; i++){
+            motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        motors[0].setPower(0.25);
+        motors[1].setPower(-0.25);
+        motors[2].setPower(0.25);
+        motors[3].setPower(-0.25);
+    }
+
+
 
     public void stopMotors(){
         for (int i = 0; i < 4; i++){
@@ -304,7 +326,7 @@ public class Drive {
 
     }
 
-    private int inchesToTicks(double inches) {
+    public int inchesToTicks(double inches) {
         double circumference = 2 * Math.PI * RADIUS;
         return (int) Math.round(inches * ticksPerRev / circumference);
     }
@@ -312,7 +334,41 @@ public class Drive {
     public void goToPosition(double position){
         setEncoders(inchesToTicks(position));
 
+        targetPos = inchesToTicks(position);
+
     }
+
+    //TODO see if this is causing issues
+
+    public double getCurrentPos(){
+        for(int i = 0; i < 4; i++){
+            currentPos = motors[i].getCurrentPosition();
+        }
+
+        return currentPos;
+    }
+
+    public double getTargetPos(){
+        return targetPos;
+    }
+
+    public boolean atLinearPos(){
+
+        if(Math.abs(targetPos - getCurrentPos()) < 4){
+
+            atTargetPos = true;
+        }
+
+        return atTargetPos;
+
+    }
+
+    public boolean resetLinearPos(){
+        atTargetPos = false;
+
+        return atTargetPos;
+    }
+
 
 
 //////////////////////// Auto specific methods end//////////////////////////////////////////////////
