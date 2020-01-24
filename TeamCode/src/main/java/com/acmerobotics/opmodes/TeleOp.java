@@ -41,17 +41,23 @@ public class TeleOp extends LinearOpMode {
     private boolean isDpadDown = false;
     private boolean isDpadLeft = false;
 
+    private boolean is1YPressed = false;
+    private boolean slowDrive = false;
+
+    private boolean isaPressed = false;
+    private boolean moverUp = true;
+
     private boolean isYPressed = false;
 
     private boolean armReady = false;
 
     private int blocks = 0;
 
-    public static int foundation = 50; // 2 in. from ground
-    public static int above = 17; // 1 in. from ground
+    public static int foundation = 165;
+    public static int lower = 145;
 
-    public static int oneExtraBlock = 88;
-    public static int twoExtraBlock = 95;
+    public static int oneExtraBlock = 220;
+    public static int twoExtraBlock = 250;
 
     public int extraBlocks = 0;
 
@@ -76,7 +82,7 @@ public class TeleOp extends LinearOpMode {
         lift.resetEncoder(); // sets 0 position
         arm.resetEncoder();
 
-        arm.runTo(70); // gets arm out of the intake's way
+        arm.runTo(90); // gets arm out of the intake's way
 
         intake.rightFullyOpen();
         isRightOpen = true;
@@ -116,10 +122,40 @@ public class TeleOp extends LinearOpMode {
 
             lift.setPID();
 
-            ////////////////////// gamepad1   /////////////////////////////
+            //////////////////////////////////// gamepad1   //////////////////////////////////////////
 
-            Pose2d v = transform.transform(new Pose2d(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x));
-            drive.setPower(v);
+            if(gamepad1.y) {
+
+                if(!is1YPressed) {
+                    is1YPressed = true;
+
+                    if (slowDrive == false) {
+                        slowDrive = true;
+                    }
+
+                    else if (slowDrive == true){
+                        slowDrive = false;
+                    }
+                }
+            }
+
+            else{
+                is1YPressed = false;
+            }
+
+
+            if(slowDrive == false){
+
+                Pose2d v = transform.transform(new Pose2d(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x));
+                drive.setPower(v);
+            }
+
+            if(slowDrive == true){
+
+                Pose2d v = new Pose2d(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+                drive.setSlowPower(v);
+            }
+
 
             //drive.setPower(new Vector2d(gamepad1.left_stick_y, -gamepad1.left_stick_x), gamepad1.right_stick_x);
 
@@ -129,6 +165,10 @@ public class TeleOp extends LinearOpMode {
 
             if (gamepad1.b){
                 foundationMover.moveToStore();
+            }
+
+            else{
+                isaPressed = false;
             }
 
             if (gamepad1.left_bumper) {
@@ -197,7 +237,7 @@ public class TeleOp extends LinearOpMode {
             intake.setIntakePower(gamepad1.right_trigger);
 
 
-            ///////////////////// gamepad2   ///////////////////////////
+            /////////////////////////////////////// gamepad2   /////////////////////////////////////////////
 
 
             ////////////////////// Main Lift Code ///////////////////////
@@ -244,7 +284,7 @@ public class TeleOp extends LinearOpMode {
             if (gamepad2.right_trigger > 0){
                 if (!isRightTriggerPressed){
                     isRightTriggerPressed = true;
-                    lift.runToIncrement(100);
+                    lift.runToIncrement(150);
                 }
             }
 
@@ -256,13 +296,25 @@ public class TeleOp extends LinearOpMode {
             if (gamepad2.left_trigger > 0){
                 if (!isLeftTriggerPressed){
                     isLeftTriggerPressed = true;
-                    lift.runToIncrement(-100);
+                    lift.runToIncrement(-150);
                 }
             }
 
             else{
                 isLeftTriggerPressed = false;
             }
+
+
+            /////////////////////// Lift Grab Capstone //////////////////////////
+
+            if (gamepad2.back){
+                arm.moveTo(8);
+                lift.runTo(1340, 1);
+            }
+
+            ///////////////////////////////////////////////////////////////
+
+
 
             //////////////////////// ARM //////////////////////////
 
@@ -274,7 +326,7 @@ public class TeleOp extends LinearOpMode {
 
                 lift.runTo(liftEncoder.startHeight, lift.liftPower);
 
-                arm.runTo(5);
+                arm.runTo(8);
 
                 arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 arm.armMotor.setPower(0.08);
@@ -287,9 +339,9 @@ public class TeleOp extends LinearOpMode {
 
                 // allows robot to go under bridge
 
-                int blockLifted = foundation + above;
+                int blockLifted = foundation;
 
-                arm.runTo(blockLifted);    // moves 2 in. + 1 in. above ground
+                arm.runTo(blockLifted);
                 lift.runTo(0, lift.liftPower);
             }
 
@@ -299,7 +351,7 @@ public class TeleOp extends LinearOpMode {
 
                 // hand releases block
 
-                int blockPlaced = foundation;
+                int blockPlaced = lower;
 
                 arm.runTo(blockPlaced);
             }
@@ -341,12 +393,13 @@ public class TeleOp extends LinearOpMode {
 
             telemetry.addData("blocks", blocks);
 
+            telemetry.addData("drive mode", slowDrive);
+
+            telemetry.addData("is Y pressed", is1YPressed);
+
+            telemetry.addData("gampad 1 Y pressed", gamepad1.y);
+
             telemetry.update();
-
-            dashboardTelemetry.addData("arm current position", arm.armMotor.getCurrentPosition());
-            dashboardTelemetry.addData("arm target position", arm.armMotor.getTargetPosition());
-
-            dashboardTelemetry.update();
         }
     }
 }

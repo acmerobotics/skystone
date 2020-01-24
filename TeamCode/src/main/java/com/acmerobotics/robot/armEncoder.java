@@ -19,26 +19,32 @@ public class armEncoder {
     public Servo rotationServo;
     public Servo handServo;
 
-    private double TICKS_PER_REV = 280;
+    private double TICKS_PER_REV_MOTOR = 560;
+
+    private double TICKS_PER_REV_GEAR = TICKS_PER_REV_MOTOR * 2;
+
+    private double TICKs_PER_DEGREE = TICKS_PER_REV_GEAR / 360;
 
     private double ARM_MOTOR_DIAMETER = 1;
 
     private int gearRatio = 2;
 
-    //^^^^^^^^^^^^^^^^^^^^used in encoder math^^^^^^^^^^^//
+    private double armLength = 14;
+
+    //^^^^^^^^^^^^^^^^^^^^used in math^^^^^^^^^^^//
 
     public double rotateCenter = 140/255;
 
 
-    public static double P = 12;
-    public static double I = 0.5;
+    public static double P = 16; //12
+    public static double I = 0.6; // 0.5
     public static double D = 0;
     public static double F = 0;
 
     public static PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F, MotorControlAlgorithm.LegacyPID);
 
-    private double handOpenPos = 0.78;
-    private double handClosePos = 0.08;
+    private double handOpenPos = 0.59;
+    private double handClosePos = 0.117;
 
 
     //^^^^^^^^^^^^general variables^^^^^^^^^^^^^^^^^^^^//
@@ -109,7 +115,6 @@ public class armEncoder {
     }
 
     public void setHand(String position){
-        // take in close or open then set servo position accordingly
 
         if (position.equals("open")){
             //open hand
@@ -127,17 +132,55 @@ public class armEncoder {
 
 
 
+    ////////////////////////// hand inches from ground math code ////////////////////////////
+
+    public double hypotenuseOfPath(double desiredInches){
+        double hypotenuse = Math.pow(armLength, 2) + Math.pow(desiredInches, 2);
+        return hypotenuse;
+    }
+
+    public double armAngleOfPath(double hypotenuse){
+
+        double angle = (Math.pow(hypotenuse, 2) - Math.pow(armLength, 2) - Math.pow(armLength, 2)
+                / (-2 * armLength *  armLength));  // law of cosine solving for angle
+
+        angle = Math.acos(angle);
+
+        return angle;
+
+    }
+
+
+    public double angleToTicks(double angle){
+        double ticks = angle * TICKs_PER_DEGREE;
+
+        return ticks;
+    }
+
+
+    public double moveTo(double inches){  /// final method with all math concluded
+        double hypotenuse = hypotenuseOfPath(inches);
+
+        double angle = armAngleOfPath(hypotenuse);
+
+        double ticks = angleToTicks(angle);
+
+        return ticks;
+    }
+
+
+    //////////////////////////^ end of hand inches from ground math code ^////////////////////////////
 
 
 
 
 
-    ///////////////////////////// math to get ticks to move at x angle /////////////////////////////
+    ///////////////////////////// degree angle math code (discontinued) /////////////////////////////
 
     public double ticksPerInch(){
         // number of ticks per inch based on the arm gear circumference
 
-        return TICKS_PER_REV/ Math.PI * ARM_MOTOR_DIAMETER;
+        return TICKS_PER_REV_GEAR/ Math.PI * ARM_MOTOR_DIAMETER;
         // (to test if this is really ticks per inch: take the number that results from the equation above (x) and
         // multiply it by the circumference, this number will tell you the total number of ticks around the circumference.)
     }
@@ -194,5 +237,5 @@ public class armEncoder {
 
 
 
-    //////////////////////////////////////^ end of encoder math ^/////////////////////////////////////
+    //////////////////////////////////////^ degree angle math code math ^/////////////////////////////////////
 }
