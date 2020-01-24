@@ -22,6 +22,9 @@ public class Drive {
 
     public static double MAX_V = 30;
     public static double MAX_O = 30;
+
+    public static double slow_v = MAX_V/4;
+    public static double slow_o = MAX_O/4;
   
     public static final double RADIUS = 2;
 
@@ -120,23 +123,7 @@ public class Drive {
        //imu.initialize(parameters);
     }
 
-
-    //what is this for?
-    public void moveTo(int seconds){
-        double x = 0;
-        double y = 0;
-        runtime.reset();
-
-        Vector2d v = new Vector2d(y,x);
-
-        if (runtime.seconds() > seconds){
-            //setPower(v, 0);
-
-    }
-
-    }
-
-    /*
+   /*
 
     public void setPower(Vector2d v, double omega) {
 
@@ -170,7 +157,19 @@ public class Drive {
 
     }
 
-    public void setVelocity(Pose2d v) {
+
+    public void setSlowPower(Pose2d target) {
+        double v = target.vec().norm() * slow_v;
+        double theta = Math.atan2(target.getX(), target.getY());
+        double omega = target.getHeading() * slow_o;
+
+        targetVelocity = new Pose2d(v * Math.cos(theta), v * Math.sin(theta), omega);
+
+        setVelocity(targetVelocity);
+    }
+
+
+        public void setVelocity(Pose2d v) {
         for (int i = 0; i < 4; i++) {
             Vector2d wheelVelocity = new Vector2d(v.getX() - v.getHeading() * WHEEL_POSITIONS[i].getY(),
                     v.getY() + v.getHeading() * WHEEL_POSITIONS[i].getX());

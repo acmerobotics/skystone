@@ -32,8 +32,7 @@ public class TeleOp extends LinearOpMode {
     public boolean isRightBumperPressed = false;
     public boolean isRightOpen = false;
 
-    private boolean isRfullyOpen = false;
-    private boolean isLfullyOpen = false;
+    private boolean isFullyOpen = false;
 
     public boolean isRightTriggerPressed = false;
     public boolean isLeftTriggerPressed = false;
@@ -41,12 +40,27 @@ public class TeleOp extends LinearOpMode {
     private boolean isDpadUp = false;
     private boolean isDpadDown = false;
     private boolean isDpadLeft = false;
+
+
+    private boolean is1YPressed = false;
+    private boolean slowDrive = false;
+
+    private boolean isaPressed = false;
+    private boolean moverUp = true;
+
+    private boolean isYPressed = false;
+
     private boolean armReady = false;
 
     private int blocks = 0;
 
-    public static int foundation = 150; // 2 in. from ground
-    public static int above = 15; // 1 in. from ground
+    public static int foundation = 165;
+    public static int lower = 145;
+
+    public static int oneExtraBlock = 220;
+    public static int twoExtraBlock = 250;
+
+    public int extraBlocks = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -57,6 +71,7 @@ public class TeleOp extends LinearOpMode {
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         Intake intake = new Intake(hardwareMap);
         JoystickTransform transform = new JoystickTransform();
+        ElapsedTime time = new ElapsedTime();
         
         FtcDashboard dashboard = FtcDashboard.getInstance();
         Telemetry dashboardTelemetry = dashboard.getTelemetry();
@@ -68,19 +83,20 @@ public class TeleOp extends LinearOpMode {
         lift.resetEncoder(); // sets 0 position
         arm.resetEncoder();
 
-        arm.runTo(120); // gets arm out of the intake's way
+        arm.runTo(90); // gets arm out of the intake's way
 
         intake.rightFullyOpen();
         isRightOpen = true;
-        isRfullyOpen = true;
+
+        time.reset();
 
         while(true) {
             lift.tightenLiftString();
 
-            if (lift.liftMotor.isBusy() == false){
+            if(time.seconds() > 1){
                 intake.leftFullyOpen();
                 isLeftOpen = true;
-                isLfullyOpen = true;
+                isFullyOpen = true;
             }
 
             lift.goToBottom();
@@ -100,17 +116,47 @@ public class TeleOp extends LinearOpMode {
 
         while (!isStopRequested()){
 
-            if(!armReady){
+            if(!armReady) {
                 arm.resetEncoder();
                 armReady = true;
             }
 
             lift.setPID();
 
-            ////////////////////// gamepad1   /////////////////////////////
+            //////////////////////////////////// gamepad1   //////////////////////////////////////////
 
-            Pose2d v = transform.transform(new Pose2d(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x));
-            drive.setPower(v);
+            if(gamepad1.y) {
+
+                if(!is1YPressed) {
+                    is1YPressed = true;
+
+                    if (slowDrive == false) {
+                        slowDrive = true;
+                    }
+
+                    else if (slowDrive == true){
+                        slowDrive = false;
+                    }
+                }
+            }
+
+            else{
+                is1YPressed = false;
+            }
+
+
+            if(slowDrive == false){
+
+                Pose2d v = transform.transform(new Pose2d(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x));
+                drive.setPower(v);
+            }
+
+            if(slowDrive == true){
+
+                Pose2d v = new Pose2d(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+                drive.setSlowPower(v);
+            }
+
 
             //drive.setPower(new Vector2d(gamepad1.left_stick_y, -gamepad1.left_stick_x), gamepad1.right_stick_x);
 
@@ -120,6 +166,10 @@ public class TeleOp extends LinearOpMode {
 
             if (gamepad1.b){
                 foundationMover.moveToStore();
+            }
+
+            else{
+                isaPressed = false;
             }
 
             if (gamepad1.left_bumper) {
@@ -137,12 +187,12 @@ public class TeleOp extends LinearOpMode {
                     else{
                         intake.rightClose();
                         isRightOpen = false;
-                        isRfullyOpen = false;
+                        isFullyOpen = false;
                     }
                 }
             }
 
-            else {
+            else if (!gamepad1.left_bumper && !isFullyOpen) {
 
                 isLeftBumperPressed = false;
 
@@ -155,10 +205,8 @@ public class TeleOp extends LinearOpMode {
                 else{
                     intake.leftClose();
                     isLeftOpen = false;
-                    isLfullyOpen = false;
                 }
             }
-
 
             if (gamepad1.right_bumper) {
 
@@ -166,21 +214,18 @@ public class TeleOp extends LinearOpMode {
 
                     isRightBumperPressed = true;
 
-                    if(isRfullyOpen == false) {
+                    if(isFullyOpen == false) {
+                        isFullyOpen = true;
 
                         intake.rightFullyOpen();
                         intake.leftFullyOpen();
-
-                        isRfullyOpen = true;
-                        isLfullyOpen = true;
                     }
 
                     else{
+                        isFullyOpen = false;
+
                         intake.rightOpen();
                         intake.leftOpen();
-
-                        isRfullyOpen = false;
-                        isLfullyOpen = false;
                     }
                 }
             }
@@ -193,7 +238,7 @@ public class TeleOp extends LinearOpMode {
             intake.setIntakePower(gamepad1.right_trigger);
 
 
-            ///////////////////// gamepad2   ///////////////////////////
+            /////////////////////////////////////// gamepad2   /////////////////////////////////////////////
 
 
             ////////////////////// Main Lift Code ///////////////////////
@@ -240,7 +285,7 @@ public class TeleOp extends LinearOpMode {
             if (gamepad2.right_trigger > 0){
                 if (!isRightTriggerPressed){
                     isRightTriggerPressed = true;
-                    lift.runToIncrement(100);
+                    lift.runToIncrement(150);
                 }
             }
 
@@ -252,13 +297,25 @@ public class TeleOp extends LinearOpMode {
             if (gamepad2.left_trigger > 0){
                 if (!isLeftTriggerPressed){
                     isLeftTriggerPressed = true;
-                    lift.runToIncrement(-100);
+                    lift.runToIncrement(-150);
                 }
             }
 
             else{
                 isLeftTriggerPressed = false;
             }
+
+
+            /////////////////////// Lift Grab Capstone //////////////////////////
+
+            if (gamepad2.back){
+                arm.moveTo(8);
+                lift.runTo(1340, 1);
+            }
+
+            ///////////////////////////////////////////////////////////////
+
+
 
             //////////////////////// ARM //////////////////////////
 
@@ -268,12 +325,12 @@ public class TeleOp extends LinearOpMode {
 
                 //hand will grab block
 
-                lift.runTo(liftEncoder.startHeight, lift.liftPower, liftEncoder.Mode.DIRECT);
+                lift.runTo(liftEncoder.startHeight, lift.liftPower);
 
-                arm.runTo(10);
+                arm.runTo(8);
 
                 arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                arm.armMotor.setPower(0);
+                arm.armMotor.setPower(0.08);
             }
 
 
@@ -283,10 +340,10 @@ public class TeleOp extends LinearOpMode {
 
                 // allows robot to go under bridge
 
-                int blockLifted = foundation + above;
+                int blockLifted = foundation;
 
-                arm.runTo(blockLifted);    // moves 2 in. + 1 in. above ground
-                lift.runTo(0, lift.liftPower, liftEncoder.Mode.DIRECT);
+                arm.runTo(blockLifted);
+                lift.runTo(0, lift.liftPower);
             }
 
 
@@ -295,9 +352,29 @@ public class TeleOp extends LinearOpMode {
 
                 // hand releases block
 
-                int blockPlaced = foundation;
+                int blockPlaced = lower;
 
                 arm.runTo(blockPlaced);
+            }
+
+            if (gamepad2.y){
+                if (!isYPressed) {
+                    isYPressed = true;
+
+                    if (extraBlocks == 0) {
+                        arm.runTo(oneExtraBlock);
+                        extraBlocks = 1;
+                    }
+
+                    else if (extraBlocks == 1){
+                        arm.runTo(twoExtraBlock);
+                        extraBlocks = 0;
+                    }
+                }
+            }
+
+            else{
+                isYPressed = false;
             }
 
 
@@ -317,13 +394,9 @@ public class TeleOp extends LinearOpMode {
 
             telemetry.addData("blocks", blocks);
 
-            telemetry.addLine();
+            telemetry.addData("drive mode", slowDrive);
 
             telemetry.update();
-
         }
-
     }
-
 }
-

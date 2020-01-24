@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Intake {
 
     private DcMotorEx leftMotor, rightMotor;
-    private Servo leftServo, rightServo;
+    public Servo leftServo, rightServo;
 
     private double leftOpen = 0.33;
     private double leftClose = 1;
@@ -52,7 +52,6 @@ public class Intake {
 
     public void rightClose(){
         rightServo.setPosition(rightClose);
-
     }
 
     public void setIntakePower(double intakePower) {
