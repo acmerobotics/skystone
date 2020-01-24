@@ -52,7 +52,6 @@ public class BlueFoundation extends LinearOpMode {
                 case 1:
 
                     if(drive.atLinearPos()){
-                        drive.resetLinearPos();
                         state++;
 
                     }

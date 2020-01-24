@@ -11,6 +11,7 @@ public class RedFoundation extends LinearOpMode {
 
     private boolean moveToFoundation = false;
     private boolean strafeRight = false;
+    private boolean grabbedFoundation = false;
     private int state;
     private boolean timeReset;
 
@@ -29,11 +30,12 @@ public class RedFoundation extends LinearOpMode {
         drive.resetEncoders();
         drive.resetAngle();
         time.reset();
+        //drive.resetLinearPos();
         drive.update();
 
         telemetry.addData("state", state);
         telemetry.addData("current pos", drive.getCurrentPos());
-        telemetry.addData("linear pos", drive.atLinearPos());
+        telemetry.addData("target pos bool", drive.returnAtTargetPos());
         telemetry.update();
 
         waitForStart();
@@ -46,8 +48,7 @@ public class RedFoundation extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToPosition(-30);
-
+                    drive.goToPosition(26);
                     state++;
 
                     break;
@@ -55,6 +56,7 @@ public class RedFoundation extends LinearOpMode {
                 case 1:
 
                     if(drive.atLinearPos()){
+                        drive.stopMotors();
                         state++;
 
                     }
@@ -62,6 +64,19 @@ public class RedFoundation extends LinearOpMode {
                     break;
 
                 case 2:
+
+                    foundationMover.moveToGrab();
+
+                    Thread.sleep(600);
+
+                    state++;
+
+
+
+                    break;
+
+
+                case 3:
 
                     if (!timeReset) {
                         time.reset();
@@ -78,17 +93,6 @@ public class RedFoundation extends LinearOpMode {
 
 
                     break;
-
-
-                case 3:
-
-                    foundationMover.moveToGrab();
-
-                    state++;
-
-                    break;
-
-
 
                 case 4:
 

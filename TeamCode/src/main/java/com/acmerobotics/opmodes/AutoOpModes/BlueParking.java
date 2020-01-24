@@ -56,7 +56,6 @@ public class BlueParking extends LinearOpMode {
                 case 1:
 
                     if(drive.atLinearPos()){
-                        drive.resetLinearPos();
                         state++;
 
                     }

@@ -98,8 +98,8 @@ public class Drive {
 
 
         motors[0].setDirection(DcMotorEx.Direction.FORWARD);
-        motors[1].setDirection(DcMotorEx.Direction.REVERSE);
-        motors[2].setDirection(DcMotorEx.Direction.FORWARD);
+        motors[1].setDirection(DcMotorEx.Direction.FORWARD);
+        motors[2].setDirection(DcMotorEx.Direction.REVERSE);
         motors[3].setDirection(DcMotorEx.Direction.REVERSE);
 
         for(int i=0; i<4; i++){
@@ -306,9 +306,14 @@ public class Drive {
     }
 
     public void setEncoders(int distance){
+        motors[0].setTargetPosition(distance);
+        motors[3].setTargetPosition(distance);
+        motors[0].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motors[3].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motors[1].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motors[2].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         for (int i = 0; i < 4; i++){
-            motors[i].setTargetPosition(distance);
-            motors[i].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
             motors[i].setPower(0.5);
         }
 
@@ -352,10 +357,13 @@ public class Drive {
         return targetPos;
     }
 
+    public boolean returnAtTargetPos(){
+        return atTargetPos;
+    }
+
     public boolean atLinearPos(){
 
-        if(Math.abs(targetPos - getCurrentPos()) < 4){
-
+        if(Math.abs(targetPos - getCurrentPos()) < 5){
             atTargetPos = true;
         }
 
@@ -363,12 +371,12 @@ public class Drive {
 
     }
 
+
     public boolean resetLinearPos(){
         atTargetPos = false;
 
         return atTargetPos;
     }
-
 
 
 //////////////////////// Auto specific methods end//////////////////////////////////////////////////
