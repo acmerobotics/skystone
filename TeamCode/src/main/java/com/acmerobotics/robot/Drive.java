@@ -25,9 +25,11 @@ public class Drive {
   
     public static final double RADIUS = 2;
 
-    public double targetPos;
+    public int targetPos;
 
     public boolean atTargetPos = false;
+
+    public boolean motorsStopped = false;
 
     private Pose2d targetVelocity = new Pose2d(0, 0, 0);
 
@@ -300,9 +302,18 @@ public class Drive {
 
 
     public void stopMotors(){
-        for (int i = 0; i < 4; i++){
-            motors[i].setPower(0);
-        }
+
+        motors[0].setPower(0);
+        motors[1].setPower(0);
+        motors[2].setPower(0);
+        motors[3].setPower(0);
+
+        motorsStopped = true;
+
+    }
+
+    public boolean areMotorsStopped(){
+        return motorsStopped;
     }
 
     public void setEncoders(int distance){
@@ -314,7 +325,7 @@ public class Drive {
         motors[2].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         for (int i = 0; i < 4; i++){
 
-            motors[i].setPower(0.5);
+            motors[i].setPower(0.25);
         }
 
     }
@@ -345,15 +356,16 @@ public class Drive {
 
     //TODO see if this is causing issues
 
-    public double getCurrentPos(){
-        for(int i = 0; i < 4; i++){
-            currentPos = motors[i].getCurrentPosition();
-        }
-
-        return currentPos;
+    public int getCurrentPos(){
+//        for(int i = 0; i < 4; i++){
+//            currentPos = motors[i].getCurrentPosition();
+//        }
+//
+//        return currentPos;
+        return motors[0].getCurrentPosition();
     }
 
-    public double getTargetPos(){
+    public int getTargetPos(){
         return targetPos;
     }
 
@@ -363,7 +375,7 @@ public class Drive {
 
     public boolean atLinearPos(){
 
-        if(Math.abs(targetPos - getCurrentPos()) < 5){
+        if(Math.abs(targetPos - getCurrentPos()) < 10){
             atTargetPos = true;
         }
 

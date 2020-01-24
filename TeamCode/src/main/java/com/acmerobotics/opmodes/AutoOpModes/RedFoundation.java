@@ -48,7 +48,7 @@ public class RedFoundation extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToPosition(26);
+                    drive.goToPosition(30);
                     state++;
 
                     break;
@@ -57,6 +57,7 @@ public class RedFoundation extends LinearOpMode {
 
                     if(drive.atLinearPos()){
                         drive.stopMotors();
+
                         state++;
 
                     }
@@ -137,6 +138,7 @@ public class RedFoundation extends LinearOpMode {
             telemetry.addData("current pos", drive.getCurrentPos());
             telemetry.addData("target pos", drive.getTargetPos());
             telemetry.addData("linear pos", drive.atLinearPos());
+            telemetry.addData("motors stopped", drive.areMotorsStopped());
             telemetry.update();
 
         }
