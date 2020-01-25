@@ -308,7 +308,10 @@ public class TeleOp extends LinearOpMode {
             /////////////////////// Lift Grab Capstone //////////////////////////
 
             if (gamepad2.back){
-                arm.moveTo(8);
+                arm.moveTo(10);
+            }
+
+            if (gamepad2.start){
                 lift.runTo(1340, 1);
             }
 
@@ -392,12 +395,6 @@ public class TeleOp extends LinearOpMode {
             ////////////////////////// Telemetry //////////////////////////////
 
             telemetry.addData("blocks", blocks);
-
-            telemetry.addData("drive mode", slowDrive);
-
-            telemetry.addData("is Y pressed", is1YPressed);
-
-            telemetry.addData("gampad 1 Y pressed", gamepad1.y);
 
             telemetry.update();
         }

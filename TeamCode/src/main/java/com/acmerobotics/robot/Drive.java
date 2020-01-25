@@ -24,8 +24,8 @@ public class Drive {
     public static double MAX_V = 30;
     public static double MAX_O = 30;
 
-    public static double slow_v = MAX_V/3;
-    public static double slow_o = MAX_O/3;
+    public static double slow_v = MAX_V/2;
+    public static double slow_o = MAX_O/2;
   
     public static final double RADIUS = 2;
 
