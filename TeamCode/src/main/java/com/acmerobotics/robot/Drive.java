@@ -193,45 +193,37 @@ public class Drive {
 
     /////////////////// Auto specific methods //////////////////////////////////////////////////////
 
-    public double getRawHeading(){
+    public double getRawHeading() {
         return rawHeading;
 
     }
 
-    public double getHeading(){
-        return getRawHeading() + headingOffset;
-    }
-
-   public void setHeading(double heading){
-        headingOffset = degreesToRadians(heading) - getRawHeading();
-    }
-
     public void setDegrees(double degrees){
-        this.degrees = degreesToRadians(degrees);
+        this.degrees = degrees;
     }
 
-    public double getRadians(){
+    public double getDegrees(){
         return degrees;
     }
 
     public void resetAngle(){
-       lastAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+       lastAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-       globalAngle = degreesToRadians(0);
+       globalAngle = 0;
 
     }
 
     public double getAngle(){
 
-        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         double deltaAngle = angles.firstAngle - lastAngle.firstAngle;
 
 
-        if (deltaAngle < degreesToRadians(-180))
-            deltaAngle += degreesToRadians(360);
-        else if (deltaAngle > degreesToRadians(180))
-            deltaAngle -= degreesToRadians(360);
+        if (deltaAngle < -180)
+            deltaAngle += 360;
+        else if (deltaAngle > 180)
+            deltaAngle -= 360;
 
         globalAngle += deltaAngle;
 
@@ -241,40 +233,26 @@ public class Drive {
 
     }
 
-    public double calculateError(){
-        error = -getAngle() + getRadians();
-        return error;
+    public void counterClockwise(){
+        for(int i = 0; i < 4; i++){
+            motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        }
+        motors[0].setPower(0.5);
+        motors[1].setPower(0.5);
+        motors[2].setPower(-0.5);
+        motors[3].setPower(-0.5);
+
     }
-
-
-/*
-    public void turn(int degrees){
-        turning = true;
-        targetHeading = getHeading() + degreesToRadians(degrees);
-    }
-
- */
 
     public void clockwise(){
         for(int i = 0; i < 4; i++){
             motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
-        motors[0].setPower(0.25);
-        motors[1].setPower(0.25);
-        motors[2].setPower(-0.25);
-        motors[3].setPower(-0.25);
 
-    }
-
-    public void counterClockwise(){
-        for(int i = 0; i < 4; i++){
-            motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        }
-
-        motors[0].setPower(-0.25);
-        motors[1].setPower(-0.25);
-        motors[2].setPower(0.25);
-        motors[3].setPower(0.25);
+        motors[0].setPower(-0.5);
+        motors[1].setPower(-0.5);
+        motors[2].setPower(0.5);
+        motors[3].setPower(0.5);
     }
 
     public void strafeLeft(){
@@ -282,10 +260,10 @@ public class Drive {
             motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        motors[0].setPower(-0.25);
-        motors[1].setPower(0.25);
-        motors[2].setPower(-0.25);
-        motors[3].setPower(0.25);
+        motors[0].setPower(-0.5);
+        motors[1].setPower(0.5);
+        motors[2].setPower(-0.5);
+        motors[3].setPower(0.5);
     }
 
     public void strafeRight(){
@@ -293,10 +271,10 @@ public class Drive {
             motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        motors[0].setPower(0.25);
-        motors[1].setPower(-0.25);
-        motors[2].setPower(0.25);
-        motors[3].setPower(-0.25);
+        motors[0].setPower(0.5);
+        motors[1].setPower(-0.5);
+        motors[2].setPower(0.5);
+        motors[3].setPower(-0.5);
     }
 
 
@@ -325,7 +303,7 @@ public class Drive {
         motors[2].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         for (int i = 0; i < 4; i++){
 
-            motors[i].setPower(0.5);
+            motors[i].setPower(0.25);
         }
 
     }
@@ -364,6 +342,10 @@ public class Drive {
         return targetPos;
     }
 
+    public double getCurrentAngle(){
+        return globalAngle;
+    }
+
     public boolean returnAtTargetPos(){
         return atTargetPos;
     }
@@ -384,7 +366,6 @@ public class Drive {
 
         return atTargetPos;
     }
-
 
 //////////////////////// Auto specific methods end//////////////////////////////////////////////////
 

@@ -30,7 +30,6 @@ public class RedFoundation extends LinearOpMode {
         drive.resetEncoders();
         drive.resetAngle();
         time.reset();
-        //drive.resetLinearPos();
         drive.update();
 
         telemetry.addData("state", state);
@@ -66,9 +65,7 @@ public class RedFoundation extends LinearOpMode {
 
                 case 2:
 
-                    drive.resetLinearPos();
-
-                    drive.goToPosition(3);
+                    drive.goToPosition(34);
 
                     state++;
 
@@ -90,30 +87,33 @@ public class RedFoundation extends LinearOpMode {
                         timeReset = true;
                     }
 
-                    if(time.seconds() < 2) {
+                    if(time.seconds() < 1) {
                         drive.strafeRight();
 
                     } else {
 
+                        drive.stopMotors();
+                        drive.resetAngle();
                         state++;
                     }
 
 
                     break;
 
+
                 case 5:
 
-                    drive.setDegrees(-179);
+                    drive.setDegrees(179);
 
-                    drive.getRadians();
+                    drive.getDegrees();
 
                     if(drive.getAngle() == 0) {
                         drive.clockwise();
                     }
 
-                    if(drive.getRadians() > 0) {
+                    if(drive.getDegrees() > 0) {
 
-                        if(drive.getAngle() < drive.getRadians()){
+                        if(drive.getAngle() < drive.getDegrees()){
                             drive.counterClockwise();
 
                         } else {
@@ -124,7 +124,7 @@ public class RedFoundation extends LinearOpMode {
 
                     } else {
 
-                        if(drive.getAngle() > drive.getRadians()){
+                        if(drive.getAngle() > drive.getDegrees()){
                             drive.clockwise();
 
                         } else {
@@ -136,45 +136,11 @@ public class RedFoundation extends LinearOpMode {
                     }
 
                     break;
+
+
+                    /*
 
                 case 6:
-
-                    drive.setDegrees(-91);
-
-
-                    drive.getRadians();
-
-                    if(drive.getAngle() == 0) {
-                        drive.clockwise();
-                    }
-
-                    if(drive.getRadians() > 0) {
-
-                        if(drive.getAngle() < drive.getRadians()){
-                            drive.counterClockwise();
-
-                        } else {
-
-                            drive.stopMotors();
-                            state++;
-                        }
-
-                    } else {
-
-                        if(drive.getAngle() > drive.getRadians()){
-                            drive.clockwise();
-
-                        } else {
-
-                            drive.stopMotors();
-                            state++;
-                        }
-
-                    }
-
-                    break;
-
-                case 7:
 
                     foundationMover.moveToStore();
 
@@ -185,7 +151,7 @@ public class RedFoundation extends LinearOpMode {
                     break;
 
 
-                case 8:
+                case 7:
 
                     drive.resetLinearPos();
 
@@ -195,14 +161,17 @@ public class RedFoundation extends LinearOpMode {
 
 
                     //TODO add the init sequence with the lift and such.
-
+*/
 
             }
+
+
 
             telemetry.addData("state", state);
             telemetry.addData("current pos", drive.getCurrentPos());
             telemetry.addData("target pos", drive.getTargetPos());
             telemetry.addData("motors stopped", drive.areMotorsStopped());
+            telemetry.addData("current angle", drive.getCurrentAngle());
             telemetry.update();
 
         }
