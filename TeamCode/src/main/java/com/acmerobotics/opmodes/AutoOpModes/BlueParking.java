@@ -96,7 +96,25 @@ public class BlueParking extends LinearOpMode {
                 case 2:
 
                     drive.goToPosition(10);
+
                     state++;
+                    break;
+
+                case 3:
+
+                    if (!timeReset){
+                        time.reset();
+                        timeReset = true;
+                    }
+
+                    if(time.seconds() < 2) {
+                        drive.strafeLeft();
+
+                    } else {
+
+                        state++;
+                    }
+
                     break;
             }
 

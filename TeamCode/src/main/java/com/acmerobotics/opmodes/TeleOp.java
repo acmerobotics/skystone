@@ -51,6 +51,7 @@ public class TeleOp extends LinearOpMode {
     private boolean isYPressed = false;
 
     private boolean armReady = false;
+    private boolean aPressed = false;
 
     private int blocks = 0;
 
@@ -306,17 +307,6 @@ public class TeleOp extends LinearOpMode {
             }
 
 
-            /////////////////////// Lift Grab Capstone //////////////////////////
-
-            if (gamepad2.back){
-                arm.moveTo(8);
-                lift.runTo(1340, 1);
-            }
-
-            ///////////////////////////////////////////////////////////////
-
-
-
             //////////////////////// ARM //////////////////////////
 
 
@@ -393,8 +383,6 @@ public class TeleOp extends LinearOpMode {
             ////////////////////////// Telemetry //////////////////////////////
 
             telemetry.addData("blocks", blocks);
-
-            telemetry.addData("drive mode", slowDrive);
 
             telemetry.update();
         }
