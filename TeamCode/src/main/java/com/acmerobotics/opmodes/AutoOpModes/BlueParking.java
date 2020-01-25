@@ -94,7 +94,7 @@ public class BlueParking extends LinearOpMode {
 
                 case 2:
 
-                    drive.goToPosition(10, 0.25);
+                    drive.goToPosition(-10, 0.25);
 
                     state++;
                     break;
@@ -108,22 +108,22 @@ public class BlueParking extends LinearOpMode {
 
                     break;
 
-                case 4:
-
-                    if (!timeReset){
-                        time.reset();
-                        timeReset = true;
-                    }
-
-                    if(time.seconds() < 2) {
-                        drive.strafeLeft();
-
-                    } else {
-
-                        state++;
-                    }
-
-                    break;
+//                case 4:
+//
+//                    if (!timeReset){
+//                        time.reset();
+//                        timeReset = true;
+//                    }
+//
+//                    if(time.seconds() < 2) {
+//                        drive.strafeLeft();
+//
+//                    } else {
+//
+//                        state++;
+//                    }
+//
+//                    break;
             }
 
             telemetry.addData("state", state);
