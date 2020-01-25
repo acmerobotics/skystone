@@ -375,6 +375,7 @@ public class Drive {
     public boolean atLinearPos(){
 
         if(Math.abs(targetPos - getCurrentPos()) < 10){
+            stopMotors();
             atTargetPos = true;
         }
 

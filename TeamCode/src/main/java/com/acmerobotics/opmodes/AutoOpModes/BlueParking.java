@@ -1,6 +1,9 @@
 package com.acmerobotics.opmodes.AutoOpModes;
 
 import com.acmerobotics.robot.Drive;
+import com.acmerobotics.robot.liftEncoder;
+import com.acmerobotics.robot.Intake;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -20,6 +23,10 @@ public class BlueParking extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Drive drive = new Drive(hardwareMap);
+        liftEncoder lift = new liftEncoder(hardwareMap);
+        Intake intake = new Intake(hardwareMap);
+        armEncoder arm = new armEncoder(hardwareMap);
+
         ElapsedTime time = new ElapsedTime();
 
         state = 0;
@@ -39,6 +46,19 @@ public class BlueParking extends LinearOpMode {
 
         telemetry.clearAll();
 
+        lift.init();
+        arm.init();
+
+        lift.resetEncoder();
+        arm.resetEncoder();
+
+        arm.runTo(90); // gets arm out of the intake's way
+
+        intake.rightFullyOpen();
+        isRightOpen = true;
+
+        time.reset();
+
         while(!isStopRequested()) {
 
             switch (state) {
@@ -47,13 +67,30 @@ public class BlueParking extends LinearOpMode {
 
                 case 0:
 
+                    lift.tightenLiftString();
+
+                    if(time.seconds() > 1){
+                        intake.leftFullyOpen();
+                        isLeftOpen = true;
+                        isFullyOpen = true;
+                    }
+
+                    lift.goToBottom();
+
+
+                    if(lift.bottomSet){
+                        break;
+                    }
+
+                case 1:
+
                     drive.goToPosition(10);
 
                     state++;
 
                     break;
 
-                case 1:
+                case 2:
 
                     if(drive.atLinearPos()){
                         state++;
