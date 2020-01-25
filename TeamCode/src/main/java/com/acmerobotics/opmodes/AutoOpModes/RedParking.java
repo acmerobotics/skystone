@@ -68,7 +68,6 @@ public class RedParking extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToPosition(10);
                     arm.runTo(100); // gets arm out of the intake's way
 
                     intake.rightFullyOpen();
@@ -78,9 +77,10 @@ public class RedParking extends LinearOpMode {
                     break;
 
                 case 1:
+
                     if(lift.bottomSet){
+
                         state++;
-                        break;
                     }
 
                     else {
@@ -89,14 +89,17 @@ public class RedParking extends LinearOpMode {
 
                         lift.goToBottom();
 
-                        if (drive.atLinearPos()) {
-
-                        }
-
                         if (time.seconds() > 1) {
                             intake.leftFullyOpen();
                         }
                     }
+                    break;
+
+                case 2:
+
+                    drive.goToPosition(10);
+                    state++;
+                    break;
             }
 
 //            telemetry.addData("state", state);
