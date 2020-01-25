@@ -48,7 +48,7 @@ public class RedFoundation extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToPosition(30);
+                    drive.goToPosition(28);
                     state++;
 
                     break;
@@ -56,7 +56,7 @@ public class RedFoundation extends LinearOpMode {
                 case 1:
 
                     if(drive.atLinearPos()){
-                        drive.stopMotors();
+                        foundationMover.moveToGrab();
 
                         state++;
 
@@ -66,18 +66,24 @@ public class RedFoundation extends LinearOpMode {
 
                 case 2:
 
-                    foundationMover.moveToGrab();
+                    drive.resetLinearPos();
 
-                    Thread.sleep(600);
+                    drive.goToPosition(3);
 
                     state++;
 
-
-
                     break;
 
-
                 case 3:
+
+                    if(drive.atLinearPos()){
+                        drive.stopMotors();
+
+                        state++;
+                    }
+
+
+                case 4:
 
                     if (!timeReset) {
                         time.reset();
@@ -95,9 +101,9 @@ public class RedFoundation extends LinearOpMode {
 
                     break;
 
-                case 4:
+                case 5:
 
-                    drive.setDegrees(-265);
+                    drive.setDegrees(-179);
 
                     drive.getRadians();
 
@@ -131,13 +137,71 @@ public class RedFoundation extends LinearOpMode {
 
                     break;
 
+                case 6:
+
+                    drive.setDegrees(-91);
+
+
+                    drive.getRadians();
+
+                    if(drive.getAngle() == 0) {
+                        drive.clockwise();
+                    }
+
+                    if(drive.getRadians() > 0) {
+
+                        if(drive.getAngle() < drive.getRadians()){
+                            drive.counterClockwise();
+
+                        } else {
+
+                            drive.stopMotors();
+                            state++;
+                        }
+
+                    } else {
+
+                        if(drive.getAngle() > drive.getRadians()){
+                            drive.clockwise();
+
+                        } else {
+
+                            drive.stopMotors();
+                            state++;
+                        }
+
+                    }
+
+                    break;
+
+                case 7:
+
+                    foundationMover.moveToStore();
+
+                    //might have to do thread.sleep here cause it might not release in time before it has to move back
+
+                    state++;
+
+                    break;
+
+
+                case 8:
+
+                    drive.resetLinearPos();
+
+                    //drive to  the bridge and such
+
+
+
+
+                    //TODO add the init sequence with the lift and such.
+
 
             }
 
             telemetry.addData("state", state);
             telemetry.addData("current pos", drive.getCurrentPos());
             telemetry.addData("target pos", drive.getTargetPos());
-            telemetry.addData("linear pos", drive.atLinearPos());
             telemetry.addData("motors stopped", drive.areMotorsStopped());
             telemetry.update();
 

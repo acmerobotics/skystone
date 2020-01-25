@@ -325,7 +325,7 @@ public class Drive {
         motors[2].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         for (int i = 0; i < 4; i++){
 
-            motors[i].setPower(0.25);
+            motors[i].setPower(0.5);
         }
 
     }
@@ -357,11 +357,6 @@ public class Drive {
     //TODO see if this is causing issues
 
     public int getCurrentPos(){
-//        for(int i = 0; i < 4; i++){
-//            currentPos = motors[i].getCurrentPosition();
-//        }
-//
-//        return currentPos;
         return motors[0].getCurrentPosition();
     }
 
@@ -375,7 +370,7 @@ public class Drive {
 
     public boolean atLinearPos(){
 
-        if(Math.abs(targetPos - getCurrentPos()) < 10){
+        if(Math.abs(targetPos - getCurrentPos()) < 4){
             atTargetPos = true;
         }
 

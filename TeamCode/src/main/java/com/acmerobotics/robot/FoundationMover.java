@@ -10,6 +10,7 @@ public class FoundationMover {
     private static double GRABBING = 0.12;
     private static double STORING = 0.6;
 
+
     public FoundationMover(HardwareMap hardwareMap){
 
         servo = hardwareMap.servo.get("foundationServo");
@@ -22,6 +23,7 @@ public class FoundationMover {
     public void moveToStore(){
         servo.setPosition(STORING);
     }
+
 
 
 
