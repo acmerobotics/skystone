@@ -94,7 +94,7 @@ public class BlueParking extends LinearOpMode {
 
                 case 2:
 
-                    drive.goToPosition(10);
+                    drive.goToPosition(10, 0.25);
 
                     state++;
                     break;
