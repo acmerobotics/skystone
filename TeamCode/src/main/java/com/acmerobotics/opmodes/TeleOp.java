@@ -83,7 +83,7 @@ public class TeleOp extends LinearOpMode {
         lift.resetEncoder();
         arm.resetEncoder();
 
-        arm.runTo(90); // gets arm out of the intake's way
+        arm.runTo(100); // gets arm out of the intake's way
 
         intake.rightFullyOpen();
         isRightOpen = true;

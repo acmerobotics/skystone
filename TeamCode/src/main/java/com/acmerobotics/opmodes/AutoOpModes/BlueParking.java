@@ -3,6 +3,7 @@ package com.acmerobotics.opmodes.AutoOpModes;
 import com.acmerobotics.robot.Drive;
 import com.acmerobotics.robot.liftEncoder;
 import com.acmerobotics.robot.Intake;
+import com.acmerobotics.robot.armEncoder;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -16,6 +17,7 @@ public class BlueParking extends LinearOpMode {
     private boolean strafeRight = false;
     private int state;
     private boolean timeReset;
+
 
     // FtcDashboard dashboard  = FtcDashboard.getInstance();
     //Telemetry dashboardTelemetry = dashboard.getTelemetry();
@@ -55,7 +57,6 @@ public class BlueParking extends LinearOpMode {
         arm.runTo(90); // gets arm out of the intake's way
 
         intake.rightFullyOpen();
-        isRightOpen = true;
 
         time.reset();
 
@@ -67,49 +68,46 @@ public class BlueParking extends LinearOpMode {
 
                 case 0:
 
-                    lift.tightenLiftString();
+                    arm.runTo(100); // gets arm out of the intake's way
 
-                    if(time.seconds() > 1){
-                        intake.leftFullyOpen();
-                        isLeftOpen = true;
-                        isFullyOpen = true;
-                    }
-
-                    lift.goToBottom();
-
-
-                    if(lift.bottomSet){
-                        break;
-                    }
-
-                case 1:
-
-                    drive.goToPosition(10);
+                    intake.rightFullyOpen();
 
                     state++;
 
                     break;
 
-                case 2:
+                case 1:
 
-                    if(drive.atLinearPos()){
+                    if(lift.bottomSet){
+
                         state++;
-
+                        break;
                     }
 
-                    break;
+                    else {
 
+                        lift.tightenLiftString();
 
+                        lift.goToBottom();
+
+                        if (time.seconds() > 1) {
+                            intake.leftFullyOpen();
+                        }
+                    }
+
+                case 2:
+                    drive.goToPosition(10);
+                    state++;
             }
 
             telemetry.addData("state", state);
-            telemetry.addData("current pos", drive.getCurrentPos());
-            telemetry.addData("target pos", drive.getTargetPos());
-            telemetry.addData("linear pos", drive.atLinearPos());
+            telemetry.addData("bottom set", lift.bottomSet);
+//            telemetry.addData("current pos", drive.getCurrentPos());
+//            telemetry.addData("target pos", drive.getTargetPos());
+//            telemetry.addData("linear pos", drive.atLinearPos());
+
             telemetry.update();
 
         }
-
-
     }
 }
