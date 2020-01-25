@@ -1,22 +1,21 @@
 package com.acmerobotics.robot;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.robomatic.robot.Robot;
-import com.acmerobotics.robomatic.robot.Subsystem;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @Config
 public class Drive {
@@ -29,11 +28,11 @@ public class Drive {
   
     public static final double RADIUS = 2;
 
-    public static double MOVE_FORWARD = -0.8;
-    public static double MOVE_BACK = 0.8;
-    public static double MOVE_RIGHT = 0.8;
-    public static double MOVE_LEFT = -0.8;
-    public static double omegaSpeed = 0.8;
+    public int targetPos;
+
+    public boolean atTargetPos = false;
+
+    public boolean motorsStopped = false;
 
     private Pose2d targetVelocity = new Pose2d(0, 0, 0);
 
@@ -43,8 +42,16 @@ public class Drive {
     private static final double WHEEL_DIAMETER = 2; ////////real diameter is 4
     private static final double TICKS_PER_INCH = TICK_COUNT/ WHEEL_DIAMETER * Math.PI;
 
+    Orientation lastAngle = new Orientation();
+
     public double wheelOmega = 0;
     public int MDistance = 0;
+    private double currentPos;
+    private double error;
+    private double degrees;
+    private double globalAngle;
+
+    private double ticksPerRev = 560.0;
 
     private ElapsedTime runtime = new ElapsedTime();
   
@@ -52,14 +59,14 @@ public class Drive {
     TelemetryPacket packet = new TelemetryPacket();
 
 
-    public static Vector2d[] WHEEL_POSITIONS = {
+    private static Vector2d[] WHEEL_POSITIONS = {
             new Vector2d(6, 7.5),
             new Vector2d(-6, 7.5),
             new Vector2d(-6, -7.5),
             new Vector2d(6, -7.5)
     };
 
-    public static Vector2d[] ROTOR_DIRECTIONS = {
+    private static Vector2d[] ROTOR_DIRECTIONS = {
       new Vector2d(1, 1),
       new Vector2d(-1, 1),
       new Vector2d(-1, -1),
@@ -75,7 +82,7 @@ public class Drive {
     private double rawHeading;
 
 
-    public Drive(HardwareMap hardwareMap){
+    public Drive(HardwareMap hardwareMap, boolean inTeleOp){
         //super("drive");
 
        // motors[0] = robot.getMotor("m0");
@@ -95,10 +102,21 @@ public class Drive {
         motors[3] = hardwareMap.get(DcMotorEx.class, "m3");
 
 
-        motors[0].setDirection(DcMotorEx.Direction.FORWARD);
-        motors[1].setDirection(DcMotorEx.Direction.REVERSE);
-        motors[2].setDirection(DcMotorEx.Direction.FORWARD);
-        motors[3].setDirection(DcMotorEx.Direction.REVERSE);
+        if(!inTeleOp){
+            motors[0].setDirection(DcMotorEx.Direction.FORWARD);
+            motors[1].setDirection(DcMotorEx.Direction.FORWARD);
+            motors[2].setDirection(DcMotorEx.Direction.REVERSE);
+            motors[3].setDirection(DcMotorEx.Direction.REVERSE);
+
+        } else {
+
+            motors[0].setDirection(DcMotorEx.Direction.FORWARD);
+            motors[1].setDirection(DcMotorEx.Direction.REVERSE);
+            motors[2].setDirection(DcMotorEx.Direction.FORWARD);
+            motors[3].setDirection(DcMotorEx.Direction.REVERSE);
+
+        }
+
 
         for(int i=0; i<4; i++){
             motors[i].setPower(0);
@@ -118,6 +136,7 @@ public class Drive {
        //imu.initialize(parameters);
     }
 
+   /*
 
     public void setPower(Vector2d v, double omega) {
 
@@ -136,6 +155,8 @@ public class Drive {
         }
 
     }
+
+     */
 
 
     public void setPower(Pose2d target) {
@@ -173,171 +194,212 @@ public class Drive {
 
     }
 
+    public double degreesToRadians(double degrees){
+        double toRadians = degrees/180 * Math.PI;
+        return toRadians;
+    }
+
+
 
     /////////////////// Auto specific methods //////////////////////////////////////////////////////
 
-    public void stopAndReset(){
-        for(int i=0; i<4; i++){
-            motors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
+    public double getRawHeading() {
+        return rawHeading;
+
     }
 
-    public void setPowerA(Vector2d v, double omega){
-        setVelocityA(v.times(MAX_V), omega * MAX_O);
+    public void setDegrees(double degrees){
+        this.degrees = degrees;
     }
 
-    public void setVelocityA(Vector2d v, double omega){
-
-        for (int i = 0; i < 4; i ++){
-            Vector2d wheelVelocity = new Vector2d(v.getX() - omega * WHEEL_POSITIONS[i].getY(), v.getX() + omega * WHEEL_POSITIONS[i].getY());
-            wheelOmega = (wheelVelocity.dot(ROTOR_DIRECTIONS[i]) * Math.sqrt(2)/RADIUS);
-            motors[i].setPower(Math.abs(wheelOmega));
-        }
+    public double getDegrees(){
+        return degrees;
     }
 
-    public void setMDistance(Vector2d v, double distance) { //right now only does forward and back but after testing it add right and left
-        //sets 1)direction 2)distance with direction 3)target position
+    public void resetAngle(){
+       lastAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        for(int i=0; i<4; i++) {
-            double setDirections = v.dot(ROTOR_DIRECTIONS[i]) * Math.sqrt(2);
+       globalAngle = 0;
 
-            distance *= setDirections;
-
-            MDistance = motors[i].getCurrentPosition() + (int) (distance * TICKS_PER_INCH);
-            motors[i].setTargetPosition(MDistance);
-        }
-
-        for(int i=0; i<4; i++) {
-            motors[i].setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
     }
+
+    public double getAngle(){
+
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        double deltaAngle = angles.firstAngle - lastAngle.firstAngle;
+
+
+        if (deltaAngle < -180)
+            deltaAngle += 360;
+        else if (deltaAngle > 180)
+            deltaAngle -= 360;
+
+        globalAngle += deltaAngle;
+
+        lastAngle = angles;
+
+        return globalAngle;
+
+    }
+
+    public void counterClockwise(){
+        for(int i = 0; i < 4; i++){
+            motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        }
+        motors[0].setPower(0.5);
+        motors[1].setPower(0.5);
+        motors[2].setPower(-0.5);
+        motors[3].setPower(-0.5);
+
+    }
+
+    public void clockwise(){
+        for(int i = 0; i < 4; i++){
+            motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        motors[0].setPower(-0.5);
+        motors[1].setPower(-0.5);
+        motors[2].setPower(0.5);
+        motors[3].setPower(0.5);
+    }
+
+    public void strafeLeft(){
+        for(int i = 0; i < 4; i++){
+            motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        motors[0].setPower(-0.5);
+        motors[1].setPower(0.5);
+        motors[2].setPower(-0.5);
+        motors[3].setPower(0.5);
+    }
+
+    public void strafeRight(){
+        for(int i = 0; i < 4; i++){
+            motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        motors[0].setPower(0.5);
+        motors[1].setPower(-0.5);
+        motors[2].setPower(0.5);
+        motors[3].setPower(-0.5);
+    }
+
+    public void moveForward(){
+        for(int i = 0; i < 4; i++){
+            motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        motors[0].setPower(0.5);
+        motors[1].setPower(0.5);
+        motors[2].setPower(0.5);
+        motors[3].setPower(0.5);
+    }
+
+    public void moveBack(){
+        for(int i = 0; i < 4; i++){
+            motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        motors[0].setPower(-0.5);
+        motors[1].setPower(-0.5);
+        motors[2].setPower(-0.5);
+        motors[3].setPower(-0.5);
+    }
+
+
 
     public void stopMotors(){
-        for (int i = 0; i < 4; i++) {
-            if (!(motors[i].isBusy())) {
 
-                //sets everything to zero because destination was reached
-                setPowerA(new Vector2d(0, 0), 0);
-                motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            }
+        motors[0].setPower(0);
+        motors[1].setPower(0);
+        motors[2].setPower(0);
+        motors[3].setPower(0);
+
+        motorsStopped = true;
+
+    }
+
+    public boolean areMotorsStopped(){
+        return motorsStopped;
+    }
+
+    public void setEncoders(int distance, double power){
+        motors[0].setTargetPosition(distance);
+        motors[3].setTargetPosition(distance);
+        motors[0].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motors[3].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motors[1].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motors[2].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        for (int i = 0; i < 4; i++){
+
+            motors[i].setPower(power);
+        }
+
+    }
+
+    public void resetEncoders(){
+        for(int i = 0; i < 4; i++){
+            motors[i].setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         }
     }
 
-    public void moveRobotTo(String move, double distance){// distance is negative if going back
+    private double ticksToInches(int ticks) {
+        double revs = ticks / ticksPerRev;
+        return 2 * Math.PI * RADIUS * revs;
 
-        double y = 0;
-        double x = 0;
-
-        if (move.equals("forward")) {
-            y = 1;
-
-            Vector2d v = new Vector2d(y,x); //sets vector based on move
-
-            setMDistance(v, distance);
-
-            setPowerA(v, 0);
-
-            stopMotors();
-        }
-
-        if (move.equals("back")) {
-            y = -1;
-
-            Vector2d v = new Vector2d(y,x); //sets vector based on move
-
-            setMDistance(v, distance);
-
-            setPowerA(v, 0);
-
-            stopMotors();
-        }
-
-        if (move.equals("right")) {
-            x = 1;
-
-            Vector2d v = new Vector2d(y,x); //sets vector based on move
-
-            setMDistance(v, distance);
-
-            setPowerA(v, 0);
-
-            stopMotors();
-        }
-
-        if (move.equals("left")) {
-            x = -1;
-
-            Vector2d v = new Vector2d(y,x); //sets vector based on move
-
-            setMDistance(v, distance);
-
-            setPowerA(v, 0);
-
-            stopMotors();
-        }
     }
 
-    public void turnRobotTo(String move, double angle ){
-        //turns robot
-        Vector2d v = new Vector2d(0,0); //sets vector based on move
+    public int inchesToTicks(double inches) {
+        double circumference = 2 * Math.PI * RADIUS;
+        return (int) Math.round(inches * ticksPerRev / circumference);
+    }
 
-        double omega = 0;
-        double distance = getRadianLen(angle, WHEEL_FROM_CENTER); //find wheel's distance from center so it acts as radius
+    public void goToPosition(double position, double power){
+        setEncoders(inchesToTicks(position), power);
 
-        if (move.equals("right")) {
+        targetPos = inchesToTicks(position);
 
-            omega = 1 * omegaSpeed;
+    }
 
-            setMDistance(v, distance);
+    //TODO see if this is causing issues
 
-            setPowerA(v, omega);
+    public int getCurrentPos(){
+        return motors[0].getCurrentPosition();
+    }
 
-            stopMotors();
+    public int getTargetPos(){
+        return targetPos;
+    }
+
+    public double getCurrentAngle(){
+        return globalAngle;
+    }
+
+    public boolean returnAtTargetPos(){
+        return atTargetPos;
+    }
+
+    public boolean atLinearPos(){
+
+        if(Math.abs(targetPos - getCurrentPos()) < 4){
+            atTargetPos = true;
         }
 
-        if (move.equals("left")) {
+        return atTargetPos;
 
-            omega = -1 * omegaSpeed;
-
-            setMDistance(v, distance);
-
-            setPowerA(v, omega);
-
-            stopMotors();
-        }
     }
 
 
-    public double getRadianLen(double angle, double radius){
-        // returns radian length (wheel movement curve length)
+    public boolean resetLinearPos(){
+        atTargetPos = false;
 
-        double i =  (angle/360) * 2 * Math.PI * radius;
-        return i;
+        return atTargetPos;
     }
-
-//    public double getRawHeading(){
-//        return rawHeading;
-//
-//    }
-//
-//    public double getHeading(){
-//        return getRawHeading() + headingOffset;
-//    }
-//
-//    public void setHeading(double heading){
-//        headingOffset = heading - getRawHeading();
-//    }
-//
-//    public void turn(double angle){
-//        turning = true;
-//        targetHeading = getHeading() + angle;
-//
-//    }
 
 //////////////////////// Auto specific methods end//////////////////////////////////////////////////
-
-
-    //TODO robomatic probably needs the update function ha ha ha
 
     public void update(){
 

@@ -119,9 +119,10 @@ public class liftEncoder {
         boolean isAtBottom = isAtBottom();
         if(bottomSet == false && stringTightened == true) {
             if (!isAtBottom) {
-                bottomPosition = liftMotor.getCurrentPosition();
-                bottomPosition -= 10;
-                runTo(bottomPosition, liftPower);
+
+                liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                liftMotor.setPower(-0.1);
+
             } else {
                 bottomPosition = 0;
                 liftMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);

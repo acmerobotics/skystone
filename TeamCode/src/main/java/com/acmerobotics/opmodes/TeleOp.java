@@ -41,6 +41,7 @@ public class TeleOp extends LinearOpMode {
     private boolean isDpadDown = false;
     private boolean isDpadLeft = false;
 
+
     private boolean is1YPressed = false;
     private boolean slowDrive = false;
 
@@ -50,6 +51,7 @@ public class TeleOp extends LinearOpMode {
     private boolean isYPressed = false;
 
     private boolean armReady = false;
+    private boolean aPressed = false;
 
     private int blocks = 0;
 
@@ -64,7 +66,7 @@ public class TeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //SkyStoneRobot robot = new SkyStoneRobot(this);
-        Drive drive = new Drive(hardwareMap);
+        Drive drive = new Drive(hardwareMap, true);
         armEncoder arm = new armEncoder(hardwareMap);
         liftEncoder lift = new liftEncoder(hardwareMap);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
@@ -79,10 +81,10 @@ public class TeleOp extends LinearOpMode {
         lift.init();
         arm.init();
 
-        lift.resetEncoder(); // sets 0 position
+        lift.resetEncoder();
         arm.resetEncoder();
 
-        arm.runTo(90); // gets arm out of the intake's way
+        arm.runTo(100); // gets arm out of the intake's way
 
         intake.rightFullyOpen();
         isRightOpen = true;
@@ -308,10 +310,7 @@ public class TeleOp extends LinearOpMode {
             /////////////////////// Lift Grab Capstone //////////////////////////
 
             if (gamepad2.back){
-                arm.moveTo(10);
-            }
-
-            if (gamepad2.start){
+                arm.moveTo(8);
                 lift.runTo(1340, 1);
             }
 
