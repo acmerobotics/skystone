@@ -294,7 +294,7 @@ public class Drive {
         return motorsStopped;
     }
 
-    public void setEncoders(int distance){
+    public void setEncoders(int distance, double power){
         motors[0].setTargetPosition(distance);
         motors[3].setTargetPosition(distance);
         motors[0].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -303,7 +303,7 @@ public class Drive {
         motors[2].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         for (int i = 0; i < 4; i++){
 
-            motors[i].setPower(0.25);
+            motors[i].setPower(power);
         }
 
     }
@@ -325,8 +325,8 @@ public class Drive {
         return (int) Math.round(inches * ticksPerRev / circumference);
     }
 
-    public void goToPosition(double position){
-        setEncoders(inchesToTicks(position));
+    public void goToPosition(double position, double power){
+        setEncoders(inchesToTicks(position), power);
 
         targetPos = inchesToTicks(position);
 

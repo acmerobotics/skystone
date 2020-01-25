@@ -43,7 +43,7 @@ public class BlueFoundation extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToPosition(-30);
+                    drive.goToPosition(-30, 0.25);
 
                     state++;
 
