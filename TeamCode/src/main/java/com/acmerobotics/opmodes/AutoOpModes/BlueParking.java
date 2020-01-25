@@ -40,7 +40,7 @@ public class BlueParking extends LinearOpMode {
 
         telemetry.addData("state", state);
         telemetry.addData("current pos", drive.getCurrentPos());
-        telemetry.addData("linear pos", drive.atLinearPos());
+       // telemetry.addData("linear pos", drive.atLinearPos());
         telemetry.update();
 
         waitForStart();
@@ -65,7 +65,7 @@ public class BlueParking extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToPosition(-10, 0.25);
+                    drive.goToPosition(-10, -0.25);
 
                     state++;
                     break;
