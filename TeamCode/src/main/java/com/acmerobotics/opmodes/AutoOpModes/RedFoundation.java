@@ -57,7 +57,7 @@ public class RedFoundation extends LinearOpMode {
                     if(drive.atLinearPos()){
                         foundationMover.moveToGrab();
 
-                        Thread.sleep(500);
+                        Thread.sleep(1500);
 
                         state++;
 

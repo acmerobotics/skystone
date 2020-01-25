@@ -42,7 +42,7 @@ public class BlueFoundation extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToPosition(30, 0.25);
+                    drive.goToPosition(30, 0.15);
                     state++;
 
                     break;
@@ -52,7 +52,7 @@ public class BlueFoundation extends LinearOpMode {
                     if(drive.atLinearPos()){
                         foundationMover.moveToGrab();
 
-                        Thread.sleep(500);
+                        Thread.sleep(1500);
 
                         state++;
 
