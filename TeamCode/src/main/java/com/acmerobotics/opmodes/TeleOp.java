@@ -19,9 +19,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
-//TODO do something to stop the lift from getting to and passing its max height
-
-
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp")
 @Config
 
@@ -39,19 +36,13 @@ public class TeleOp extends LinearOpMode {
 
     private boolean isDpadUp = false;
     private boolean isDpadDown = false;
-    private boolean isDpadLeft = false;
-
 
     private boolean is1YPressed = false;
     private boolean slowDrive = false;
 
-    private boolean isaPressed = false;
-    private boolean moverUp = true;
-
     private boolean isYPressed = false;
 
     private boolean armReady = false;
-    private boolean aPressed = false;
 
     private int blocks = 0;
 
@@ -74,8 +65,8 @@ public class TeleOp extends LinearOpMode {
         JoystickTransform transform = new JoystickTransform();
         ElapsedTime time = new ElapsedTime();
         
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        Telemetry dashboardTelemetry = dashboard.getTelemetry();
+        /////////////////////////////////FtcDashboard dashboard = FtcDashboard.getInstance();
+        /////////////////////////////Telemetry dashboardTelemetry = dashboard.getTelemetry();
         StickyGamepad stickyGamepad;
 
         lift.init();
@@ -167,10 +158,6 @@ public class TeleOp extends LinearOpMode {
 
             if (gamepad1.b){
                 foundationMover.moveToStore();
-            }
-
-            else{
-                isaPressed = false;
             }
 
             if (gamepad1.left_bumper) {

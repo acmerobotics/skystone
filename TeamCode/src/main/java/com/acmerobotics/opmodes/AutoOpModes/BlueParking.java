@@ -65,41 +65,12 @@ public class BlueParking extends LinearOpMode {
 
                 case 0:
 
-                    arm.runTo(100); // gets arm out of the intake's way
-
-                    intake.rightFullyOpen();
-
-                    state++;
-
-                    break;
-
-                case 1:
-
-                    if(lift.bottomSet){
-
-                        state++;
-                    }
-
-                    else {
-
-                        lift.tightenLiftString();
-
-                        lift.goToBottom();
-
-                        if (time.seconds() > 1) {
-                            intake.leftFullyOpen();
-                        }
-                    }
-                    break;
-
-                case 2:
-
                     drive.goToPosition(-10, 0.25);
 
                     state++;
                     break;
 
-                case 3:
+                case 1:
 
                     if (drive.atLinearPos()){
                         drive.stopMotors();
@@ -107,23 +78,6 @@ public class BlueParking extends LinearOpMode {
                     }
 
                     break;
-
-//                case 4:
-//
-//                    if (!timeReset){
-//                        time.reset();
-//                        timeReset = true;
-//                    }
-//
-//                    if(time.seconds() < 2) {
-//                        drive.strafeLeft();
-//
-//                    } else {
-//
-//                        state++;
-//                    }
-//
-//                    break;
             }
 
             telemetry.addData("state", state);
