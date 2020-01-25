@@ -24,11 +24,10 @@ public class BlueParking extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Drive drive = new Drive(hardwareMap);
         liftEncoder lift = new liftEncoder(hardwareMap);
         Intake intake = new Intake(hardwareMap);
         armEncoder arm = new armEncoder(hardwareMap);
-
+        Drive drive = new Drive(hardwareMap, false);
         ElapsedTime time = new ElapsedTime();
 
         state = 0;

@@ -24,11 +24,10 @@ public class RedParking extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Drive drive = new Drive(hardwareMap);
+        Drive drive = new Drive(hardwareMap, false);
         liftEncoder lift = new liftEncoder(hardwareMap);
         Intake intake = new Intake(hardwareMap);
         armEncoder arm = new armEncoder(hardwareMap);
-
         ElapsedTime time = new ElapsedTime();
 
         state = 0;
