@@ -110,6 +110,7 @@ public class TeleOp extends LinearOpMode {
 
             if(!armReady) {
                 arm.resetEncoder();
+                arm.setHand("open");
                 armReady = true;
             }
 

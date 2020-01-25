@@ -44,9 +44,7 @@ public class armEncoder {
     public static PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F, MotorControlAlgorithm.LegacyPID);
 
     private double handOpenPos = 0.59;
-    private double handClosePos = 0.117;
-
-    //0.47
+    private double handClosePos = 0.1;
 
 
     //^^^^^^^^^^^^general variables^^^^^^^^^^^^^^^^^^^^//
