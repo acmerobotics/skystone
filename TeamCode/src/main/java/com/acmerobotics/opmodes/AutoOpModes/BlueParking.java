@@ -101,6 +101,15 @@ public class BlueParking extends LinearOpMode {
 
                 case 3:
 
+                    if (drive.atLinearPos()){
+                        drive.stopMotors();
+                        state++;
+                    }
+
+                    break;
+
+                case 4:
+
                     if (!timeReset){
                         time.reset();
                         timeReset = true;
