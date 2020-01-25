@@ -64,8 +64,6 @@ public class BlueParking extends LinearOpMode {
 
             switch (state) {
 
-                //TODO add the init sequence
-
                 case 0:
 
                     arm.runTo(100); // gets arm out of the intake's way
@@ -81,7 +79,6 @@ public class BlueParking extends LinearOpMode {
                     if(lift.bottomSet){
 
                         state++;
-                        break;
                     }
 
                     else {
@@ -94,10 +91,13 @@ public class BlueParking extends LinearOpMode {
                             intake.leftFullyOpen();
                         }
                     }
+                    break;
 
                 case 2:
+
                     drive.goToPosition(10);
                     state++;
+                    break;
             }
 
             telemetry.addData("state", state);
