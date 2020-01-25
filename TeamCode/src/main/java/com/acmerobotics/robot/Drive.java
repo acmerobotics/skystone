@@ -79,7 +79,7 @@ public class Drive {
     private double rawHeading;
 
 
-    public Drive(HardwareMap hardwareMap){
+    public Drive(HardwareMap hardwareMap, boolean inTeleOp){
         //super("drive");
 
        // motors[0] = robot.getMotor("m0");
@@ -99,10 +99,21 @@ public class Drive {
         motors[3] = hardwareMap.get(DcMotorEx.class, "m3");
 
 
-        motors[0].setDirection(DcMotorEx.Direction.FORWARD);
-        motors[1].setDirection(DcMotorEx.Direction.FORWARD);
-        motors[2].setDirection(DcMotorEx.Direction.REVERSE);
-        motors[3].setDirection(DcMotorEx.Direction.REVERSE);
+        if(!inTeleOp){
+            motors[0].setDirection(DcMotorEx.Direction.FORWARD);
+            motors[1].setDirection(DcMotorEx.Direction.FORWARD);
+            motors[2].setDirection(DcMotorEx.Direction.REVERSE);
+            motors[3].setDirection(DcMotorEx.Direction.REVERSE);
+
+        } else {
+
+            motors[0].setDirection(DcMotorEx.Direction.FORWARD);
+            motors[1].setDirection(DcMotorEx.Direction.REVERSE);
+            motors[2].setDirection(DcMotorEx.Direction.FORWARD);
+            motors[3].setDirection(DcMotorEx.Direction.REVERSE);
+
+        }
+
 
         for(int i=0; i<4; i++){
             motors[i].setPower(0);
@@ -274,6 +285,28 @@ public class Drive {
         motors[0].setPower(0.5);
         motors[1].setPower(-0.5);
         motors[2].setPower(0.5);
+        motors[3].setPower(-0.5);
+    }
+
+    public void moveForward(){
+        for(int i = 0; i < 4; i++){
+            motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        motors[0].setPower(0.5);
+        motors[1].setPower(0.5);
+        motors[2].setPower(0.5);
+        motors[3].setPower(0.5);
+    }
+
+    public void moveBack(){
+        for(int i = 0; i < 4; i++){
+            motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        motors[0].setPower(-0.5);
+        motors[1].setPower(-0.5);
+        motors[2].setPower(-0.5);
         motors[3].setPower(-0.5);
     }
 

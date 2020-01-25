@@ -21,7 +21,7 @@ public class RedParking extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Drive drive = new Drive(hardwareMap);
+        Drive drive = new Drive(hardwareMap, false);
         ElapsedTime time = new ElapsedTime();
 
         state = 0;

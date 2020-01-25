@@ -51,7 +51,7 @@ public class TeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //SkyStoneRobot robot = new SkyStoneRobot(this);
-        Drive drive = new Drive(hardwareMap);
+        Drive drive = new Drive(hardwareMap, true);
         armEncoder arm = new armEncoder(hardwareMap);
         liftEncoder lift = new liftEncoder(hardwareMap);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);

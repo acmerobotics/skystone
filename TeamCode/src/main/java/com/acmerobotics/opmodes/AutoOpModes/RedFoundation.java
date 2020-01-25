@@ -20,7 +20,7 @@ public class RedFoundation extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Drive drive = new Drive(hardwareMap);
+        Drive drive = new Drive(hardwareMap, false);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         ElapsedTime time = new ElapsedTime();
 
@@ -65,16 +65,6 @@ public class RedFoundation extends LinearOpMode {
 
                     break;
 
-                    /*
-                case 2:
-
-                    drive.goToPosition(34);
-
-                    state++;
-
-                    break;
-
-                     */
 
                 case 2:
 
@@ -99,6 +89,7 @@ public class RedFoundation extends LinearOpMode {
 
                         drive.stopMotors();
                         drive.resetAngle();
+                        timeReset = false;
                         state++;
                     }
 
@@ -144,17 +135,46 @@ public class RedFoundation extends LinearOpMode {
 
                 case 5:
 
-                    drive.resetEncoders();
-                    drive.resetLinearPos();
+                    if(!timeReset){
+                        time.reset();
+                        timeReset = true;
+                    }
 
-                    drive.goToPosition(20, 0.5);
+                    if(time.seconds() < 2) {
+                        drive.moveForward();
+
+                    } else {
+
+                        drive.stopMotors();
+                        drive.resetAngle();
+                        timeReset = false;
+                        state++;
+                    }
+
+                    break;
+
+
+
+                case 6:
+
+                    foundationMover.moveToStore();
 
                     state++;
 
                     break;
 
 
-                case 6:
+                case 7:
+
+                    drive.resetEncoders();
+                    drive.resetLinearPos();
+
+
+                    drive.goToPosition(-3, -0.5);
+
+                    state++;
+
+                case 8:
 
                     if(drive.atLinearPos()){
                         drive.stopMotors();
@@ -164,20 +184,12 @@ public class RedFoundation extends LinearOpMode {
 
                     break;
 
-                case 7:
+                case 9:
 
-                    foundationMover.moveToStore();
-
-                    //might have to do thread.sleep here cause it might not release in time before it has to move back
-
-                    state++;
-
-                    break;
+                    // add in the turing and stuff to get under the bridge
 
 
-                case 8:
 
-                    //drive to  the bridge and such
 
 
 
