@@ -25,27 +25,30 @@ public class RedParking extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Drive drive = new Drive(hardwareMap, false);
-//        liftEncoder lift = new liftEncoder(hardwareMap);
-//        Intake intake = new Intake(hardwareMap);
-//        armEncoder arm = new armEncoder(hardwareMap);
-//        ElapsedTime time = new ElapsedTime();
+        liftEncoder lift = new liftEncoder(hardwareMap);
+        Intake intake = new Intake(hardwareMap);
+        armEncoder arm = new armEncoder(hardwareMap);
+        ElapsedTime time = new ElapsedTime();
 
         state = 0;
-        timeReset = false;
 
         drive.resetEncoders();
         drive.resetAngle();
-        //time.reset();
         drive.update();
 
-        telemetry.addData("state", state);
-        telemetry.addData("current pos", drive.getCurrentPos());
-        telemetry.addData("linear pos", drive.atLinearPos());
-        telemetry.update();
+        lift.init();
+        arm.init();
+
+        lift.resetEncoder();
+        arm.resetEncoder();
+
+        arm.runTo(100); // gets arm out of the intake's way
+
+        intake.rightFullyOpen();
 
         waitForStart();
 
-        telemetry.clearAll();
+        intake.leftFullyOpen();
 
         while(!isStopRequested()) {
 
@@ -53,31 +56,49 @@ public class RedParking extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToPosition(10, 0.25);
-                    state++;
-                    break;
+                        drive.goToPosition(10, 0.25);
+                        state++;
 
                 case 1:
 
-                    if (drive.atLinearPos()) {
+                    if (drive.atLinearPos()){
                         drive.stopMotors();
+                    }
 
+                    if(lift.bottomSet){
                         state++;
                     }
+
+                    else{
+
+                        lift.tightenLiftString();
+
+                        lift.goToBottom();
+                    }
+
                     break;
+
+
+
+//                case 1:
+//
+//                    drive.goToPosition(10, 0.25);
+//                    state++;
+//                    break;
+//
+//                case 2:
+//
+//                    if (drive.atLinearPos()) {
+//                        drive.stopMotors();
+//
+//                        state++;
+//                    }
+//                    break;
             }
 
-//            telemetry.addData("state", state);
-//            telemetry.addData("current pos", drive.getCurrentPos());
-//            telemetry.addData("target pos", drive.getTargetPos());
-//            telemetry.addData("linear pos", drive.atLinearPos());
-
-
-
+            telemetry.addData("state", state);
             telemetry.update();
 
         }
-
-
     }
 }

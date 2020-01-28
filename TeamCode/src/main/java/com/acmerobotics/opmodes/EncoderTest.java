@@ -18,9 +18,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class EncoderTest extends LinearOpMode {
 
     public static int armTargetPosition = 0;
-    public static int liftStartingHeight = 1920;
-
-    public static double desiredInches = 3;
 
     @Override
     public void runOpMode(){

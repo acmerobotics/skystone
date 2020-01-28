@@ -30,6 +30,7 @@ public class TeleOp extends LinearOpMode {
     public boolean isRightOpen = false;
 
     private boolean isFullyOpen = false;
+    private boolean isIntakeReady = false;
 
     public boolean isRightTriggerPressed = false;
     public boolean isLeftTriggerPressed = false;
@@ -67,13 +68,7 @@ public class TeleOp extends LinearOpMode {
         
         /////////////////////////////////FtcDashboard dashboard = FtcDashboard.getInstance();
         /////////////////////////////Telemetry dashboardTelemetry = dashboard.getTelemetry();
-        StickyGamepad stickyGamepad;
 
-        lift.init();
-        arm.init();
-
-        lift.resetEncoder();
-        arm.resetEncoder();
 
         arm.runTo(100); // gets arm out of the intake's way
 
@@ -82,22 +77,18 @@ public class TeleOp extends LinearOpMode {
 
         time.reset();
 
-        while(true) {
-            lift.tightenLiftString();
-
-            if(time.seconds() > 1){
+        while(!isIntakeReady) {
+            if (time.seconds() > 1) {
                 intake.leftFullyOpen();
                 isLeftOpen = true;
                 isFullyOpen = true;
-            }
 
-            lift.goToBottom();
-
-
-            if(lift.bottomSet){
-                break;
+                if (time.seconds() > 2){
+                    isIntakeReady = true;
+                }
             }
         }
+
 
         lift.goToStartHeight(); // raise lift so arm is ready for blocks coming in from intake
 
@@ -382,6 +373,9 @@ public class TeleOp extends LinearOpMode {
             ////////////////////////// Telemetry //////////////////////////////
 
             telemetry.addData("blocks", blocks);
+
+            telemetry.addData("isBusy", arm.armMotor.isBusy());
+            telemetry.addData("current pos", arm.armMotor.getCurrentPosition());
 
             telemetry.update();
         }
