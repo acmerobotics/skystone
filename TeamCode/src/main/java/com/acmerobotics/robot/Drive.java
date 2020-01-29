@@ -327,12 +327,18 @@ public class Drive {
     }
 
     public void setEncoders(int distance, double power){
+        motors[1].setTargetPosition(distance);
+        motors[2].setTargetPosition(distance);
         motors[0].setTargetPosition(distance);
         motors[3].setTargetPosition(distance);
+        motors[1].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motors[2].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         motors[0].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         motors[3].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        motors[1].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        motors[2].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+
+        // motors[1].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+      //  motors[2].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         for (int i = 0; i < 4; i++){
 
             motors[i].setPower(power);
@@ -400,16 +406,24 @@ public class Drive {
     }
 
     public double encoderTest1(){
-        motors[1].setPower(0.25);
 
         return motors[1].getCurrentPosition();
 
     }
 
     public double encoderTest2(){
-        motors[2].setPower(0.25);
 
         return motors[2].getCurrentPosition();
+    }
+
+    public double encoderTest3(){
+
+        return motors[3].getCurrentPosition();
+    }
+
+    public double encoderTest0(){
+
+        return motors[0].getCurrentPosition();
     }
 
 //////////////////////// Auto specific methods end//////////////////////////////////////////////////
