@@ -399,6 +399,19 @@ public class Drive {
         return atTargetPos;
     }
 
+    public double encoderTest1(){
+        motors[1].setPower(0.25);
+
+        return motors[1].getCurrentPosition();
+
+    }
+
+    public double encoderTest2(){
+        motors[2].setPower(0.25);
+
+        return motors[2].getCurrentPosition();
+    }
+
 //////////////////////// Auto specific methods end//////////////////////////////////////////////////
 
     public void update(){

@@ -96,8 +96,32 @@ public class RedFoundation extends LinearOpMode {
 
                     break;
 
-
                 case 4:
+
+
+                    if(!timeReset){
+                        time.reset();
+                        timeReset = true;
+                    }
+
+                    if(time.seconds() < 1) {
+                        drive.moveBack();
+
+                    } else {
+
+                        drive.stopMotors();
+                        drive.resetAngle();
+                        timeReset = false;
+                        state++;
+                    }
+
+                    break;
+
+
+
+
+
+                case 5:
 
                     drive.setDegrees(179);
 
@@ -133,7 +157,7 @@ public class RedFoundation extends LinearOpMode {
 
                     break;
 
-                case 5:
+                case 6:
 
                     if(!timeReset){
                         time.reset();
@@ -155,7 +179,7 @@ public class RedFoundation extends LinearOpMode {
 
 
 
-                case 6:
+                case 7:
 
                     foundationMover.moveToStore();
 
@@ -164,7 +188,7 @@ public class RedFoundation extends LinearOpMode {
                     break;
 
 
-                case 7:
+                case 8:
 
                     drive.resetEncoders();
                     drive.resetLinearPos();
@@ -174,7 +198,7 @@ public class RedFoundation extends LinearOpMode {
 
                     state++;
 
-                case 8:
+                case 9:
 
                     if(drive.atLinearPos()){
                         drive.stopMotors();
@@ -184,7 +208,7 @@ public class RedFoundation extends LinearOpMode {
 
                     break;
 
-                case 9:
+                case 10:
 
                     // add in the turing and stuff to get under the bridge
 
