@@ -31,7 +31,7 @@ public class RedParking extends LinearOpMode {
         ElapsedTime time = new ElapsedTime();
 
         state = 0;
-
+  
         drive.resetEncoders();
         drive.resetAngle();
         drive.update();
