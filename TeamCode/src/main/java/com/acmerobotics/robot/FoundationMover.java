@@ -7,8 +7,9 @@ public class FoundationMover {
 
     private Servo servo;
 
-    private static double GRABBING = 0.12;
+    private static double GRABBING = 0.2;
     private static double STORING = 0.6;
+
 
     public FoundationMover(HardwareMap hardwareMap){
 
@@ -22,6 +23,7 @@ public class FoundationMover {
     public void moveToStore(){
         servo.setPosition(STORING);
     }
+
 
 
 
