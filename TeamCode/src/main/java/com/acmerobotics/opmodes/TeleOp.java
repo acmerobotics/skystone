@@ -45,6 +45,7 @@ public class TeleOp extends LinearOpMode {
 
     private boolean armReady = false;
 
+
     private int blocks = 0;
 
     public static int foundation = 165;
@@ -77,11 +78,13 @@ public class TeleOp extends LinearOpMode {
 
         time.reset();
 
-        while(!isIntakeReady) {
-            if (time.seconds() > 1) {
+            if(time.seconds() > 1){
                 intake.leftFullyOpen();
                 isLeftOpen = true;
                 isFullyOpen = true;
+            }
+
+            lift.goToBottom();
 
                 if (time.seconds() > 2){
                     isIntakeReady = true;
@@ -97,13 +100,16 @@ public class TeleOp extends LinearOpMode {
 
         waitForStart();
 
-        while (!isStopRequested()){
+        arm.resetEncoder();
 
             if(!armReady) {
                 arm.resetEncoder();
                 arm.setHand("open");
                 armReady = true;
             }
+
+        while (!isStopRequested()){
+            time.reset();
 
             lift.setPID();
 
