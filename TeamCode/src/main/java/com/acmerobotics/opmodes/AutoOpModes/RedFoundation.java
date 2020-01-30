@@ -114,6 +114,7 @@ public class RedFoundation extends LinearOpMode {
 
                         } else {
 
+                            drive.resetAngle();
                             drive.stopMotors();
                             state++;
                         }
@@ -125,6 +126,7 @@ public class RedFoundation extends LinearOpMode {
 
                         } else {
 
+                            drive.resetAngle();
                             drive.stopMotors();
                             state++;
                         }
@@ -186,16 +188,71 @@ public class RedFoundation extends LinearOpMode {
 
                 case 9:
 
-                    // add in the turing and stuff to get under the bridge
+                    drive.setDegrees(-90); //check to make sure that its actually negative
+
+                    drive.getDegrees();
+
+                    if(drive.getAngle() == 0) {
+                        drive.clockwise();
+                    }
+
+                    if(drive.getDegrees() > 0) {
+
+                        if(drive.getAngle() < drive.getDegrees()){
+                            drive.counterClockwise();
+
+                        } else {
+
+                            drive.resetAngle();
+                            drive.stopMotors();
+                            state++;
+                        }
+
+                    } else {
+
+                        if(drive.getAngle() > drive.getDegrees()){
+                            drive.clockwise();
+
+                        } else {
+
+                            drive.resetAngle();
+                            drive.stopMotors();
+                            state++;
+                        }
+
+                    }
+
+                    break;
+
+                    //TODO I might have to add a strafe in here. I think I might actually want a tracking omni too...
+                //maybe
 
 
+                case 10:
+
+                    drive.resetEncoders();
+                    drive.resetLinearPos();
+
+                    drive.goToPosition(20, -0.5);
+
+                    state++;
+
+                    break;
+
+                case 11:
+
+                    if(drive.atLinearPos()){
+                        drive.stopMotors();
+
+                        state++;
+                    }
+
+                    break;
 
 
+                case 12:
 
-
-
-                    //TODO add the init sequence with the lift and such.
-
+                    // add in all of the pre init stuff
 
             }
 
