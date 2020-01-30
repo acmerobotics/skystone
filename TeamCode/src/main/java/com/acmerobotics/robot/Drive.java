@@ -328,11 +328,14 @@ public class Drive {
 
     public void setEncoders(int distance, double power){
         motors[0].setTargetPosition(distance);
+        motors[1].setTargetPosition(distance);
+        motors[2].setTargetPosition(distance);
         motors[3].setTargetPosition(distance);
         motors[0].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motors[1].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motors[2].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         motors[3].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        motors[1].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        motors[2].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
         for (int i = 0; i < 4; i++){
 
             motors[i].setPower(power);
