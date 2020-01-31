@@ -377,6 +377,8 @@ public class TeleOp extends LinearOpMode {
             telemetry.addData("isBusy", arm.armMotor.isBusy());
             telemetry.addData("current pos", arm.armMotor.getCurrentPosition());
 
+            telemetry.addData("1/2 speed drive", slowDrive);
+
             telemetry.update();
         }
     }

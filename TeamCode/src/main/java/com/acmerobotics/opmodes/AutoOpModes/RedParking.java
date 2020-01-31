@@ -56,10 +56,7 @@ public class RedParking extends LinearOpMode {
 
                 case 0:
 
-                        drive.goToPosition(10, 0.25);
-                        state++;
-
-                case 1:
+                    drive.goToPosition(25, 0.25);
 
                     if (drive.atLinearPos()){
                         drive.stopMotors();
@@ -69,7 +66,7 @@ public class RedParking extends LinearOpMode {
                         state++;
                     }
 
-                    else{
+                    else if (!lift.bottomSet){
 
                         lift.tightenLiftString();
 
@@ -77,7 +74,6 @@ public class RedParking extends LinearOpMode {
                     }
 
                     break;
-
 
 
 //                case 1:
@@ -97,6 +93,7 @@ public class RedParking extends LinearOpMode {
             }
 
             telemetry.addData("state", state);
+            telemetry.addData("lift ready", lift.bottomSet);
             telemetry.update();
 
         }
