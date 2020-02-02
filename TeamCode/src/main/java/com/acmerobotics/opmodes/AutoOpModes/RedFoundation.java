@@ -47,7 +47,7 @@ public class RedFoundation extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToPosition(28, 0.25);
+                    drive.goToPosition(29.5, 0.25);
                     state++;
 
                     break;
@@ -114,7 +114,6 @@ public class RedFoundation extends LinearOpMode {
 
                         } else {
 
-                            drive.resetAngle();
                             drive.stopMotors();
                             state++;
                         }
@@ -126,7 +125,6 @@ public class RedFoundation extends LinearOpMode {
 
                         } else {
 
-                            drive.resetAngle();
                             drive.stopMotors();
                             state++;
                         }
@@ -148,7 +146,6 @@ public class RedFoundation extends LinearOpMode {
                     } else {
 
                         drive.stopMotors();
-                        drive.resetAngle();
                         timeReset = false;
                         state++;
                     }
@@ -172,7 +169,7 @@ public class RedFoundation extends LinearOpMode {
                     drive.resetLinearPos();
 
 
-                    drive.goToPosition(-3, -0.5);
+                    drive.goToPosition(-3.5, -0.5);
 
                     state++;
 
@@ -186,9 +183,18 @@ public class RedFoundation extends LinearOpMode {
 
                     break;
 
+
                 case 9:
 
-                    drive.setDegrees(-90); //check to make sure that its actually negative
+                    drive.resetAngle();
+
+                    state++;
+
+                    break;
+
+                case 10:
+
+                    drive.setDegrees(-80);
 
                     drive.getDegrees();
 
@@ -203,7 +209,6 @@ public class RedFoundation extends LinearOpMode {
 
                         } else {
 
-                            drive.resetAngle();
                             drive.stopMotors();
                             state++;
                         }
@@ -215,7 +220,6 @@ public class RedFoundation extends LinearOpMode {
 
                         } else {
 
-                            drive.resetAngle();
                             drive.stopMotors();
                             state++;
                         }
@@ -224,22 +228,19 @@ public class RedFoundation extends LinearOpMode {
 
                     break;
 
-                    //TODO I might have to add a strafe in here. I think I might actually want a tracking omni too...
-                //maybe
 
-
-                case 10:
+                case 11:
 
                     drive.resetEncoders();
                     drive.resetLinearPos();
 
-                    drive.goToPosition(20, -0.5);
+                    drive.goToPosition(45, -0.5);
 
                     state++;
 
                     break;
 
-                case 11:
+                case 12:
 
                     if(drive.atLinearPos()){
                         drive.stopMotors();
@@ -250,7 +251,7 @@ public class RedFoundation extends LinearOpMode {
                     break;
 
 
-                case 12:
+                case 13:
 
                     // add in all of the pre init stuff
 

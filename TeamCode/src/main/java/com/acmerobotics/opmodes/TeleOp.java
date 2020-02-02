@@ -90,8 +90,8 @@ public class TeleOp extends LinearOpMode {
                     isIntakeReady = true;
                 }
             }
-        }
 
+/*
 
         lift.goToStartHeight(); // raise lift so arm is ready for blocks coming in from intake
 
@@ -384,6 +384,10 @@ public class TeleOp extends LinearOpMode {
             telemetry.addData("current pos", arm.armMotor.getCurrentPosition());
 
             telemetry.update();
+
+
         }
     }
+    
+ */
 }
