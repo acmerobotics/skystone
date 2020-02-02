@@ -3,13 +3,16 @@ package com.acmerobotics.robot;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class TheColorSensor {
 
-    ColorSensor colorSensor;
+    private  ColorSensor colorSensor;
 
-    public int scaleFactor = 255;
+    private int scaleFactor = 255;
 
     public float[] hsvValues = new float[3];
 
@@ -17,11 +20,32 @@ public class TheColorSensor {
         colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
     }
 
-    public float[] HSV(){
+    public void HSV(){
         Color.RGBToHSV((colorSensor.red() * scaleFactor), (colorSensor.green() * scaleFactor),(colorSensor.blue() * scaleFactor), hsvValues);
-
-        return hsvValues;
     }
+
+
+    public boolean isSkystoneHue(){
+        if(hsvValues[0] > 30){
+            return true;
+        }
+
+        else{
+            return false;
+        }
+    }
+
+
+    public boolean isSkystoneSat(){
+        if(hsvValues[1] < 0.35){
+            return true;
+        }
+
+        else{
+            return false;
+        }
+    }
+
 
     public double RED(){
         return colorSensor.red();
@@ -33,6 +57,10 @@ public class TheColorSensor {
 
     public double BLUE(){
         return colorSensor.blue();
+    }
+
+    public int hue(){
+        return colorSensor.argb();
     }
 
 }

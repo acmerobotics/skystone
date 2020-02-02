@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -25,6 +26,9 @@ public class Drive {
 
     public static double slow_v = MAX_V/2;
     public static double slow_o = MAX_O/2;
+
+    public double moveForwardPower = 0.5;
+    public double moveBackPower = -0.5;
   
     public static final double RADIUS = 2;
 
@@ -36,12 +40,6 @@ public class Drive {
 
     private Pose2d targetVelocity = new Pose2d(0, 0, 0);
 
-    private static double WHEEL_FROM_CENTER = 0; /////////////////find length of wheel from center
-
-    private static final double TICK_COUNT = 0;
-    private static final double WHEEL_DIAMETER = 2; ////////real diameter is 4
-    private static final double TICKS_PER_INCH = TICK_COUNT/ WHEEL_DIAMETER * Math.PI;
-
     Orientation lastAngle = new Orientation();
 
     public double wheelOmega = 0;
@@ -50,6 +48,9 @@ public class Drive {
     private double error;
     private double degrees;
     private double globalAngle;
+
+    private double grabPosition;
+    private double releasePosition;
 
     private double ticksPerRev = 560.0;
 
@@ -75,6 +76,7 @@ public class Drive {
 
     public DcMotorEx[] motors = new DcMotorEx[4];
     private BNO055IMU imu;
+    private Servo stoneServo;
 
     private boolean turning = false;
     private double targetHeading;
@@ -95,6 +97,7 @@ public class Drive {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
+        //stoneServo = hardwareMap.get(Servo.class, "stoneServo");
 
         motors[0] = hardwareMap.get(DcMotorEx.class, "m0");
         motors[1] = hardwareMap.get(DcMotorEx.class, "m1");
@@ -292,10 +295,10 @@ public class Drive {
             motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        motors[0].setPower(0.5);
-        motors[1].setPower(0.5);
-        motors[2].setPower(0.5);
-        motors[3].setPower(0.5);
+        motors[0].setPower(moveForwardPower);
+        motors[1].setPower(moveForwardPower);
+        motors[2].setPower(moveForwardPower);
+        motors[3].setPower(moveForwardPower);
     }
 
     public void moveBack(){
@@ -303,10 +306,10 @@ public class Drive {
             motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        motors[0].setPower(-0.5);
-        motors[1].setPower(-0.5);
-        motors[2].setPower(-0.5);
-        motors[3].setPower(-0.5);
+        motors[0].setPower(moveBackPower);
+        motors[1].setPower(moveBackPower);
+        motors[2].setPower(moveBackPower);
+        motors[3].setPower(moveBackPower);
     }
 
 
@@ -329,10 +332,13 @@ public class Drive {
     public void setEncoders(int distance, double power){
         motors[0].setTargetPosition(distance);
         motors[3].setTargetPosition(distance);
+        motors[1].setTargetPosition(distance);
+        motors[2].setTargetPosition(distance);
+
         motors[0].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         motors[3].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        motors[1].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        motors[2].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motors[1].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motors[2].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         for (int i = 0; i < 4; i++){
 
             motors[i].setPower(power);
@@ -340,13 +346,14 @@ public class Drive {
 
     }
 
+
     public void resetEncoders(){
         for(int i = 0; i < 4; i++){
             motors[i].setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         }
     }
 
-    private double ticksToInches(int ticks) {
+    public double ticksToInches(int ticks) {
         double revs = ticks / ticksPerRev;
         return 2 * Math.PI * RADIUS * revs;
 
@@ -363,6 +370,16 @@ public class Drive {
         targetPos = inchesToTicks(position);
 
     }
+
+
+    public void grab(){
+        stoneServo.setPosition(grabPosition);
+    }
+
+    public void release(){
+        stoneServo.setPosition(releasePosition);
+    }
+
 
     //TODO see if this is causing issues
 
