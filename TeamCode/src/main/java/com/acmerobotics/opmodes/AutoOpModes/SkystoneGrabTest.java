@@ -17,7 +17,8 @@ public class SkystoneGrabTest extends LinearOpMode{
     private int ticksTraveled1 = 0;
     private int ticksTraveled2 = 0;
 
-    private boolean stoneDetected = false;
+    private boolean stone1Detected = false;
+    private boolean stone2Detected = false;
 
     private int stonesMoved = 0;
 
@@ -48,9 +49,10 @@ public class SkystoneGrabTest extends LinearOpMode{
                     case "firstBlock":
                         if (time.seconds() > timeToPark){
                             if (drive.motors[0].getCurrentPosition() < passedBlocks){
-                                if (!stoneDetected) {
+                                if (!stone1Detected) {
                                     if (colorSensor.isSkystoneSat()) {
 
+                                        stone1Detected = true;
                                         ticksTraveled1 = drive.motors[0].getCurrentPosition();
 
                                     } else {
@@ -101,9 +103,18 @@ public class SkystoneGrabTest extends LinearOpMode{
                                 }
 
                                 else {
-                                    if (colorSensor.isSkystoneSat()) {
+                                    if (!stone2Detected) {
+                                        if (colorSensor.isSkystoneSat()) {
 
-                                        ticksTraveled2 = drive.motors[0].getCurrentPosition();
+                                            ticksTraveled2 = drive.motors[0].getCurrentPosition();
+                                            stone2Detected = true;
+
+                                        } else {
+                                            drive.moveBack();
+                                            ticksTraveled2 = drive.motors[0].getCurrentPosition();
+                                        }
+
+                                    }else{
 
                                         //move towards block   /////////////////////////////////////////////////
                                         drive.grab();
@@ -120,10 +131,6 @@ public class SkystoneGrabTest extends LinearOpMode{
 
                                         stonesMoved = 2;
                                         state = "thirdBlock";
-
-                                    } else {
-                                        drive.moveBack();
-                                        ticksTraveled2 = drive.motors[0].getCurrentPosition();
                                     }
                                 }
 

@@ -56,7 +56,7 @@ public class RedParking extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToPosition(25, 0.25);
+                    drive.goToPosition(10, 0.25);
 
                     if (drive.atLinearPos()){
                         drive.stopMotors();
