@@ -268,9 +268,16 @@ public class Drive {
     public void goToStrafingPos(int distance, double power, String direction){
         setTrackingOmni(omniEncodersInchesToTicks(distance), power, direction);
 
+        targetOmniPos = omniEncodersInchesToTicks(distance);
+
     }
 
     private void setTrackingOmni(int distance, double power, String direction){
+        motors[0].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motors[1].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motors[2].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motors[3].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         if (direction.equals("left")){
             motors[0].setPower(-power);
             motors[1].setPower(power);

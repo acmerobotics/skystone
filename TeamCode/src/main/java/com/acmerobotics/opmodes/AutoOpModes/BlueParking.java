@@ -12,9 +12,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name="Blue Parking")
 public class BlueParking extends LinearOpMode {
 
-
-    private boolean moveToFoundation = false;
-    private boolean strafeRight = false;
     private int state;
     private boolean timeReset;
 
@@ -40,7 +37,6 @@ public class BlueParking extends LinearOpMode {
 
         telemetry.addData("state", state);
         telemetry.addData("current pos", drive.getCurrentPos());
-       // telemetry.addData("linear pos", drive.atLinearPos());
         telemetry.update();
 
         waitForStart();
@@ -84,8 +80,6 @@ public class BlueParking extends LinearOpMode {
             telemetry.addData("bottom set", lift.bottomSet);
 //            telemetry.addData("current pos", drive.getCurrentPos());
 //            telemetry.addData("target pos", drive.getTargetPos());
-//            telemetry.addData("linear pos", drive.atLinearPos());
-
             telemetry.update();
 
         }
