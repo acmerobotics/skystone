@@ -178,40 +178,10 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
 
             /////////////////////////////////////////////////////////////////////////////////////////
-            if(!stoneDetected) {
-                if (colorSensor.isSkystoneHue()) {
-
-                    drive.stopMotors();
-                    traveled = drive.motors[0].getCurrentPosition();
-                    stoneDetected = true;
-
-                } else {
-                    drive.moveForward();
-                    traveled = drive.motors[0].getCurrentPosition();
-                }
-            }
-
-            if (stoneDetected){
-
-                    drive.goToPosition(0, 0.3);
-
-                    if (lift.bottomSet) {
-                        drive.goToPosition(-40, 0.3);
-
-                        if (drive.atLinearPos()) {
-                            drive.stopMotors();
-                        }
-                    } else {
-                        arm.runTo(80);
-
-                        lift.tightenLiftString();
-
-                        lift.goToBottom();
-                    }
-            }
 
             telemetry.addData( "skystone", colorSensor.isSkystoneSat());
             telemetry.addData( "current position 0", drive.motors[0].getCurrentPosition());
+            telemetry.addData("traveled", traveled);
             telemetry.addLine();
 
             telemetry.addData("state", state);
