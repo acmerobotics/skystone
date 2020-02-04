@@ -42,7 +42,7 @@ public class BlueFoundation extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToPosition(30, 0.15);
+                    drive.goToPosition(30, 0.25);
                     state++;
 
                     break;
@@ -69,7 +69,6 @@ public class BlueFoundation extends LinearOpMode {
                         state++;
                     }
 
-
                 case 3:
 
                     if (!timeReset) {
@@ -77,8 +76,8 @@ public class BlueFoundation extends LinearOpMode {
                         timeReset = true;
                     }
 
-                    if(time.seconds() < 0.7) {
-                        drive.strafeLeft();
+                    if(time.seconds() < 0.9) {
+                        //drive.strafeLeft();
 
                     } else {
 
@@ -181,29 +180,90 @@ public class BlueFoundation extends LinearOpMode {
 
                 case 9:
 
-                    // add in the turing and stuff to get under the bridge
+                    drive.resetAngle();
+
+                    state++;
+
+                    break;
+
+                case 10:
+
+                    drive.setDegrees(80);
+
+                    drive.getDegrees();
+
+                    if(drive.getAngle() == 0) {
+                        drive.clockwise();
+                    }
+
+                    if(drive.getDegrees() > 0) {
+
+                        if(drive.getAngle() < drive.getDegrees()){
+                            drive.counterClockwise();
+
+                        } else {
+
+                            drive.stopMotors();
+                            state++;
+                        }
+
+                    } else {
+
+                        if(drive.getAngle() > drive.getDegrees()){
+                            drive.clockwise();
+
+                        } else {
+
+                            drive.stopMotors();
+                            state++;
+                        }
+
+                    }
+
+                    break;
 
 
+                case 11:
 
+                    drive.resetEncoders();
+                    drive.resetLinearPos();
 
+                    drive.goToPosition(44, -0.5);
 
+                    state++;
 
+                    break;
+
+                case 12:
+
+                    if(drive.atLinearPos()){
+                        drive.stopMotors();
+
+                        state++;
+                    }
+
+                    break;
+
+                case 13:
 
                     //TODO add the init sequence with the lift and such.
-
 
             }
 
 
 
+
+
             telemetry.addData("state", state);
             telemetry.addData("current pos", drive.getCurrentPos());
-            telemetry.addData("target pos", drive.getTargetPos());
+            telemetry.addData("target pos", drive.getTargetMotorPos());
             telemetry.addData("motors stopped", drive.areMotorsStopped());
             telemetry.addData("current angle", drive.getCurrentAngle());
             telemetry.update();
 
         }
+
+
 
 
     }
