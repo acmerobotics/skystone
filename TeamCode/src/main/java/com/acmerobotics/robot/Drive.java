@@ -97,7 +97,7 @@ public class Drive {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
-        //stoneServo = hardwareMap.get(Servo.class, "stoneServo");
+        stoneServo = hardwareMap.get(Servo.class, "stoneServo");
 
         motors[0] = hardwareMap.get(DcMotorEx.class, "m0");
         motors[1] = hardwareMap.get(DcMotorEx.class, "m1");
