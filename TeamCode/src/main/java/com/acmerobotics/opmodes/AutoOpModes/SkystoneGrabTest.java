@@ -34,6 +34,8 @@ public class SkystoneGrabTest extends LinearOpMode{
             armEncoder arm = new armEncoder(hardwareMap);
             ElapsedTime time = new ElapsedTime();
 
+            drive.resetEncoders();
+
             waitForStart();
             time.reset();
 
@@ -66,13 +68,12 @@ public class SkystoneGrabTest extends LinearOpMode{
                                     Thread.sleep(1500);
                                     //back up ////////////////////////////////////////////////////
 
-                                    double inchesTobackUp = -(drive.ticksToInches(ticksTraveled1));
-                                    drive.goToPosition(inchesTobackUp + 6, 0.6);
+                                    drive.goToPosition(-48, 0.6);
 
                                     drive.release();
                                     Thread.sleep(1000);
 
-                                    drive.goToPosition(-6, 0.5); // get under bridge
+                                    drive.goToPosition(0, 0.5); // get under bridge
 
                                     stonesMoved = 1;
                                     state = "secondBlock";
@@ -104,7 +105,7 @@ public class SkystoneGrabTest extends LinearOpMode{
 
                                 else {
                                     if (!stone2Detected) {
-                                        if (colorSensor.isSkystoneSat()) {
+                                        if (colorSensor.isSkystoneHue()) {
 
                                             ticksTraveled2 = drive.motors[0].getCurrentPosition();
                                             stone2Detected = true;

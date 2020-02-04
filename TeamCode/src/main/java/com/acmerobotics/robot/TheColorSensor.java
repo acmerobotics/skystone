@@ -26,7 +26,7 @@ public class TheColorSensor {
 
 
     public boolean isSkystoneHue(){
-        if(hsvValues[0] > 30){
+        if(hsvValues[0] > 100){
             return true;
         }
 

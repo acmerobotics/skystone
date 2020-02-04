@@ -7,7 +7,7 @@ public class FoundationMover {
 
     private Servo servo;
 
-    private static double GRABBING = 0.2;
+    private static double GRABBING = 0.19;
     private static double STORING = 0.6;
 
 

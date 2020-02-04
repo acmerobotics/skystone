@@ -106,10 +106,10 @@ public class Drive {
 
 
         if(!inTeleOp){
-            motors[0].setDirection(DcMotorEx.Direction.FORWARD);
-            motors[1].setDirection(DcMotorEx.Direction.FORWARD);
-            motors[2].setDirection(DcMotorEx.Direction.REVERSE);
-            motors[3].setDirection(DcMotorEx.Direction.REVERSE);
+            motors[0].setDirection(DcMotorEx.Direction.REVERSE);
+            motors[1].setDirection(DcMotorEx.Direction.REVERSE);
+            motors[2].setDirection(DcMotorEx.Direction.FORWARD);
+            motors[3].setDirection(DcMotorEx.Direction.FORWARD);
 
         } else {
 

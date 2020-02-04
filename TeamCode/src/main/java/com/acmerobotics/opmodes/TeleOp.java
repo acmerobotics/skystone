@@ -69,8 +69,9 @@ public class TeleOp extends LinearOpMode {
         /////////////////////////////////FtcDashboard dashboard = FtcDashboard.getInstance();
         /////////////////////////////Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
+        lift.resetEncoder();
 
-        arm.runTo(100); // gets arm out of the intake's way
+        arm.runTo(110); // gets arm out of the intake's way
 
         intake.rightFullyOpen();
         isRightOpen = true;
@@ -88,7 +89,6 @@ public class TeleOp extends LinearOpMode {
                 }
             }
         }
-
 
         lift.goToStartHeight(); // raise lift so arm is ready for blocks coming in from intake
 
