@@ -298,7 +298,7 @@ public class Drive {
 
     public boolean atStrafingPos(){
 
-        if(Math.abs(targetOmniPos) - getCurrentTrackerPos() < 10){
+        if(Math.abs(targetOmniPos) - getCurrentTrackerPos() < 12){
             atTargetOmniPos = true;
         }
 

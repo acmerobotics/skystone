@@ -70,7 +70,7 @@ public class RedFoundation extends LinearOpMode {
 
                 case 3:
 
-                    drive.goToStrafingPos(12, 0.5, "right");
+                    drive.goToStrafingPos(24, 0.5, "right");
                     state++;
 
                     break;
@@ -90,7 +90,6 @@ public class RedFoundation extends LinearOpMode {
 
                     drive.setDegrees(179);
 
-                    drive.getDegrees();
 
                     if(drive.getAngle() == 0) {
                         drive.clockwise();
@@ -127,7 +126,9 @@ public class RedFoundation extends LinearOpMode {
                     drive.resetEncoders();
                     drive.resetLinearPos();
 
-                    drive.goToPosition(30, 0.5);
+                    drive.goToPosition(15, 0.5);
+
+                    state++;
 
                     break;
 
@@ -155,7 +156,7 @@ public class RedFoundation extends LinearOpMode {
                     drive.resetEncoders();
                     drive.resetLinearPos();
 
-                    drive.goToPosition(-3.5, -0.5);
+                    drive.goToPosition(-3.5, -0.75);
 
                     state++;
 
