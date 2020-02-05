@@ -8,10 +8,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Red Foundation")
 public class RedFoundation extends LinearOpMode {
-
-    private boolean moveToFoundation = false;
-    private boolean strafeRight = false;
-    private boolean grabbedFoundation = false;
     private int state;
 
     // FtcDashboard dashboard  = FtcDashboard.getInstance();
@@ -256,6 +252,8 @@ public class RedFoundation extends LinearOpMode {
             telemetry.addData("target pos", drive.getTargetMotorPos());
             telemetry.addData("motors stopped", drive.areMotorsStopped());
             telemetry.addData("current angle", drive.getCurrentAngle());
+            telemetry.addData("current omni pos", drive.getCurrentTrackerPos());
+            telemetry.addData("target omni pos", drive.getTargetOmniPos());
             telemetry.update();
 
         }

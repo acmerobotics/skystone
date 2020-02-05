@@ -69,7 +69,7 @@ public class Drive {
     private BNO055IMU imu;
 
     private DcMotor omniTracker;
-    private static final String trackerName = "intakeMotor"; //figure out where the encoder is plugged in
+    private static final String trackerName = "rightMotor";
 
     private static final double trackerRadius = DistanceUnit.INCH.fromMm(35.0 / 2.0);
     private static final double trackerTicksPerInch = (500 * 4) / (2 * trackerRadius * Math.PI);
@@ -243,14 +243,12 @@ public class Drive {
         motors[1].setPower(0.5);
         motors[2].setPower(-0.5);
         motors[3].setPower(-0.5);
-
     }
 
     public void clockwise(){
         for(int i = 0; i < 4; i++){
             motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
-
         motors[0].setPower(-0.5);
         motors[1].setPower(-0.5);
         motors[2].setPower(0.5);
@@ -311,6 +309,10 @@ public class Drive {
         atTargetOmniPos = false;
 
         return atTargetOmniPos;
+    }
+
+    public double getTargetOmniPos(){
+        return targetOmniPos;
     }
 
 
