@@ -78,7 +78,7 @@ public class TeleOp extends LinearOpMode {
 
         lift.resetEncoder();
 
-        arm.runTo(120); // gets arm out of the intake's way
+        arm.runTo(100); // gets arm out of the intake's way
 
         intake.rightFullyOpen();
         isRightOpen = true;
@@ -91,16 +91,14 @@ public class TeleOp extends LinearOpMode {
                 isFullyOpen = true;
             }
 
-            lift.goToBottom();
+            if (time.seconds() > 1){
+                isIntakeReady = true;
 
-                if (time.seconds() > 1){
-                    isIntakeReady = true;
-                }
+                lift.goToStartHeight(); // raise lift so arm is ready for blocks coming in from intake
 
-        lift.goToStartHeight(); // raise lift so arm is ready for blocks coming in from intake
-
-        arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        arm.armMotor.setPower(0.08); // arm goes to place where the 0 position will be
+                arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                arm.armMotor.setPower(0.08); // arm goes to place where the 0 position will be
+            }
 
         waitForStart();
 
