@@ -4,23 +4,21 @@ import com.acmerobotics.robot.Drive;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name="Blue Bridge Parking LZ")
-public class BlueBridgeParkingLoadingZone extends LinearOpMode {
-    public int state;
+@Autonomous(name="Red Wall Parking BZ")
+public class RedWallParkingBuildingZone extends LinearOpMode {
+    private int state;
 
     @Override
     public void runOpMode() throws InterruptedException {
         Drive drive = new Drive(hardwareMap, false);
 
-
         state = 0;
 
         waitForStart();
 
-
         while(!isStopRequested()){
 
-            switch (state){
+            switch (state) {
 
                 case 0:
 
@@ -38,31 +36,10 @@ public class BlueBridgeParkingLoadingZone extends LinearOpMode {
                         state++;
                     }
 
-                    break;
+
+                    //TODO add in all the recalibration things
 
 
-                case 2:
-
-                    drive.goToStrafingPos(30, 0.5, "left");
-
-                    state++;
-
-                    break;
-
-
-                case 3:
-
-                    if(drive.atStrafingPos()){
-                        drive.stopMotors();
-
-                        state++;
-                    }
-
-                    break;
-
-                case 4:
-
-                    //TODO add the recalibration stuff
             }
 
         }

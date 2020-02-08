@@ -4,21 +4,20 @@ import com.acmerobotics.robot.Drive;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name="Blue Bridge Parking LZ")
-public class BlueBridgeParkingLoadingZone extends LinearOpMode {
-    public int state;
+@Autonomous(name="Red Bridge Parking BZ")
+public class RedBridgeParkingBuildingZone extends LinearOpMode {
+    private int state;
 
     @Override
     public void runOpMode() throws InterruptedException {
         Drive drive = new Drive(hardwareMap, false);
-
 
         state = 0;
 
         waitForStart();
 
 
-        while(!isStopRequested()){
+        while (!isStopRequested()){
 
             switch (state){
 
@@ -43,7 +42,7 @@ public class BlueBridgeParkingLoadingZone extends LinearOpMode {
 
                 case 2:
 
-                    drive.goToStrafingPos(30, 0.5, "left");
+                    drive.goToStrafingPos(30, 0.5, "right");
 
                     state++;
 
@@ -66,6 +65,5 @@ public class BlueBridgeParkingLoadingZone extends LinearOpMode {
             }
 
         }
-
     }
 }

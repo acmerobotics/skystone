@@ -4,8 +4,8 @@ import com.acmerobotics.robot.Drive;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name="Blue Bridge Parking LZ")
-public class BlueBridgeParkingLoadingZone extends LinearOpMode {
+@Autonomous(name="Red Bridge Parking LZ")
+public class RedBridgeParkingLoadingZone extends LinearOpMode {
     public int state;
 
     @Override

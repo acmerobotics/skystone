@@ -38,7 +38,7 @@ public class BlueFoundation extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToStrafingPos(24, 0.5, "left");
+                    drive.goToStrafingPos(40, 0.5, "left");
                     state++;
 
                     break;
