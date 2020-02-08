@@ -104,11 +104,11 @@ public class Drive {
         motors[2] = hardwareMap.get(DcMotorEx.class, "m2");
         motors[3] = hardwareMap.get(DcMotorEx.class, "m3");
 
-        omniTracker = hardwareMap.get(DcMotorEx.class, "rightMotor");
-        omniTracker.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
 
         if(!inTeleOp){
+            omniTracker = hardwareMap.get(DcMotorEx.class, "rightMotor");
+            omniTracker.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
             motors[0].setDirection(DcMotorEx.Direction.FORWARD);
             motors[1].setDirection(DcMotorEx.Direction.FORWARD);
             motors[2].setDirection(DcMotorEx.Direction.REVERSE);

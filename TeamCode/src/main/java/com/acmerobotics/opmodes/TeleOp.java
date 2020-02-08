@@ -57,6 +57,9 @@ public class TeleOp extends LinearOpMode {
 
     public int extraBlocks = 0;
 
+
+    private StickyGamepad stickyGamepad1, stickyGamepad2;
+
     @Override
     public void runOpMode() throws InterruptedException {
         //SkyStoneRobot robot = new SkyStoneRobot(this);
@@ -66,6 +69,8 @@ public class TeleOp extends LinearOpMode {
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         Intake intake = new Intake(hardwareMap);
         JoystickTransform transform = new JoystickTransform();
+        stickyGamepad1 = new StickyGamepad(gamepad1);
+        stickyGamepad2 = new StickyGamepad(gamepad2);
         ElapsedTime time = new ElapsedTime();
         
         /////////////////////////////////FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -219,8 +224,24 @@ public class TeleOp extends LinearOpMode {
                 isRightBumperPressed = false;
             }
 
-            intake.setIntakePower(-gamepad1.left_trigger);
-            intake.setIntakePower(gamepad1.right_trigger);
+            if (gamepad1.left_trigger > 0) {
+
+                intake.setIntakePower(-1);
+
+
+            } else {
+
+                intake.setIntakePower(0);
+            }
+
+            if (gamepad1.right_trigger > 0){
+
+                intake.setIntakePower(1);
+
+            } else {
+
+                intake.setIntakePower(0);
+            }
 
 
             /////////////////////////////////////// gamepad2   /////////////////////////////////////////////
