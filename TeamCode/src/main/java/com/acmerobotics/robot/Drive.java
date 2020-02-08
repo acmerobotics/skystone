@@ -30,6 +30,9 @@ public class Drive {
 
     public double moveForwardPower = 0.5;
     public double moveBackPower = -0.5;
+    public double strafePower = 0.5;
+
+    public double turnPower = 0.5;
   
     public static final double RADIUS = 2;
 
@@ -89,7 +92,7 @@ public class Drive {
     private static final String trackerName = "rightMotor";
 
     private static final double trackerRadius = DistanceUnit.INCH.fromMm(35.0 / 2.0);
-    private static final double trackerTicksPerInch = (500 * 4) / (2 * trackerRadius * Math.PI);
+    private static final double trackerTicksPerRev = 500;
 
     private int targetOmniPos;
     private boolean atTargetOmniPos = false;
@@ -263,10 +266,10 @@ public class Drive {
         for(int i = 0; i < 4; i++){
             motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
-        motors[0].setPower(0.5);
-        motors[1].setPower(0.5);
-        motors[2].setPower(-0.5);
-        motors[3].setPower(-0.5);
+        motors[0].setPower(-turnPower);
+        motors[1].setPower(-turnPower);
+        motors[2].setPower(turnPower);
+        motors[3].setPower(turnPower);
 
     }
 
@@ -275,10 +278,10 @@ public class Drive {
             motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        motors[0].setPower(-0.5);
-        motors[1].setPower(-0.5);
-        motors[2].setPower(0.5);
-        motors[3].setPower(0.5);
+        motors[0].setPower(turnPower);
+        motors[1].setPower(turnPower);
+        motors[2].setPower(-turnPower);
+        motors[3].setPower(-turnPower);
     }
 
 
@@ -292,13 +295,13 @@ public class Drive {
     }
 
     public void goToStrafingPos(int distance, double power, String direction){
-        setTrackingOmni(omniEncodersInchesToTicks(distance), power, direction);
+        setTrackingOmni(power, direction);
 
         targetOmniPos = omniEncodersInchesToTicks(distance);
 
     }
 
-    private void setTrackingOmni(int distance, double power, String direction){
+    private void setTrackingOmni(double power, String direction){
         motors[0].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motors[1].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motors[2].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -320,13 +323,13 @@ public class Drive {
     }
 
     private int omniEncodersInchesToTicks(double inches) {
-        double circumference = 2 * Math.PI * RADIUS;
-        return (int) Math.round(inches * trackerTicksPerInch / circumference);
+        double circumference = 2 * Math.PI * trackerRadius;
+        return (int) Math.round(inches * trackerTicksPerRev / circumference);
     }
 
     public boolean atStrafingPos(){
 
-        if(Math.abs(targetOmniPos) - getCurrentTrackerPos() < 10){
+        if(targetOmniPos < getCurrentTrackerPos()){
             atTargetOmniPos = true;
         }
 
@@ -348,10 +351,10 @@ public class Drive {
             motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        motors[0].setPower(-0.5);
-        motors[1].setPower(0.5);
-        motors[2].setPower(-0.5);
-        motors[3].setPower(0.5);
+        motors[0].setPower(-strafePower);
+        motors[1].setPower(strafePower);
+        motors[2].setPower(-strafePower);
+        motors[3].setPower(strafePower);
     }
 
     public void strafeRight(){
@@ -359,10 +362,10 @@ public class Drive {
             motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        motors[0].setPower(0.5);
-        motors[1].setPower(-0.5);
-        motors[2].setPower(0.5);
-        motors[3].setPower(-0.5);
+        motors[0].setPower(strafePower);
+        motors[1].setPower(-strafePower);
+        motors[2].setPower(strafePower);
+        motors[3].setPower(-strafePower);
     }
 
     public void moveForward(){
