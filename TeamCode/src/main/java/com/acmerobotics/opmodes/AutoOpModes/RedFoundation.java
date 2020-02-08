@@ -17,10 +17,14 @@ public class RedFoundation extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Drive drive = new Drive(hardwareMap, false);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
+        ElapsedTime time = new ElapsedTime();
+
 
         state = 0;
         drive.resetEncoders();
         drive.resetAngle();
+        drive.resetEncoderOmni();
+        time.reset();
         drive.update();
 
         telemetry.addData("state", state);
@@ -68,17 +72,29 @@ public class RedFoundation extends LinearOpMode {
                     break;
 
 
+
                 case 3:
 
-                    drive.goToStrafingPos(24, 0.5, "right");
+                    drive.resetEncoderOmni();
+                    drive.resetStrafingPos();
+
                     state++;
 
                     break;
 
+
                 case 4:
+
+                    drive.goToStrafingPos(-40, 0.5, "right");
+                    state++;
+
+                    break;
+
+                case 5:
 
                     if(drive.atStrafingPos()){
                         drive.stopMotors();
+                        drive.resetAngle();
 
                         state++;
                     }
@@ -86,7 +102,9 @@ public class RedFoundation extends LinearOpMode {
                     break;
 
 
-                case 5:
+                case 6:
+
+
 
                     drive.setDegrees(179);
 
@@ -121,18 +139,18 @@ public class RedFoundation extends LinearOpMode {
 
                     break;
 
-                case 6:
+                case 7:
 
                     drive.resetEncoders();
                     drive.resetLinearPos();
 
-                    drive.goToPosition(15, 0.5);
+                    drive.goToPosition(15, 0.75);
 
                     state++;
 
                     break;
 
-                case 7:
+                case 8:
 
                     if(drive.atLinearPos()){
                         drive.stopMotors();
@@ -142,7 +160,7 @@ public class RedFoundation extends LinearOpMode {
 
                     break;
 
-                case 8:
+                case 9:
 
                     foundationMover.moveToStore();
 
@@ -151,39 +169,32 @@ public class RedFoundation extends LinearOpMode {
                     break;
 
 
-                case 9:
+                case 10:
 
-                    drive.resetEncoders();
-                    drive.resetLinearPos();
-
-                    drive.goToPosition(-3.5, -0.75);
+                    time.reset();
 
                     state++;
 
                     break;
 
-                case 10:
+                case 11:
 
-                    if(drive.atLinearPos()){
-                        drive.stopMotors();
+                    if(time.seconds() < 0.2){
+                        drive.moveBack();
 
+
+                    } else {
+
+                        drive.resetAngle();
                         state++;
                     }
 
                     break;
 
 
-                case 11:
-
-                    drive.resetAngle();
-
-                    state++;
-
-                    break;
-
                 case 12:
 
-                    drive.setDegrees(-80);
+                    drive.setDegrees(-75);
 
                     drive.getDegrees();
 
@@ -223,7 +234,7 @@ public class RedFoundation extends LinearOpMode {
                     drive.resetEncoders();
                     drive.resetLinearPos();
 
-                    drive.goToPosition(45, -0.5);
+                    drive.goToPosition(43, -0.5);
 
                     state++;
 
@@ -253,7 +264,7 @@ public class RedFoundation extends LinearOpMode {
             telemetry.addData("target pos", drive.getTargetMotorPos());
             telemetry.addData("motors stopped", drive.areMotorsStopped());
             telemetry.addData("current angle", drive.getCurrentAngle());
-            telemetry.addData("current omni pos", drive.getCurrentTrackerPos());
+            telemetry.addData("current omni pos inches", drive.getCurrentTrackerPosInches());
             telemetry.addData("target omni pos", drive.getTargetOmniPos());
             telemetry.update();
 
