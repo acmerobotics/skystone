@@ -73,14 +73,14 @@ public class TeleOp extends LinearOpMode {
 
         lift.resetEncoder();
 
-        arm.runTo(110); // gets arm out of the intake's way
+        arm.runTo(120); // gets arm out of the intake's way
 
         intake.rightFullyOpen();
         isRightOpen = true;
 
         time.reset();
 
-            if(time.seconds() > 1){
+            if(time.seconds() > 0.5){
                 intake.leftFullyOpen();
                 isLeftOpen = true;
                 isFullyOpen = true;
@@ -88,7 +88,7 @@ public class TeleOp extends LinearOpMode {
 
             lift.goToBottom();
 
-                if (time.seconds() > 2){
+                if (time.seconds() > 1){
                     isIntakeReady = true;
                 }
 
