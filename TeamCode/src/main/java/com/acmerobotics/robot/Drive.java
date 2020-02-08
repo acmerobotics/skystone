@@ -29,7 +29,7 @@ public class Drive {
     public static double slow_o = MAX_O/2;
 
     public double moveForwardPower = 0.5;
-    public double moveBackPower = -0.5;
+    public double moveBackPower = 0.5;
     public double strafePower = 0.5;
 
     public double turnPower = 0.5;
@@ -122,10 +122,10 @@ public class Drive {
 
 
         if(!inTeleOp){
-            motors[0].setDirection(DcMotorEx.Direction.REVERSE);
-            motors[1].setDirection(DcMotorEx.Direction.REVERSE);
-            motors[2].setDirection(DcMotorEx.Direction.FORWARD);
-            motors[3].setDirection(DcMotorEx.Direction.FORWARD);
+            motors[0].setDirection(DcMotorEx.Direction.FORWARD);
+            motors[1].setDirection(DcMotorEx.Direction.FORWARD);
+            motors[2].setDirection(DcMotorEx.Direction.REVERSE);
+            motors[3].setDirection(DcMotorEx.Direction.REVERSE);
 
         } else {
 
@@ -266,10 +266,10 @@ public class Drive {
         for(int i = 0; i < 4; i++){
             motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
-        motors[0].setPower(-turnPower);
-        motors[1].setPower(-turnPower);
-        motors[2].setPower(turnPower);
-        motors[3].setPower(turnPower);
+        motors[0].setPower(turnPower);
+        motors[1].setPower(turnPower);
+        motors[2].setPower(-turnPower);
+        motors[3].setPower(-turnPower);
 
     }
 
@@ -278,10 +278,10 @@ public class Drive {
             motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        motors[0].setPower(turnPower);
-        motors[1].setPower(turnPower);
-        motors[2].setPower(-turnPower);
-        motors[3].setPower(-turnPower);
+        motors[0].setPower(-turnPower);
+        motors[1].setPower(-turnPower);
+        motors[2].setPower(turnPower);
+        motors[3].setPower(turnPower);
     }
 
 
@@ -351,10 +351,10 @@ public class Drive {
             motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        motors[0].setPower(-strafePower);
-        motors[1].setPower(strafePower);
-        motors[2].setPower(-strafePower);
-        motors[3].setPower(strafePower);
+        motors[0].setPower(strafePower);
+        motors[1].setPower(-strafePower);
+        motors[2].setPower(strafePower);
+        motors[3].setPower(-strafePower);
     }
 
     public void strafeRight(){
@@ -362,10 +362,10 @@ public class Drive {
             motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        motors[0].setPower(strafePower);
-        motors[1].setPower(-strafePower);
-        motors[2].setPower(strafePower);
-        motors[3].setPower(-strafePower);
+        motors[0].setPower(-strafePower);
+        motors[1].setPower(strafePower);
+        motors[2].setPower(-strafePower);
+        motors[3].setPower(strafePower);
     }
 
     public void moveForward(){
@@ -384,10 +384,10 @@ public class Drive {
             motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        motors[0].setPower(moveBackPower);
-        motors[1].setPower(moveBackPower);
-        motors[2].setPower(moveBackPower);
-        motors[3].setPower(moveBackPower);
+        motors[0].setPower(-moveBackPower);
+        motors[1].setPower(-moveBackPower);
+        motors[2].setPower(-moveBackPower);
+        motors[3].setPower(-moveBackPower);
     }
 
 
