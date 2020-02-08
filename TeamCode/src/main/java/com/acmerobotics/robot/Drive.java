@@ -99,8 +99,6 @@ public class Drive {
 
         stoneServo = hardwareMap.get(Servo.class, "stoneServo");
 
-        omniTracker.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         motors[0] = hardwareMap.get(DcMotorEx.class, "m0");
         motors[1] = hardwareMap.get(DcMotorEx.class, "m1");
         motors[2] = hardwareMap.get(DcMotorEx.class, "m2");

@@ -38,6 +38,10 @@ public class Intake {
         rightMotor.setPower(rightIntakePower);
     }
 
+    public void setIntakePower(double intakePower) {
+        internalSetVelocity(intakePower, intakePower);
+    }
+
     public void leftOpen(){
         leftServo.setPosition(leftOpen);
     }
@@ -52,10 +56,6 @@ public class Intake {
 
     public void rightClose(){
         rightServo.setPosition(rightClose);
-    }
-
-    public void setIntakePower(double intakePower) {
-        internalSetVelocity(intakePower, intakePower);
     }
 
     public void leftFullyOpen(){
