@@ -16,11 +16,13 @@ public class BlueFoundation extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Drive drive = new Drive(hardwareMap, false);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
+        ElapsedTime time = new ElapsedTime();
 
         state = 0;
 
         drive.resetEncoders();
         drive.resetAngle();
+        time.reset();
         drive.update();
 
         telemetry.addData("state", state);
@@ -63,7 +65,7 @@ public class BlueFoundation extends LinearOpMode {
                 case 3:
 
                     if(drive.atLinearPos()){
-                        drive.moveForward(0.20);
+                        drive.moveForward(0.18);
                         foundationMover.moveToGrab();
 
                         Thread.sleep(1500);
@@ -80,8 +82,12 @@ public class BlueFoundation extends LinearOpMode {
                     if(drive.atLinearPos()){
                         drive.stopMotors();
 
+                    } else {
+                        drive.resetAngle();
                         state++;
                     }
+
+                    break;
 
 
                 case 5:
@@ -124,7 +130,7 @@ public class BlueFoundation extends LinearOpMode {
 
                     drive.resetEncoders();
 
-                    drive.goToPosition(24, 0.5);
+                    drive.goToPosition(19, 0.75);
 
                     state++;
 
@@ -152,31 +158,26 @@ public class BlueFoundation extends LinearOpMode {
 
                 case 9:
 
-                    drive.resetEncoders();
-
-                    drive.goToPosition(-3, -0.5);
+                    time.reset();
 
                     state++;
 
+                    break;
+
                 case 10:
 
-                    if(drive.atLinearPos()){
-                        drive.stopMotors();
+                    if(time.seconds() < 0.2){
+                        drive.moveBack(0.5);
 
+                    } else {
+
+                        drive.resetAngle();
                         state++;
                     }
 
                     break;
 
                 case 11:
-
-                    drive.resetAngle();
-
-                    state++;
-
-                    break;
-
-                case 12:
 
                     drive.setDegrees(80);
 
@@ -213,7 +214,7 @@ public class BlueFoundation extends LinearOpMode {
                     break;
 
 
-                case 13:
+                case 12:
 
                     drive.resetEncoders();
 
@@ -223,7 +224,7 @@ public class BlueFoundation extends LinearOpMode {
 
                     break;
 
-                case 14:
+                case 13:
 
                     if(drive.atLinearPos()){
                         drive.stopMotors();
@@ -233,7 +234,7 @@ public class BlueFoundation extends LinearOpMode {
 
                     break;
 
-                case 15:
+                case 14:
 
                     //TODO add the init sequence with the lift and such.
 

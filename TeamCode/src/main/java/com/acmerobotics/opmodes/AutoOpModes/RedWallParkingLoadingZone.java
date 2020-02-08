@@ -1,8 +1,10 @@
 package com.acmerobotics.opmodes.AutoOpModes;
 
 import com.acmerobotics.robot.Drive;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+@Autonomous(name="Red Wall Parking LZ")
 public class RedWallParkingLoadingZone extends LinearOpMode {
     private int state;
 
@@ -26,9 +28,11 @@ public class RedWallParkingLoadingZone extends LinearOpMode {
 
             switch (state) {
 
+                //TODO add in all the recalibration things
+
                 case 0:
 
-                    drive.goToPosition(10, 0.5);
+                    drive.goToPosition(9, 0.5);
 
                     state++;
 
@@ -42,8 +46,6 @@ public class RedWallParkingLoadingZone extends LinearOpMode {
                         state++;
                     }
 
-
-                    //TODO add in all the recalibration things
 
 
             }

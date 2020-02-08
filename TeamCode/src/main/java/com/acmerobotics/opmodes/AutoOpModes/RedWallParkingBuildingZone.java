@@ -20,9 +20,11 @@ public class RedWallParkingBuildingZone extends LinearOpMode {
 
             switch (state) {
 
+                //TODO add the recalibration stuff at the beginning
+
                 case 0:
 
-                    drive.goToPosition(10, 0.5);
+                    drive.goToPosition(-8, 0.5);
 
                     state++;
 
@@ -36,8 +38,6 @@ public class RedWallParkingBuildingZone extends LinearOpMode {
                         state++;
                     }
 
-
-                    //TODO add in all the recalibration things
 
 
             }

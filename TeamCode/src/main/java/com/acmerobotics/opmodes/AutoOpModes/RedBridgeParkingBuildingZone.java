@@ -23,7 +23,7 @@ public class RedBridgeParkingBuildingZone extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToPosition(10, 0.5);
+                    drive.goToPosition(-8, 0.5);
 
                     state++;
 
