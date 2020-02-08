@@ -21,9 +21,11 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
     private double passedBlocks;
 
     private double parkingLocation;
-    private double blockLocation;
-    private double underBridge; // will be negative
-    private double awayBridge; // will be negative
+    private double blockLocation = 22; // inches
+    private double forward = 2;
+    private double back = -3;
+    private double underBridge = -22; // will be negative
+    private double awayBridge = -12; // will be negative
 
     private int grabbed = 0;
 
@@ -50,28 +52,28 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
             switch(state){
 
                     /////////////////////// time and encoder checks /////////////////////////
-                case "checkEncoders":
-                    if (drive.motors[0].getCurrentPosition() > passedBlocks){ //// need to convert to ticks
-                        drive.goToPosition(parkingLocation, 0.3);
-                    }
-
-                    else{
-                        // change state
-                    }
-
-                    break;
-
-
-                case "checkTime":
-                    if (time.seconds() < parkTime){
-                        drive.goToPosition(parkingLocation, 0.3);
-                    }
-
-                    else{
-                        // change state
-                    }
-
-                    break;
+//                case "checkEncoders":
+//                    if (drive.motors[0].getCurrentPosition() > passedBlocks){ //// need to convert to ticks
+//                        drive.goToPosition(parkingLocation, 0.3);
+//                    }
+//
+//                    else{
+//                        // change state
+//                    }
+//
+//                    break;
+//
+//
+//                case "checkTime":
+//                    if (time.seconds() < parkTime){
+//                        drive.goToPosition(parkingLocation, 0.3);
+//                    }
+//
+//                    else{
+//                        // change state
+//                    }
+//
+//                    break;
 
                     ////////////////////////////////////////////////////////////////////////////
 
@@ -91,10 +93,10 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                     break;
 
 
-                case "goToBlocks":                     /// requires strafe
-                    // strafe to block location
+                case "goToBlocks":
+                    drive.goToStrafingPos((int)blockLocation, 0.3, "right");
 
-                    if (){ // if target location reached
+                    if (drive.atStrafingPos()){
                         drive.stopMotors();
 
                         state = "atBlocks";
@@ -105,6 +107,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
                 case "atBlocks":
                     drive.resetEncoders();
+                    drive.resetTrackingOmni();
                     traveled = drive.motors[0].getCurrentPosition();
 
                     state = "lookingForSkystone";
@@ -116,6 +119,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                     if (colorSensor.isSkystoneHue()) {
 
                         drive.stopMotors();
+                        drive.resetTrackingOmni();
                         traveled = drive.motors[0].getCurrentPosition();
 
                         state = "grabBlock";
@@ -128,12 +132,12 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                     break;
 
 
-                case "grabBlock": /// requires strafe
-                    // strafe to the right x inches to grab block
+                case "grabBlock":
+                    drive.goToStrafingPos((int)forward, 0.25, "right");
 
                     drive.grab();
 
-                    // strafe to the left x to get back to original spot then plus 4 inches to not run into other blocks when returning
+                    drive.goToStrafingPos((int)back, 0.25, "left");
 
                     grabbed++;
 
@@ -162,9 +166,9 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
                 case "return":
                     double Return = drive.ticksToInches(traveled);
-                    drive.goToPosition(Return, 0.3);
+                    drive.goToPosition(Return + 3, 0.3);
 
-                    // strafe x minus 4 (see grab block)
+                    drive.goToStrafingPos((int)forward, 0.25, "right");
 
                     state = "lookingForSkystone";
 
@@ -182,6 +186,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
             telemetry.addData( "skystone", colorSensor.isSkystoneSat());
             telemetry.addData( "current position 0", drive.motors[0].getCurrentPosition());
             telemetry.addData("traveled", traveled);
+            telemetry.addData("omni",drive.omniTracker.getCurrentPosition());
             telemetry.addLine();
 
             telemetry.addData("state", state);

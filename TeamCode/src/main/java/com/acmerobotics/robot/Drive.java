@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @Config
@@ -84,6 +85,15 @@ public class Drive {
     private double rawHeading;
 
 
+    public DcMotor omniTracker;
+    private static final String trackerName = "rightMotor";
+
+    private static final double trackerRadius = DistanceUnit.INCH.fromMm(35.0 / 2.0);
+    private static final double trackerTicksPerInch = (500 * 4) / (2 * trackerRadius * Math.PI);
+
+    private int targetOmniPos;
+    private boolean atTargetOmniPos = false;
+
     public Drive(HardwareMap hardwareMap, boolean inTeleOp){
         //super("drive");
 
@@ -98,6 +108,9 @@ public class Drive {
         imu.initialize(parameters);
 
         stoneServo = hardwareMap.get(Servo.class, "stoneServo");
+
+        omniTracker = hardwareMap.dcMotor.get(trackerName);
+        omniTracker.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         motors[0] = hardwareMap.get(DcMotorEx.class, "m0");
         motors[1] = hardwareMap.get(DcMotorEx.class, "m1");
@@ -266,6 +279,68 @@ public class Drive {
         motors[1].setPower(-0.5);
         motors[2].setPower(0.5);
         motors[3].setPower(0.5);
+    }
+
+
+
+    public double getCurrentTrackerPos(){
+        return omniTracker.getCurrentPosition();
+    }
+
+    public void resetTrackingOmni(){
+        omniTracker.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    public void goToStrafingPos(int distance, double power, String direction){
+        setTrackingOmni(omniEncodersInchesToTicks(distance), power, direction);
+
+        targetOmniPos = omniEncodersInchesToTicks(distance);
+
+    }
+
+    private void setTrackingOmni(int distance, double power, String direction){
+        motors[0].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motors[1].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motors[2].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motors[3].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        if (direction.equals("left")){
+            motors[0].setPower(-power);
+            motors[1].setPower(power);
+            motors[2].setPower(-power);
+            motors[3].setPower(power);
+
+        } else if (direction.equals("right")) {
+            motors[0].setPower(power);
+            motors[1].setPower(-power);
+            motors[2].setPower(power);
+            motors[3].setPower(-power);
+        }
+
+    }
+
+    private int omniEncodersInchesToTicks(double inches) {
+        double circumference = 2 * Math.PI * RADIUS;
+        return (int) Math.round(inches * trackerTicksPerInch / circumference);
+    }
+
+    public boolean atStrafingPos(){
+
+        if(Math.abs(targetOmniPos) - getCurrentTrackerPos() < 10){
+            atTargetOmniPos = true;
+        }
+
+        return atTargetOmniPos;
+    }
+
+    public boolean resetStrafingPos(){
+        atTargetOmniPos = false;
+
+        return atTargetOmniPos;
+    }
+
+    public double getTargetOmniPos(){
+        return targetOmniPos;
     }
 
     public void strafeLeft(){
