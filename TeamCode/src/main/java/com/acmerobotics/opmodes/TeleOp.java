@@ -93,7 +93,9 @@ public class TeleOp extends LinearOpMode {
 
             if (time.seconds() > 1){
                 isIntakeReady = true;
+            }
 
+            if (isIntakeReady){
                 lift.goToStartHeight(); // raise lift so arm is ready for blocks coming in from intake
 
                 arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
