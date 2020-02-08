@@ -186,7 +186,10 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
             telemetry.addData( "skystone", colorSensor.isSkystoneSat());
             telemetry.addData( "current position 0", drive.motors[0].getCurrentPosition());
             telemetry.addData("traveled", traveled);
-            telemetry.addData("omni",drive.omniTracker.getCurrentPosition());
+            telemetry.addLine();
+
+            telemetry.addData("omni target", drive.omniTracker.getTargetPosition());
+            telemetry.addData("omni current",drive.omniTracker.getCurrentPosition());
             telemetry.addLine();
 
             telemetry.addData("state", state);
