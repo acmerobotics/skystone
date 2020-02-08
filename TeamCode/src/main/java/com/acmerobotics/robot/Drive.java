@@ -71,7 +71,7 @@ public class Drive {
       new Vector2d(1, -1)
     };
 
-    private DcMotorEx[] motors = new DcMotorEx[4];
+    public DcMotorEx[] motors = new DcMotorEx[4];
     private BNO055IMU imu;
     private Servo stoneServo;
 
@@ -99,7 +99,6 @@ public class Drive {
 
         stoneServo = hardwareMap.get(Servo.class, "stoneServo");
 
-        omniTracker = hardwareMap.dcMotor.get(trackerName);
         omniTracker.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         motors[0] = hardwareMap.get(DcMotorEx.class, "m0");

@@ -82,13 +82,13 @@ public class SkystoneGrabTest extends LinearOpMode{
                             } else{
                                 // passed blocks so just go park
                                 double inchesTobackUp = -(drive.ticksToInches(ticksTraveled1));
-                                drive.goToPosition(inchesTobackUp, 0.6);
+                                drive.goToPosition((int)inchesTobackUp, 0.6);
                             }
 
                         } else{
                             // only enough time to park
                             double inchesTobackUp = -(drive.ticksToInches(ticksTraveled1));
-                            drive.goToPosition(inchesTobackUp, 0.6);
+                            drive.goToPosition((int)inchesTobackUp, 0.6);
                         }
 
                         break;
@@ -99,7 +99,7 @@ public class SkystoneGrabTest extends LinearOpMode{
                             if (drive.motors[0].getCurrentPosition() < passedBlocks){
                                 if (!inStone1Position){
                                     double stone1Position = drive.ticksToInches(ticksTraveled2);
-                                    drive.goToPosition(stone1Position + 5, 0.6);
+                                    drive.goToPosition((int)stone1Position + 5, 0.6);
                                     inStone1Position = true;
                                 }
 
@@ -123,7 +123,7 @@ public class SkystoneGrabTest extends LinearOpMode{
                                         //back up ////////////////////////////////////////////////////
 
                                         double inchesTobackUp = -(drive.ticksToInches(ticksTraveled2));
-                                        drive.goToPosition(inchesTobackUp + 6, 0.6);
+                                        drive.goToPosition((int)inchesTobackUp + 6, 0.6);
 
                                         drive.release();
                                         Thread.sleep(1000);
@@ -138,13 +138,13 @@ public class SkystoneGrabTest extends LinearOpMode{
                             } else{
                                 // passed blocks so just go park
                                 double inchesTobackUp = -(drive.ticksToInches(ticksTraveled2));
-                                drive.goToPosition(inchesTobackUp, 0.6);
+                                drive.goToPosition((int)inchesTobackUp, 0.6);
                             }
 
                         } else{
                             // only enough time to park
                             double inchesTobackUp = -(drive.ticksToInches(ticksTraveled2));
-                            drive.goToPosition(inchesTobackUp, 0.6);
+                            drive.goToPosition((int)inchesTobackUp, 0.6);
                         }
 
                         break;

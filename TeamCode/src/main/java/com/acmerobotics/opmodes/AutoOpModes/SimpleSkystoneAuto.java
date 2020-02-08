@@ -39,18 +39,19 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
         Drive drive = new Drive(hardwareMap, false);
         armEncoder arm = new armEncoder(hardwareMap);
         liftEncoder lift = new liftEncoder(hardwareMap);
-        ElapsedTime time = new ElapsedTime();
+        //ElapsedTime time = new ElapsedTime();
 
         drive.resetEncoders();
         drive.resetAngle();
+        drive.resetEncoderOmni();
+        drive.resetStrafingPos();
 
         drive.moveForwardPower = 0.3;
         drive.turnPower = 0.35;
         drive.strafePower = 0.3;
 
-
         waitForStart();
-        time.reset();
+        //time.reset();
 
         while (!isStopRequested()) {
             colorSensor.HSV();
@@ -101,56 +102,70 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
                 case "goToBlocks":
 
-                    drive.goToPosition(blockLocation, 0.28);
+//                    drive.goToPosition((int)blockLocation, 0.28);
+//
+//                    if (drive.atLinearPos()){
+//                        drive.stopMotors();
+//
+//                        state = "turn";
+//                    }
 
-                    if (drive.atLinearPos()){
+
+                    //////////////////
+                    // 45 in
+                    drive.goToStrafingPos(-180, 0.3, "right");
+
+                    if (drive.atStrafingPos()){
                         drive.stopMotors();
+                        drive.resetStrafingPos();
 
-                        state = "turn";
+                        state = "atBlocks";
                     }
+
+                    //////////////////////
 
                     break;
 
 
-                case "turn":
-
-                    drive.setDegrees(80);
-
-                    if(drive.getAngle() == 0) {
-                        drive.clockwise();
-                    }
-
-                    if(drive.getDegrees() > 0) {
-
-                        if(drive.getAngle() < drive.getDegrees()){
-                            drive.counterClockwise();
-
-                        } else {
-
-                            drive.stopMotors();
-                            state = "atBlocks";
-                        }
-
-                    } else {
-
-                        if(drive.getAngle() > drive.getDegrees()){
-                            drive.clockwise();
-
-                        } else {
-
-                            drive.stopMotors();
-                            state = "atBlocks";
-                        }
-
-                    }
-
-                    break;
+//                case "turn":
+//
+//                    drive.setDegrees(80);
+//
+//                    if(drive.getAngle() == 0) {
+//                        drive.clockwise();
+//                    }
+//
+//                    if(drive.getDegrees() > 0) {
+//
+//                        if(drive.getAngle() < drive.getDegrees()){
+//                            drive.counterClockwise();
+//
+//                        } else {
+//
+//                            drive.stopMotors();
+//                            state = "atBlocks";
+//                        }
+//
+//                    } else {
+//
+//                        if(drive.getAngle() > drive.getDegrees()){
+//                            drive.clockwise();
+//
+//                        } else {
+//
+//                            drive.stopMotors();
+//                            state = "atBlocks";
+//                        }
+//
+//                    }
+//
+//                    break;
 
 
                 case "atBlocks":
-                    // might need to strafe closer to blocks
 
                     drive.resetEncoders();
+                    drive.resetEncoderOmni();
                     traveled = drive.motors[0].getCurrentPosition();
 
                     state = "lookingForSkystone";
@@ -162,7 +177,6 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                     if (colorSensor.isSkystoneHue()) {
 
                         drive.stopMotors();
-                        drive.resetTrackingOmni();
                         traveled = drive.motors[0].getCurrentPosition();
 
                         state = "approach";
@@ -177,18 +191,13 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
                 case "approach":
 
-                    if(!timeReset){
-                        time.reset();
-                        timeReset = true;
-                    }
+                    // 2 in
+                    drive.goToStrafingPos(-8, 0.3, "right");
 
-                    if (time.seconds() < forward){
-                        drive.strafeRight();
-                    }
-
-                    else{
+                    if (drive.atStrafingPos()){
                         drive.stopMotors();
-                        timeReset = false;
+                        drive.resetStrafingPos();
+
                         state = "grabBlock";
                     }
 
@@ -201,20 +210,16 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                     Thread.sleep(1500);
                     state = "retreat";
 
+                    break;
+
                 case "retreat":
 
-                    if(!timeReset){
-                        time.reset();
-                        timeReset = true;
-                    }
+                    //4 in
+                    drive.goToStrafingPos(16, 0.3, "left");
 
-                    if (time.seconds() < back){
-                        drive.strafeRight();
-                    }
-
-                    else{
-                        drive.stopMotors();
-                        timeReset = false;
+                    if (drive.atStrafingPos()){
+                    drive.resetStrafingPos();
+                    drive.stopMotors();
                         state = "getToZero";
                     }
 
@@ -233,7 +238,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
 
                 case "score":
-                    drive.goToPosition(underBridge + awayBridge, 0.3);
+                    drive.goToPosition((int)(underBridge + awayBridge), 0.3);
 
                     if (drive.atLinearPos()){
                         drive.stopMotors();
@@ -248,7 +253,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                     Thread.sleep(1500);
 
                     if (grabbed == 2){
-                        drive.goToPosition(underBridge, 0.3);
+                        drive.goToPosition((int)underBridge, 0.3);
                     }
 
                     else {
@@ -260,32 +265,27 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
                 case "return":
                     double Return = drive.ticksToInches(traveled);
-                    drive.goToPosition(Return + 3, 0.3);
+                    drive.goToPosition((int)Return + 3, 0.3);
 
                     if (drive.atLinearPos()){
                         drive.stopMotors();
+                        drive.resetStrafingPos();
+
 
                         state = "resetStrafe";
                     }
 
                     break;
 
-
-
                 case "resetStrafe":
 
-                    if(!timeReset){
-                        time.reset();
-                        timeReset = true;
-                    }
+                    // 16
+                    drive.goToStrafingPos(-16, 0.3, "right");
 
-                    if (time.seconds() < 1){
-                        drive.strafeRight();
-                    }
-
-                    else{
+                    if (drive.atStrafingPos()){
                         drive.stopMotors();
-                        timeReset = false;
+                        drive.resetStrafingPos();
+
                         state = "lookingForSkystone";
                     }
 
@@ -301,9 +301,6 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
             telemetry.addData("traveled", traveled);
             telemetry.addLine();
 
-            telemetry.addData("omni target", drive.omniTracker.getTargetPosition());
-            telemetry.addData("omni current",drive.omniTracker.getCurrentPosition());
-            telemetry.addData("motors stopped", drive.motorsStopped);
             telemetry.addLine();
 
             telemetry.addData("state", state);

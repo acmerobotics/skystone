@@ -18,44 +18,15 @@ public class omniTest extends LinearOpMode {
 
         drive.resetAngle();
 
-        drive.turnPower = 0.35;
-
         waitForStart();
 
         while(!isStopRequested()){
 
-            drive.setDegrees(80);
+            drive.goToStrafingPos(-4, 0.3, "right");
 
-            drive.getDegrees();
-
-            if(drive.getAngle() == 0) {
-                drive.clockwise();
+            if (drive.atStrafingPos()){
+                drive.stopMotors();
             }
-
-            if(drive.getDegrees() > 0) {
-
-                if(drive.getAngle() < drive.getDegrees()){
-                    drive.counterClockwise();
-
-                } else {
-
-                    drive.stopMotors();
-                }
-
-            } else {
-
-                if(drive.getAngle() > drive.getDegrees()){
-                    drive.clockwise();
-
-                } else {
-
-                    drive.stopMotors();
-                }
-
-            }
-
-            telemetry.addData("current", drive.getDegrees());
-            telemetry.addLine();
 
             telemetry.addData("target", drive.getAngle());
             telemetry.update();
