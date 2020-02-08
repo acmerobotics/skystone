@@ -58,7 +58,7 @@ public class SkystoneGrabTest extends LinearOpMode{
                                         ticksTraveled1 = drive.motors[0].getCurrentPosition();
 
                                     } else {
-                                        drive.moveBack();
+                                        drive.moveBack(0.5);
                                         ticksTraveled1 = drive.motors[0].getCurrentPosition();
                                     }
                                 } else {
@@ -111,7 +111,7 @@ public class SkystoneGrabTest extends LinearOpMode{
                                             stone2Detected = true;
 
                                         } else {
-                                            drive.moveBack();
+                                            drive.moveBack(0.5);
                                             ticksTraveled2 = drive.motors[0].getCurrentPosition();
                                         }
 

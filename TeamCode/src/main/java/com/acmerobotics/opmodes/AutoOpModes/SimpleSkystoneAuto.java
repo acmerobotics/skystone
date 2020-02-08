@@ -182,7 +182,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                         state = "approach";
 
                     } else {
-                        drive.moveForward();
+                        drive.moveForward(0.5);
                         traveled = drive.motors[0].getCurrentPosition();
                     }
 
