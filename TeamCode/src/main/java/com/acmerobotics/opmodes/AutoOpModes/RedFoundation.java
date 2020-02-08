@@ -2,6 +2,8 @@ package com.acmerobotics.opmodes.AutoOpModes;
 
 import com.acmerobotics.robot.Drive;
 import com.acmerobotics.robot.FoundationMover;
+import com.acmerobotics.robot.armEncoder;
+import com.acmerobotics.robot.liftEncoder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,6 +19,8 @@ public class RedFoundation extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Drive drive = new Drive(hardwareMap, false);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
+        armEncoder arm = new armEncoder(hardwareMap);
+        liftEncoder lift = new liftEncoder(hardwareMap);
         ElapsedTime time = new ElapsedTime();
 
 
@@ -253,7 +257,20 @@ public class RedFoundation extends LinearOpMode {
 
                 case 15:
 
-                    // add in all of the pre init stuff
+                    arm.runTo(110);
+
+                    if (lift.bottomSet){
+                        state++;
+                    }
+
+                    else{
+                        lift.tightenLiftString();
+
+                        lift.goToBottom();
+                    }
+
+                    break;
+
 
             }
 
