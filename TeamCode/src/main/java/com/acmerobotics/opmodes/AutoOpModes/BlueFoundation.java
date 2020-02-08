@@ -25,7 +25,6 @@ public class BlueFoundation extends LinearOpMode {
 
         telemetry.addData("state", state);
         telemetry.addData("current pos", drive.getCurrentPos());
-        telemetry.addData("target pos bool", drive.returnAtTargetPos());
         telemetry.update();
 
         waitForStart();
@@ -38,7 +37,7 @@ public class BlueFoundation extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToStrafingPos(40, 0.5, "left");
+                    drive.goToStrafingPos(40 , 0.5, "left");
                     state++;
 
                     break;
@@ -47,6 +46,7 @@ public class BlueFoundation extends LinearOpMode {
 
                     if(drive.atStrafingPos()){
                         drive.stopMotors();
+                        drive.resetEncoders();
 
                         state++;
                     }
@@ -55,7 +55,7 @@ public class BlueFoundation extends LinearOpMode {
 
                 case 2:
 
-                    drive.goToPosition(30, 0.25);
+                    drive.goToPosition(27, 0.3);
                     state++;
 
                     break;
@@ -63,6 +63,7 @@ public class BlueFoundation extends LinearOpMode {
                 case 3:
 
                     if(drive.atLinearPos()){
+                        drive.moveForward(0.20);
                         foundationMover.moveToGrab();
 
                         Thread.sleep(1500);
@@ -122,9 +123,8 @@ public class BlueFoundation extends LinearOpMode {
                 case 6:
 
                     drive.resetEncoders();
-                    drive.resetLinearPos();
 
-                    drive.goToPosition(15, 0.5);
+                    drive.goToPosition(24, 0.5);
 
                     state++;
 
@@ -153,8 +153,6 @@ public class BlueFoundation extends LinearOpMode {
                 case 9:
 
                     drive.resetEncoders();
-                    drive.resetLinearPos();
-
 
                     drive.goToPosition(-3, -0.5);
 
@@ -218,7 +216,6 @@ public class BlueFoundation extends LinearOpMode {
                 case 13:
 
                     drive.resetEncoders();
-                    drive.resetLinearPos();
 
                     drive.goToPosition(44, -0.5);
 

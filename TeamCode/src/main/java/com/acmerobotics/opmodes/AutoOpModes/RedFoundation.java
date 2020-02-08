@@ -29,7 +29,6 @@ public class RedFoundation extends LinearOpMode {
 
         telemetry.addData("state", state);
         telemetry.addData("current pos", drive.getCurrentPos());
-        telemetry.addData("target pos bool", drive.returnAtTargetPos());
         telemetry.update();
 
         waitForStart();
@@ -76,7 +75,6 @@ public class RedFoundation extends LinearOpMode {
                 case 3:
 
                     drive.resetEncoderOmni();
-                    drive.resetStrafingPos();
 
                     state++;
 
@@ -142,7 +140,6 @@ public class RedFoundation extends LinearOpMode {
                 case 7:
 
                     drive.resetEncoders();
-                    drive.resetLinearPos();
 
                     drive.goToPosition(15, 0.75);
 
@@ -180,7 +177,7 @@ public class RedFoundation extends LinearOpMode {
                 case 11:
 
                     if(time.seconds() < 0.2){
-                        drive.moveBack();
+                        drive.moveBack(0.5);
 
 
                     } else {
@@ -232,7 +229,6 @@ public class RedFoundation extends LinearOpMode {
                 case 13:
 
                     drive.resetEncoders();
-                    drive.resetLinearPos();
 
                     drive.goToPosition(43, -0.5);
 
