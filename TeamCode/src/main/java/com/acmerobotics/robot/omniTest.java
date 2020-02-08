@@ -10,26 +10,30 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class omniTest extends LinearOpMode {
 
-    public boolean positionReached = false;
-
     @Override
     public void runOpMode() throws InterruptedException {
-        Drive drive = new Drive(hardwareMap, false);
-
-        drive.resetAngle();
+        Intake intake = new Intake(hardwareMap);
 
         waitForStart();
 
-        while(!isStopRequested()){
+        while (!isStopRequested()){
 
-            drive.goToStrafingPos(-4, 0.3, "right");
-
-            if (drive.atStrafingPos()){
-                drive.stopMotors();
+            if (gamepad1.y){
+                intake.leftServo.setPosition(intake.LfullyOpen);
             }
 
-            telemetry.addData("target", drive.getAngle());
-            telemetry.update();
+            if (gamepad1.b){
+                intake.leftOpen();
+            }
+
+
+            if (gamepad1.a){
+                intake.leftFullyOpen();
+            }
+
+            if (gamepad1.x){
+                intake.rightFullyOpen();
+            }
         }
     }
 }

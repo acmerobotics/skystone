@@ -13,12 +13,12 @@ public class Intake {
     public Servo leftServo, rightServo;
 
     private double leftOpen = 0.275;
-    private double leftClose = 1;
+    private double leftClose = .99;
 
     private double rightOpen = 0.7;
-    private double rightClose = 0;
+    private double rightClose = 0.01;
 
-    private double LfullyOpen = 0;
+    public double LfullyOpen = 0.01;
     private double RfullyOpen = 0.9;
 
     public Intake(HardwareMap hardwareMap){
