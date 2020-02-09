@@ -203,17 +203,18 @@ public class TeleOp extends LinearOpMode {
 
                         intake.rightOpen();
                         isRightOpen = true;
-                    }
 
-                    else{
+                    } else {
+
                         intake.rightClose();
                         isRightOpen = false;
                         isFullyOpen = false;
                     }
-                }
-            }
 
-            else if (!gamepad1.left_bumper && !isFullyOpen) {
+                }
+
+
+            } else if (!gamepad1.left_bumper && !isFullyOpen && isLeftBumperPressed) {
 
                 isLeftBumperPressed = false;
 
@@ -221,11 +222,11 @@ public class TeleOp extends LinearOpMode {
 
                     intake.leftOpen();
                     isLeftOpen = true;
-                }
 
-                else{
+                } else {
                     intake.leftClose();
                     isLeftOpen = false;
+
                 }
             }
 
@@ -236,24 +237,29 @@ public class TeleOp extends LinearOpMode {
                     isRightBumperPressed = true;
 
                     if(isFullyOpen == false) {
+
                         isFullyOpen = true;
 
                         intake.rightFullyOpen();
                         intake.leftFullyOpen();
-                    }
 
-                    else{
+                    } else {
+
                         isFullyOpen = false;
 
                         intake.rightOpen();
                         intake.leftOpen();
                     }
                 }
-            }
 
-            else {
+
+            } else {
+
                 isRightBumperPressed = false;
             }
+
+
+
 
             if (gamepad1.left_trigger > 0) {
 

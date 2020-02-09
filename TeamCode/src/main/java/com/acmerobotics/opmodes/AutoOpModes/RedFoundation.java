@@ -33,7 +33,6 @@ public class RedFoundation extends LinearOpMode {
 
         telemetry.addData("state", state);
         telemetry.addData("current pos", drive.getCurrentPos());
-        telemetry.addData("target pos bool", drive.returnAtTargetPos());
         telemetry.update();
 
         waitForStart();
@@ -46,14 +45,34 @@ public class RedFoundation extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToPosition(29, 0.25);
+                    drive.goToStrafingPos(40, 0.5, "right");
                     state++;
 
                     break;
 
                 case 1:
 
+                    if(drive.atStrafingPos()){
+                        drive.stopMotors();
+                        drive.resetEncoders();
+
+                        state++;
+                    }
+
+                    break;
+
+
+                case 2:
+
+                    drive.goToPosition(29, 0.25);
+                    state++;
+
+                    break;
+
+                case 3:
+
                     if(drive.atLinearPos()){
+                        drive.moveForward(0.18);
                         foundationMover.moveToGrab();
 
                         Thread.sleep(1500);
@@ -65,48 +84,21 @@ public class RedFoundation extends LinearOpMode {
                     break;
 
 
-                case 2:
+                case 4:
 
                     if(drive.atLinearPos()){
                         drive.stopMotors();
 
+                    } else {
+
+                        drive.resetAngle();
                         state++;
                     }
 
                     break;
 
-
-
-                case 3:
-
-                    drive.resetEncoderOmni();
-                    drive.resetStrafingPos();
-
-                    state++;
-
-                    break;
-
-
-                case 4:
-
-                    drive.goToStrafingPos(-40, 0.5, "right");
-                    state++;
-
-                    break;
 
                 case 5:
-
-                    if(drive.atStrafingPos()){
-                        drive.stopMotors();
-                        drive.resetAngle();
-
-                        state++;
-                    }
-
-                    break;
-
-
-                case 6:
 
 
 
@@ -143,18 +135,17 @@ public class RedFoundation extends LinearOpMode {
 
                     break;
 
-                case 7:
+                case 6:
 
                     drive.resetEncoders();
-                    drive.resetLinearPos();
 
-                    drive.goToPosition(15, 0.75);
+                    drive.goToPosition(18, 0.75);
 
                     state++;
 
                     break;
 
-                case 8:
+                case 7:
 
                     if(drive.atLinearPos()){
                         drive.stopMotors();
@@ -164,7 +155,7 @@ public class RedFoundation extends LinearOpMode {
 
                     break;
 
-                case 9:
+                case 8:
 
                     foundationMover.moveToStore();
 
@@ -173,7 +164,7 @@ public class RedFoundation extends LinearOpMode {
                     break;
 
 
-                case 10:
+                case 9:
 
                     time.reset();
 
@@ -181,10 +172,10 @@ public class RedFoundation extends LinearOpMode {
 
                     break;
 
-                case 11:
+                case 10:
 
                     if(time.seconds() < 0.2){
-                        drive.moveBack();
+                        drive.moveBack(0.5);
 
 
                     } else {
@@ -196,7 +187,7 @@ public class RedFoundation extends LinearOpMode {
                     break;
 
 
-                case 12:
+                case 11:
 
                     drive.setDegrees(-75);
 
@@ -233,10 +224,9 @@ public class RedFoundation extends LinearOpMode {
                     break;
 
 
-                case 13:
+                case 12:
 
                     drive.resetEncoders();
-                    drive.resetLinearPos();
 
                     drive.goToPosition(43, -0.5);
 
@@ -244,7 +234,7 @@ public class RedFoundation extends LinearOpMode {
 
                     break;
 
-                case 14:
+                case 13:
 
                     if(drive.atLinearPos()){
                         drive.stopMotors();
@@ -255,7 +245,7 @@ public class RedFoundation extends LinearOpMode {
                     break;
 
 
-                case 15:
+                case 14:
 
                     arm.runTo(110);
 

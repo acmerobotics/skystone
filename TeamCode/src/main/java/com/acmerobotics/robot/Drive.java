@@ -312,11 +312,8 @@ public class Drive {
 
     public boolean atStrafingPos(){
 
-        if(Math.abs(getCurrentTrackerPosInches()) > Math.abs(targetOmniPos)){
-            atTargetOmniPos = true;
-        }
+        return Math.abs(getCurrentTrackerPosInches()) > Math.abs(targetOmniPos);
 
-        return atTargetOmniPos;
     }
 
     public boolean resetStrafingPos(){
@@ -329,26 +326,25 @@ public class Drive {
         return targetOmniPos;
     }
 
-    public void moveForward(){
+    public void moveForward(double power){
         for(int i = 0; i < 4; i++){
             motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
-
-        motors[0].setPower(moveForwardPower);
-        motors[1].setPower(moveForwardPower);
-        motors[2].setPower(moveForwardPower);
-        motors[3].setPower(moveForwardPower);
+        motors[0].setPower(power);
+        motors[1].setPower(power);
+        motors[2].setPower(power);
+        motors[3].setPower(power);
     }
 
-    public void moveBack(){
+    public void moveBack(double power){
         for(int i = 0; i < 4; i++){
             motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        motors[0].setPower(-moveBackPower);
-        motors[1].setPower(-moveBackPower);
-        motors[2].setPower(-moveBackPower);
-        motors[3].setPower(-moveBackPower);
+        motors[0].setPower(-power);
+        motors[1].setPower(-power);
+        motors[2].setPower(-power);
+        motors[3].setPower(-power);
     }
 
     public void stopMotors(){
@@ -409,19 +405,23 @@ public class Drive {
     }
 
 
-    public void grab(){
+    public void grab() {
+
         stoneServo.setPosition(grabPosition);
     }
 
-    public void release(){
+    public void release() {
+
         stoneServo.setPosition(releasePosition);
     }
 
 
-    //TODO see if this is causing issues
-
     public int getCurrentPos(){
-        return motors[0].getCurrentPosition();
+        int motorZeroPos = motors[0].getCurrentPosition();
+        int motorOnePos = motors[1].getCurrentPosition();
+        int motorTwoPos = motors[2].getCurrentPosition();
+        int motorThreePos = motors[3].getCurrentPosition();
+        return (motorZeroPos + motorOnePos + motorTwoPos + motorThreePos) / 4;
     }
 
     public int getTargetMotorPos(){
@@ -432,26 +432,13 @@ public class Drive {
         return globalAngle;
     }
 
-    public boolean returnAtTargetPos(){
-        return atTargetMotorPos;
-    }
-
     public boolean atLinearPos(){
 
-        if(Math.abs(targetMotorPos - getCurrentPos()) < 14){
-            atTargetMotorPos = true;
-        }
-
-        return atTargetMotorPos;
+        return Math.abs(targetMotorPos - getCurrentPos()) < 14;
 
     }
 
 
-    public boolean resetLinearPos(){
-        atTargetMotorPos = false;
-
-        return atTargetMotorPos;
-    }
 
 //////////////////////// Auto specific methods end//////////////////////////////////////////////////
 
