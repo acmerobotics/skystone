@@ -26,7 +26,7 @@ public class RedWallParkingBuildingZone extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToPosition(10, 0.5);
+                    drive.goToPosition(-9, 0.5);
 
                     state++;
 
@@ -39,6 +39,8 @@ public class RedWallParkingBuildingZone extends LinearOpMode {
 
                         state++;
                     }
+
+                    break;
 
 
                 case 2:

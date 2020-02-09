@@ -27,44 +27,6 @@ public class RedBridgeParkingBuildingZone extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToPosition(10, 0.5);
-
-                    state++;
-
-                    break;
-
-                case 1:
-
-                    if(drive.atLinearPos()){
-                        drive.stopMotors();
-
-                        state++;
-                    }
-
-                    break;
-
-
-                case 2:
-
-                    drive.goToStrafingPos(30, 0.5, "right");
-
-                    state++;
-
-                    break;
-
-
-                case 3:
-
-                    if(drive.atStrafingPos()){
-                        drive.stopMotors();
-
-                        state++;
-                    }
-
-                    break;
-
-                case 4:
-
                     arm.runTo(110);
 
                     if (lift.bottomSet){
@@ -78,6 +40,47 @@ public class RedBridgeParkingBuildingZone extends LinearOpMode {
                     }
 
                     break;
+
+                case 1:
+
+                    drive.resetEncoders();
+
+                    drive.goToPosition(-9, 0.5);
+
+                    state++;
+
+                    break;
+
+                case 2:
+
+                    if(drive.atLinearPos()){
+                        drive.stopMotors();
+
+                        state++;
+                    }
+
+                    break;
+
+
+                case 3:
+
+                    drive.goToStrafingPos(90, 0.5, "left");
+
+                    state++;
+
+                    break;
+
+
+                case 4:
+
+                    if(drive.atStrafingPos()){
+                        drive.stopMotors();
+
+                        state++;
+                    }
+
+                    break;
+
 
             }
 

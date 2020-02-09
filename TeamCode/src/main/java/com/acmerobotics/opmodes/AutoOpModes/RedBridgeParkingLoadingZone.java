@@ -46,7 +46,7 @@ public class RedBridgeParkingLoadingZone extends LinearOpMode {
 
                 case 2:
 
-                    drive.goToStrafingPos(30, 0.5, "left");
+                    drive.goToStrafingPos(90, 0.5, "left");
 
                     state++;
 

@@ -1,6 +1,8 @@
 package com.acmerobotics.opmodes.AutoOpModes;
 
 import com.acmerobotics.robot.Drive;
+import com.acmerobotics.robot.armEncoder;
+import com.acmerobotics.robot.liftEncoder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -11,6 +13,9 @@ public class BlueWallParkingBuildingZone extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Drive drive = new Drive(hardwareMap, false);
+        liftEncoder lift = new liftEncoder(hardwareMap);
+        armEncoder arm = new armEncoder(hardwareMap);
+
 
         state = 0;
 
@@ -30,7 +35,7 @@ public class BlueWallParkingBuildingZone extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToPosition(10, 0.5);
+                    drive.goToPosition(9, 0.5);
 
                     state++;
 
@@ -45,8 +50,21 @@ public class BlueWallParkingBuildingZone extends LinearOpMode {
                     }
 
 
-                    //TODO add in all the recalibration things
+                case 2:
 
+                    arm.runTo(110);
+
+                    if (lift.bottomSet){
+                        state++;
+                    }
+
+                    else{
+                        lift.tightenLiftString();
+
+                        lift.goToBottom();
+                    }
+
+                    break;
 
             }
 

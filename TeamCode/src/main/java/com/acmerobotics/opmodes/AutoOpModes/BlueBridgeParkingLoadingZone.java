@@ -1,6 +1,8 @@
 package com.acmerobotics.opmodes.AutoOpModes;
 
 import com.acmerobotics.robot.Drive;
+import com.acmerobotics.robot.armEncoder;
+import com.acmerobotics.robot.liftEncoder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -11,6 +13,8 @@ public class BlueBridgeParkingLoadingZone extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Drive drive = new Drive(hardwareMap, false);
+        armEncoder arm = new armEncoder(hardwareMap);
+        liftEncoder lift = new liftEncoder(hardwareMap);
 
 
         state = 0;
@@ -24,13 +28,30 @@ public class BlueBridgeParkingLoadingZone extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToPosition(10, 0.5);
+                    arm.runTo(110);
+
+                    if (lift.bottomSet){
+                        state++;
+                    }
+
+                    else{
+                        lift.tightenLiftString();
+
+                        lift.goToBottom();
+                    }
+
+                    break;
+
+
+                case 1:
+
+                    drive.goToPosition(9, 0.5);
 
                     state++;
 
                     break;
 
-                case 1:
+                case 2:
 
                     if(drive.atLinearPos()){
                         drive.stopMotors();
@@ -41,16 +62,16 @@ public class BlueBridgeParkingLoadingZone extends LinearOpMode {
                     break;
 
 
-                case 2:
+                case 3:
 
-                    drive.goToStrafingPos(30, 0.5, "left");
+                    drive.goToStrafingPos(90, 0.5, "right");
 
                     state++;
 
                     break;
 
 
-                case 3:
+                case 4:
 
                     if(drive.atStrafingPos()){
                         drive.stopMotors();
@@ -60,9 +81,8 @@ public class BlueBridgeParkingLoadingZone extends LinearOpMode {
 
                     break;
 
-                case 4:
 
-                    //TODO add the recalibration stuff
+
             }
 
         }
