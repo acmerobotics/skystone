@@ -55,6 +55,8 @@ public class TeleOp extends LinearOpMode {
     public static int oneExtraBlock = 220;
     public static int twoExtraBlock = 250;
 
+    private boolean timeReset = false;
+
     public int extraBlocks = 0;
 
 
@@ -76,40 +78,69 @@ public class TeleOp extends LinearOpMode {
         /////////////////////////////////FtcDashboard dashboard = FtcDashboard.getInstance();
         /////////////////////////////Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
+        while (true) {
+            if (!lift.bottomSet) {
+                arm.runTo(110);
+
+                lift.tightenLiftString();
+
+                lift.goToBottom();
+
+            } else {
+                break;
+            }
+        }
+
         lift.resetEncoder();
 
-        arm.runTo(100); // gets arm out of the intake's way
+        arm.runTo(130); // gets arm out of the intake's way
 
-        intake.rightFullyOpen();
-        isRightOpen = true;
+        while (true) {
 
-        time.reset();
+            if (arm.armMotor.getCurrentPosition() > 100) {
 
-            if(time.seconds() > 0.5){
-                intake.leftFullyOpen();
-                isLeftOpen = true;
-                isFullyOpen = true;
+                if (timeReset == false){
+                    time.reset();
+                    timeReset = true;
+                }
+
+                intake.rightFullyOpen();
+                isRightOpen = true;
+
+                if (time.seconds() > 1.25) {
+                    intake.leftFullyOpen();
+                    isLeftOpen = true;
+                    isFullyOpen = true;
+                    timeReset = false;
+                    break;
+                }
             }
 
-            if (time.seconds() > 1){
-                isIntakeReady = true;
+        }
+
+
+        while(true){
+            if (timeReset == false){
+                time.reset();
+                timeReset = true;
             }
 
-            if (isIntakeReady){
+            if (time.seconds() > 1.25) {
+
                 lift.goToStartHeight(); // raise lift so arm is ready for blocks coming in from intake
 
                 arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 arm.armMotor.setPower(0.08); // arm goes to place where the 0 position will be
+                break;
             }
+        }
 
         waitForStart();
 
-        arm.resetEncoder();
-
             if(!armReady) {
-                arm.resetEncoder();
-                arm.setHand("open");
-                armReady = true;
+                    arm.resetEncoder();
+                    arm.setHand("open");
+                    armReady = true;
             }
 
         while (!isStopRequested()){

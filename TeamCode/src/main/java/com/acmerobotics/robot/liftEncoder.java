@@ -19,7 +19,7 @@ public class liftEncoder {
     public double blockHeight = 5;
     public double foundationHeight = 2;
     public double extraHeight = 0.5; // will get height greater than target so it doesn't run into it
-    public static int startHeight = 1920;
+    public static int startHeight = 1980;
     public static int bottomPosition = 0;
 
     public  boolean stringTightened = false;
