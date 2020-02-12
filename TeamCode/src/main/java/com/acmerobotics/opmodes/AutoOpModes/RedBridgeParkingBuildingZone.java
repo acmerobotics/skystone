@@ -45,7 +45,7 @@ public class RedBridgeParkingBuildingZone extends LinearOpMode {
 
                     drive.resetEncoders();
 
-                    drive.goToPosition(-9, 0.5);
+                    drive.goToPosition(-5, 0.5);
 
                     state++;
 
@@ -64,7 +64,7 @@ public class RedBridgeParkingBuildingZone extends LinearOpMode {
 
                 case 3:
 
-                    drive.goToStrafingPos(90, 0.5, "left");
+                    drive.goToStrafingPos(100, 0.5, "left");
 
                     state++;
 

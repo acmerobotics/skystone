@@ -113,7 +113,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
                     //////////////////
                     // 45 in
-                    drive.goToStrafingPos(-180, 0.3, "right");
+                    drive.goToStrafingPos(180, 0.3, "right");
 
                     if (drive.atStrafingPos()){
                         drive.stopMotors();
@@ -192,7 +192,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                 case "approach":
 
                     // 2 in
-                    drive.goToStrafingPos(-8, 0.3, "right");
+                    drive.goToStrafingPos(8, 0.3, "right");
 
                     if (drive.atStrafingPos()){
                         drive.stopMotors();
@@ -280,7 +280,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                 case "resetStrafe":
 
                     // 16
-                    drive.goToStrafingPos(-16, 0.3, "right");
+                    drive.goToStrafingPos(-6, 0.3, "right");
 
                     if (drive.atStrafingPos()){
                         drive.stopMotors();

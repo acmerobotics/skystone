@@ -182,7 +182,7 @@ public class BlueFoundation extends LinearOpMode {
 
                 case 11:
 
-                    drive.setDegrees(80);
+                    drive.setDegrees(75);
 
                     drive.getDegrees();
 

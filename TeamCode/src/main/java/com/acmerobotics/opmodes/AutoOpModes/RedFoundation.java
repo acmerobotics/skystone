@@ -75,7 +75,7 @@ public class RedFoundation extends LinearOpMode {
                         drive.moveForward(0.18);
                         foundationMover.moveToGrab();
 
-                        Thread.sleep(1500);
+                        Thread.sleep(1000);
 
                         state++;
 
@@ -139,7 +139,7 @@ public class RedFoundation extends LinearOpMode {
 
                     drive.resetEncoders();
 
-                    drive.goToPosition(18, 0.75);
+                    drive.goToPosition(20, 0.75);
 
                     state++;
 
@@ -228,7 +228,7 @@ public class RedFoundation extends LinearOpMode {
 
                     drive.resetEncoders();
 
-                    drive.goToPosition(43, -0.5);
+                    drive.goToPosition(41, -0.5);
 
                     state++;
 

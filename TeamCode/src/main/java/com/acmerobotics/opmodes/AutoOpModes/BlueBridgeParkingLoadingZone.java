@@ -45,7 +45,7 @@ public class BlueBridgeParkingLoadingZone extends LinearOpMode {
 
                 case 1:
 
-                    drive.goToPosition(9, 0.5);
+                    drive.goToPosition(5, 0.5);
 
                     state++;
 
@@ -64,7 +64,7 @@ public class BlueBridgeParkingLoadingZone extends LinearOpMode {
 
                 case 3:
 
-                    drive.goToStrafingPos(90, 0.5, "right");
+                    drive.goToStrafingPos(100, 0.5, "left");
 
                     state++;
 
