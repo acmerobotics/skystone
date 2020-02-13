@@ -19,7 +19,7 @@ public class liftEncoder {
     public double blockHeight = 5;
     public double foundationHeight = 2;
     public double extraHeight = 0.5; // will get height greater than target so it doesn't run into it
-    public static int startHeight = 1560;
+    public static int startHeight = 1980;
     public static int bottomPosition = 0;
 
     public  boolean stringTightened = false;
@@ -28,7 +28,7 @@ public class liftEncoder {
     //////////////////////
     public int blockPosition = 0;
 
-    public static int blockEncoderHeight = 1130;
+    public static int blockEncoderHeight = 1560;
 
 
     private int radius = 1;
@@ -74,50 +74,11 @@ public class liftEncoder {
     }
 
 
-    public void runTo(int position, double power, Mode mode){
-                     // blocks can also be used as a direct encoder position if the mode is set to DIRECT
+    public void runTo(int position, double power) {
 
-        setMode(mode);
-
-        switch (mode){
-            case BOTTOM:
-                int targetPosition = 0;
-
-                liftMotor.setTargetPosition(targetPosition);
-                liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-                liftMotor.setPower(power);
-
-            case BLOCKS:
-
-//                int foundation = 226;
-//                int block = 1130;
-//
-//                blockPosition = (block * position);
-//                plusFoundation = blockPosition + foundation;
-//                plusStartingHeight = plusFoundation + startHeight;
-//
-//                liftMotor.setTargetPosition(plusStartingHeight);
-//                liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//                liftMotor.setPower(power);
-
-//                int blocks = position;
-//
-//                targetPosition = inchesToTicks(blocks);
-//
-//                liftMotor.setTargetPosition(targetPosition);
-//                liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//
-//                liftMotor.setPower(power);
-
-            case DIRECT:
-
-                liftMotor.setTargetPosition(position);
-                liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-                liftMotor.setPower(power);
-        }
-
+        liftMotor.setTargetPosition(position);
+        liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        liftMotor.setPower(power);
     }
 
 
@@ -132,20 +93,20 @@ public class liftEncoder {
 
 
     public void runToIncrement(int position){
-        int targetPosition = liftMotor.getCurrentPosition() + position;
+        int targetPosition = liftMotor.getCurrentPosition() + position; //make 50 to 150
 
-        runTo(targetPosition, liftPower, Mode.DIRECT);
+        runTo(targetPosition, liftPower);
     }
 
 
     public void goToStartHeight(){
-        runTo(startHeight, liftPower, Mode.DIRECT);
+        runTo(startHeight, liftPower);
     }
 
     public void tightenLiftString(){
-        int tightPosition = 150;
+        int tightPosition = 100;
         if(stringTightened == false) {
-            runTo(tightPosition, liftPower, Mode.DIRECT);
+            runTo(tightPosition, liftPower);
 
             if (!liftMotor.isBusy()) {
                 stringTightened = true;
@@ -158,9 +119,10 @@ public class liftEncoder {
         boolean isAtBottom = isAtBottom();
         if(bottomSet == false && stringTightened == true) {
             if (!isAtBottom) {
-                bottomPosition = liftMotor.getCurrentPosition();
-                bottomPosition -= 5;
-                runTo(bottomPosition, liftPower, Mode.DIRECT);
+
+                liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                liftMotor.setPower(-0.1);
+
             } else {
                 bottomPosition = 0;
                 liftMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
