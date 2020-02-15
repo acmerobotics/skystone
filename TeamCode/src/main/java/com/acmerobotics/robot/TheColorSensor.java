@@ -2,9 +2,11 @@ package com.acmerobotics.robot;
 
 import android.graphics.Color;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+@Config
 public class TheColorSensor {
 
     private  ColorSensor colorSensor;
@@ -12,6 +14,8 @@ public class TheColorSensor {
     private int scaleFactor = 255;
 
     public float[] hsvValues = new float[3];
+
+    public static double skystoneHue = 120; // was 100, I will probably need to edit this
 
     public TheColorSensor(HardwareMap hardwareMap){
         colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
@@ -23,7 +27,7 @@ public class TheColorSensor {
 
 
     public boolean isSkystoneHue(){
-        if(hsvValues[0] > 100){
+        if(hsvValues[0] > skystoneHue){
             return true;
         }
 

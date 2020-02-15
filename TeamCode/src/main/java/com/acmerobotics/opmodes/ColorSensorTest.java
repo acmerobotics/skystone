@@ -1,9 +1,13 @@
 package com.acmerobotics.opmodes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.robot.Drive;
 import com.acmerobotics.robot.TheColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="ColorSensorTest")
 @Config
@@ -12,30 +16,28 @@ public class ColorSensorTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        TheColorSensor sensor = new TheColorSensor(hardwareMap);
+        TheColorSensor colorSensor = new TheColorSensor(hardwareMap);
+
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
         waitForStart();
 
         while(!isStopRequested()){
 
-            sensor.HSV();
-            telemetry.addData("hue", sensor.hsvValues[0]);
-            telemetry.addData("sat.", sensor.hsvValues[1]);
-            telemetry.addData("val.", sensor.hsvValues[2]);
+            colorSensor.HSV();
 
-            telemetry.addLine();
+            dashboardTelemetry.addData("hue", colorSensor.hsvValues[0]);
+            dashboardTelemetry.addData("skytoneHue", TheColorSensor.skystoneHue);
+            dashboardTelemetry.addData("skystone found", colorSensor.isSkystoneHue());
 
-            telemetry.addData("red", sensor.RED());
-            telemetry.addData("green", sensor.GREEN());
-            telemetry.addData("blue", sensor.BLUE());
-            telemetry.addData("hue", sensor.hue());
+            dashboardTelemetry.update();
 
-            telemetry.addLine();
-
-            telemetry.addData("hue function", sensor.isSkystoneHue());
-            telemetry.addData("sat function", sensor.isSkystoneSat());
+            telemetry.addData("skystone found", colorSensor.isSkystoneHue());
 
             telemetry.update();
+
+
         }
     }
 }

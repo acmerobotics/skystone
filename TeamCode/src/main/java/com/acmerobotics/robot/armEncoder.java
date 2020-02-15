@@ -55,7 +55,6 @@ public class armEncoder {
     public armEncoder(HardwareMap hardwareMap){
 
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
-        rotationServo = hardwareMap.get(Servo.class, "rotationServo");
         handServo = hardwareMap.get(Servo.class, "handServo");
 
     }

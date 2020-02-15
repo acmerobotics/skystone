@@ -28,8 +28,6 @@ public class Drive {
     public static double slow_v = MAX_V/2;
     public static double slow_o = MAX_O/2;
 
-    public double moveForwardPower = 0.5;
-    public double moveBackPower = 0.5;
     public double strafePower = 0.5;
 
     public double turnPower = 0.5;
@@ -49,8 +47,8 @@ public class Drive {
     private double wheelOmega = 0;
     private double degrees;
     private double globalAngle;
-    private double grabPosition;
-    private double releasePosition;
+    private double grabPosition = 0.70;
+    private double releasePosition = 0.20;
     private double ticksPerRev = 560.0;
 
     FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -75,12 +73,12 @@ public class Drive {
     private BNO055IMU imu;
     private Servo stoneServo;
 
-    private DcMotorEx omniTracker;
+    public DcMotorEx omniTracker;
 
     private static final double trackerRadius = DistanceUnit.INCH.fromMm(35.0 / 2.0);
     private static final double trackerTicksPerInch = (500 * 4) / (2 * trackerRadius * Math.PI);
 
-    private double targetOmniPos;
+    public double targetOmniPos;
     private boolean atTargetOmniPos = false;
     private int zeroPos;
 
@@ -437,6 +435,50 @@ public class Drive {
         return Math.abs(targetMotorPos - getCurrentPos()) < 14;
 
     }
+    ////////////////////////////////////////////////////////
+
+    public double realTicksPerInch(int ticks){
+        double D = 1.4;
+        int ticksPerRev = 2000;
+
+        return (ticks * ( (D * 3.14) / (ticksPerRev) ) );
+    }
+
+
+    public void IsetTrackingOmni(double power, String direction){
+        motors[0].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motors[1].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motors[2].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motors[3].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        if (direction.equals("right")){
+            motors[0].setPower(-power);
+            motors[1].setPower(power);
+            motors[2].setPower(-power);
+            motors[3].setPower(power);
+
+        } else if (direction.equals("left")) {
+            motors[0].setPower(power);
+            motors[1].setPower(-power);
+            motors[2].setPower(power);
+            motors[3].setPower(-power);
+        }
+    }
+
+
+    public void IgoToStrafingPos(double distance, double power, String direction){
+
+        IsetTrackingOmni(power, direction);
+
+        targetOmniPos = distance;
+    }
+
+
+    public boolean IatStrafingPos(){
+        return Math.abs(realTicksPerInch(omniTracker.getCurrentPosition())) > Math.abs(targetOmniPos);
+    }
+
+
 
 
 
