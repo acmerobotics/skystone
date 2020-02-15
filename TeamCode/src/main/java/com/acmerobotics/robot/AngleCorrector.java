@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 @Config
 public class AngleCorrector {
 
-    public static double Pcoefficient = 0.01;
+    public static double Pcoefficient = 0.025;
     public static double defaultMotorPower = -0.28;
 
     public double error;
@@ -48,7 +48,7 @@ public class AngleCorrector {
 
         double correctionPower = Pcontroller();
 
-        newPower = defaultMotorPower + correctionPower;
+        newPower = defaultMotorPower - (Math.copySign(correctionPower, defaultMotorPower));
 
         drive.motors[2].setPower(newPower);
         drive.motors[3].setPower(newPower);

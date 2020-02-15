@@ -29,6 +29,10 @@ public class AngleCorrection extends LinearOpMode{
 
         while (!isStopRequested()){
 
+            drive.motors[0].setPower(-0.28);
+            drive.motors[1].setPower(-0.28);
+
+
             angleCorrector.setNewPower();
 
 
@@ -36,7 +40,7 @@ public class AngleCorrection extends LinearOpMode{
             dashboardTelemetry.addData("get angle", drive.getAngle());
             dashboardTelemetry.addData("error", angleCorrector.error);
             dashboardTelemetry.addData("new power", angleCorrector.newPower);
-            dashboardTelemetry.addData("power", drive.motors[3].getPower());
+            dashboardTelemetry.addData("power", drive.motors[0].getPower());
 
             dashboardTelemetry.update();
         }
