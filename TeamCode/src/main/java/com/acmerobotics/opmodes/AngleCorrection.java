@@ -30,7 +30,7 @@ public class AngleCorrection extends LinearOpMode{
         while (!isStopRequested()){
 
             drive.motors[0].setPower(-0.28);
-            drive.motors[1].setPower(-0.28);
+            drive.motors[3].setPower(0.28);
 
 
             angleCorrector.setNewPower();
