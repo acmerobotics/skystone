@@ -28,8 +28,7 @@ public class Drive {
     public static double slow_v = MAX_V/2;
     public static double slow_o = MAX_O/2;
 
-    public double strafePower = 0.5;
-
+    public double strafePower = 0.28;
     public double turnPower = 0.5;
   
     private static final double WHEEL_RADIUS = 2;
@@ -81,6 +80,12 @@ public class Drive {
     public double targetOmniPos;
     private boolean atTargetOmniPos = false;
     private int zeroPos;
+
+    public static double Pcoefficient = 0.1;
+    public static double PcoefficientTurn = 0.05;
+
+    public double error;
+    public double newPower;
 
     public Drive(HardwareMap hardwareMap, boolean inTeleOp){
         //super("drive");
@@ -161,6 +166,10 @@ public class Drive {
     }
 
      */
+
+//   public void initAngleCorrector(Drive drive){
+//       angleCorrector = new AngleCorrector(hardwareMap);
+//   }
 
 
     public void setPower(Pose2d target) {
@@ -445,6 +454,11 @@ public class Drive {
     }
 
 
+    public double IcurrentPosition(){
+        return realTicksPerInch(omniTracker.getCurrentPosition());
+    }
+
+
     public void IsetTrackingOmni(double power, String direction){
         motors[0].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motors[1].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -453,22 +467,22 @@ public class Drive {
 
         if (direction.equals("right")){
             motors[0].setPower(-power);
-            motors[1].setPower(power);
-            motors[2].setPower(-power);
+            correctingPower(power, 1);
+            correctingPower(-power, 2);
             motors[3].setPower(power);
 
         } else if (direction.equals("left")) {
             motors[0].setPower(power);
-            motors[1].setPower(-power);
-            motors[2].setPower(power);
+            correctingPower(-power, 1);
+            correctingPower(power, 2);
             motors[3].setPower(-power);
         }
     }
 
 
-    public void IgoToStrafingPos(double distance, double power, String direction){
+    public void IgoToStrafingPos(double distance, String direction){
 
-        IsetTrackingOmni(power, direction);
+        IsetTrackingOmni(strafePower, direction);
 
         targetOmniPos = distance;
     }
@@ -488,6 +502,59 @@ public class Drive {
 
         double rawHeading = imu.getAngularOrientation().firstAngle;
     }
+
+
+
+
+    ///////////////////////////////////////Angle Corrector//////////////////////////////////////////////
+
+    public void setZero(){
+        resetAngle();
+        setDegrees(0);
+    }
+
+
+    private void setError(){
+        error = getAngle();
+    }
+
+
+    private double Pcontroller(){
+        double output = Pcoefficient * error;
+        return output;
+    }
+
+    private double PcontrollerTurn(){
+        return PcoefficientTurn * error;
+    }
+
+
+    public void correctingPower(double defaultPower, int motorNum){
+        setError();
+
+        double correctionPower = Pcontroller();
+        double turnCorrectionPower = PcontrollerTurn();
+
+        double changeSign = Math.copySign(1, defaultPower); // 1 or -1
+
+        if (defaultPower != 0) {
+
+            newPower = defaultPower - (correctionPower * changeSign);
+        }
+
+        else {
+            if (motorNum == 0 || motorNum == 1) {
+                newPower = defaultPower - turnCorrectionPower;
+            }
+
+            else { // motors 2 and 3
+                newPower = defaultPower + turnCorrectionPower;
+            }
+        }
+
+        motors[motorNum].setPower(newPower);
+    }
+
 
 
 }

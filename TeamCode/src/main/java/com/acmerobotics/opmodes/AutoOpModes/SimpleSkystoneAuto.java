@@ -1,6 +1,7 @@
 package com.acmerobotics.opmodes.AutoOpModes;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.robot.AngleCorrector;
 import com.acmerobotics.robot.Drive;
 import com.acmerobotics.robot.TheColorSensor;
 import com.acmerobotics.robot.armEncoder;
@@ -47,8 +48,6 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
         drive.resetStrafingPos();
 
         //drive.moveForwardPower = 0.3;
-        drive.turnPower = 0.35;
-        drive.strafePower = 0.3;
 
         waitForStart();
         //time.reset();
@@ -84,7 +83,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                 ////////////////////////////////////////////////////////////////////////////
 
                 case "init":
-                    arm.runTo(110);
+                    arm.runTo(120);
 
                     if (lift.bottomSet){
                         state = "goToBlocks";
@@ -101,64 +100,64 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
                 case "goToBlocks":
 
-                    drive.goToPosition(-(int)blockLocation, 0.28);
-
-                    if (drive.atLinearPos()){
-                        drive.stopMotors();
-
-                        state = "turn";
-                    }
+//                    drive.goToPosition(-(int)blockLocation, 0.28);
+//
+//                    if (drive.atLinearPos()){
+//                        drive.stopMotors();
+//
+//                        state = "turn";
+//                    }
 
 
                     //////////////////
-                    // 45 in
-//                    drive.goToStrafingPos(180, 0.3, "right");
-//
-//                    if (drive.atStrafingPos()){
-//                        drive.stopMotors();
-//                        drive.resetStrafingPos();
-//
-//                        state = "atBlocks";
-//                    }
+                     //45 in
+                    drive.IgoToStrafingPos(28, "right");
+
+                    if (drive.IatStrafingPos()){
+                        drive.stopMotors();
+                        drive.resetStrafingPos();
+
+                        state = "atBlocks";
+                    }
 
                     //////////////////////
 
                     break;
 
 
-                case "turn":
-
-                    drive.setDegrees(80);
-
-                    if(drive.getAngle() == 0) {
-                        drive.clockwise();
-                    }
-
-                    if(drive.getDegrees() > 0) {
-
-                        if(drive.getAngle() < drive.getDegrees()){
-                            drive.counterClockwise();
-
-                        } else {
-
-                            drive.stopMotors();
-                            state = "atBlocks";
-                        }
-
-                    } else {
-
-                        if(drive.getAngle() > drive.getDegrees()){
-                            drive.clockwise();
-
-                        } else {
-
-                            drive.stopMotors();
-                            state = "atBlocks";
-                        }
-
-                    }
-
-                    break;
+//                case "turn":
+//
+//                    drive.setDegrees(80);
+//
+//                    if(drive.getAngle() == 0) {
+//                        drive.clockwise();
+//                    }
+//
+//                    if(drive.getDegrees() > 0) {
+//
+//                        if(drive.getAngle() < drive.getDegrees()){
+//                            drive.counterClockwise();
+//
+//                        } else {
+//
+//                            drive.stopMotors();
+//                            state = "atBlocks";
+//                        }
+//
+//                    } else {
+//
+//                        if(drive.getAngle() > drive.getDegrees()){
+//                            drive.clockwise();
+//
+//                        } else {
+//
+//                            drive.stopMotors();
+//                            state = "atBlocks";
+//                        }
+//
+//                    }
+//
+//                    break;
 
 
                 case "atBlocks":
@@ -174,7 +173,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                 case "approach1":
 
                     // 2 in
-                    drive.IgoToStrafingPos(3, 0.28, "right");
+                    drive.IgoToStrafingPos(3, "right"); ////////////////////////////////////////
 
                     if (drive.IatStrafingPos()){
                         drive.stopMotors();
@@ -210,7 +209,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                 case "approach2":
 
                     // 2 in
-                    drive.IgoToStrafingPos(2, 0.28, "right");
+                    drive.IgoToStrafingPos(2, "right"); ////////////////////////////////////////
 
                     if (drive.IatStrafingPos()){
                         drive.stopMotors();
@@ -233,7 +232,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                 case "retreat":
 
                     //4 in
-                    drive.IgoToStrafingPos(6, 0.28, "left");
+                    drive.IgoToStrafingPos(6, "left");  ////////////////////////////////////////
 
                     if (drive.IatStrafingPos()){
                         drive.resetStrafingPos();
@@ -299,7 +298,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                 case "resetStrafe":
 
                     // 16
-                    drive.IgoToStrafingPos(6, 0.28, "right");
+                    drive.IgoToStrafingPos(6, "right");  ////////////////////////////////////////
 
                     if (drive.IatStrafingPos()){
                         drive.stopMotors();
@@ -321,6 +320,8 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
             telemetry.addLine();
 
             telemetry.addLine();
+
+            telemetry.addData("angle error", drive.error);
 
             telemetry.addData("state", state);
             telemetry.update();

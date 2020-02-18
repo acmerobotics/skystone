@@ -9,9 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 @Config
 public class AngleCorrector {
 
-    public static double Pcoefficient = 0.02; // 0.025 is for moving forward and back; for strafing use 0.02 still (ends with error of 0 to 5). I would be a good thing to reduce that error once the target position has been reached with a turn
-    // should also check for long distance accuracy
-    public static double defaultMotorPower = -0.28;
+    public static double Pcoefficient = 0.025; // 0.025 is for moving forward and back; for strafing use 0.02
 
     public double error;
     public double newPower;
@@ -22,36 +20,52 @@ public class AngleCorrector {
         drive = new Drive(hardwareMap, false);
     }
 
+
     public void setZero(){
         drive.resetAngle();
         drive.setDegrees(0);
     }
 
 
-    public double getError(){
-        return Math.round(drive.getAngle() - drive.getDegrees());
+    private double getError(){
+        return drive.getAngle() - drive.getDegrees();
     }
 
 
-    public void setError(){
+    private void setError(){
         error = getError();
     }
 
 
-    public double Pcontroller(){
+    private double Pcontroller(){
         double output = Pcoefficient * error;
         return output;
     }
 
 
-    public void setNewPower(){
+    public void setNewPower(double defaultPower, int motorNum){
         setError();
 
         double correctionPower = Pcontroller();
 
-        newPower = defaultMotorPower - (Math.copySign(correctionPower, defaultMotorPower));
+        double changeSign = Math.copySign(1, defaultPower); // 1 or -1
 
-        drive.motors[2].setPower(newPower);
-        drive.motors[1].setPower(-newPower);
+        if (defaultPower != 0) {
+
+            newPower = defaultPower - (correctionPower * changeSign);
+        }
+
+        else {
+            if (motorNum == 0 || motorNum == 1) {
+                newPower = defaultPower - correctionPower;
+            }
+
+            else { // motors 2 and 3
+                newPower = defaultPower + correctionPower;
+            }
+        }
+
+        drive.motors[motorNum].setPower(newPower);
     }
+
 }

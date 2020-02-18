@@ -31,7 +31,7 @@ public class omniTest extends LinearOpMode {
             switch (state) {
                 case 0:
 
-                    drive.IgoToStrafingPos(strafePosition, 0.3, "left");
+                    drive.IgoToStrafingPos(strafePosition, "left");
                     state++;
                     break;
 
