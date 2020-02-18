@@ -32,15 +32,13 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
     private int grabbed = 0;
 
-    private String state = "init";
+    private String state = "goToBlocks";
 
     @Override
     public void runOpMode() throws InterruptedException {
         TheColorSensor colorSensor = new TheColorSensor(hardwareMap);
         Drive drive = new Drive(hardwareMap, false);
-        armEncoder arm = new armEncoder(hardwareMap);
-        liftEncoder lift = new liftEncoder(hardwareMap);
-        //ElapsedTime time = new ElapsedTime();
+        ElapsedTime time = new ElapsedTime();
 
         drive.resetEncoders();
         drive.resetAngle();
@@ -82,82 +80,30 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
                 ////////////////////////////////////////////////////////////////////////////
 
-                case "init":
-                    arm.runTo(120);
-
-                    if (lift.bottomSet){
-                        state = "goToBlocks";
-                    }
-
-                    else{
-                        lift.tightenLiftString();
-
-                        lift.goToBottom();
-                    }
-
-                    break;
-
-
                 case "goToBlocks":
 
-//                    drive.goToPosition(-(int)blockLocation, 0.28);
-//
-//                    if (drive.atLinearPos()){
-//                        drive.stopMotors();
-//
-//                        state = "turn";
-//                    }
-
-
-                    //////////////////
-                     //45 in
                     drive.IgoToStrafingPos(28, "right");
 
                     if (drive.IatStrafingPos()){
                         drive.stopMotors();
                         drive.resetStrafingPos();
+                        time.reset();
 
                         state = "atBlocks";
                     }
-
-                    //////////////////////
-
                     break;
 
-
-//                case "turn":
-//
-//                    drive.setDegrees(80);
-//
-//                    if(drive.getAngle() == 0) {
-//                        drive.clockwise();
-//                    }
-//
-//                    if(drive.getDegrees() > 0) {
-//
-//                        if(drive.getAngle() < drive.getDegrees()){
-//                            drive.counterClockwise();
-//
-//                        } else {
-//
-//                            drive.stopMotors();
-//                            state = "atBlocks";
-//                        }
-//
-//                    } else {
-//
-//                        if(drive.getAngle() > drive.getDegrees()){
-//                            drive.clockwise();
-//
-//                        } else {
-//
-//                            drive.stopMotors();
-//                            state = "atBlocks";
-//                        }
-//
-//                    }
-//
-//                    break;
+                case "angle adjust 1":
+                    if (time.seconds() < 1) {
+                        drive.correctingPower(0, 0);
+                        drive.correctingPower(0, 1);
+                        drive.correctingPower(0, 2);
+                        drive.correctingPower(0, 3);
+                    }
+                    else{
+                        state = "atBlocks";
+                    }
+                    break;
 
 
                 case "atBlocks":
@@ -172,8 +118,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
                 case "approach1":
 
-                    // 2 in
-                    drive.IgoToStrafingPos(3, "right"); ////////////////////////////////////////
+                    drive.IgoToStrafingPos(3, "right");
 
                     if (drive.IatStrafingPos()){
                         drive.stopMotors();
@@ -182,10 +127,23 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                         drive.resetEncoders();
                         drive.resetEncoderOmni();
                         traveled = drive.motors[0].getCurrentPosition();
+                        time.reset();
 
+                        state = "angle adjust 2";
+                    }
+                    break;
+
+
+                case "angle adjust 2":
+                    if (time.seconds() < 1) {
+                        drive.correctingPower(0, 0);
+                        drive.correctingPower(0, 1);
+                        drive.correctingPower(0, 2);
+                        drive.correctingPower(0, 3);
+                    }
+                    else{
                         state = "lookingForSkystone";
                     }
-
                     break;
 
 
@@ -214,10 +172,23 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                     if (drive.IatStrafingPos()){
                         drive.stopMotors();
                         drive.resetStrafingPos();
+                        time.reset();
 
+                        state = "angle adjust 3";
+                    }
+                    break;
+
+
+                case "angle adjust 3":
+                    if (time.seconds() < 1) {
+                        drive.correctingPower(0, 0);
+                        drive.correctingPower(0, 1);
+                        drive.correctingPower(0, 2);
+                        drive.correctingPower(0, 3);
+                    }
+                    else{
                         state = "grabBlock";
                     }
-
                     break;
 
 
@@ -237,9 +208,22 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                     if (drive.IatStrafingPos()){
                         drive.resetStrafingPos();
                         drive.stopMotors();
+                        time.reset();
+                        state = "angle adjust 4";
+                    }
+                    break;
+
+
+                case "angle adjust 4":
+                    if (time.seconds() < 1) {
+                        drive.correctingPower(0, 0);
+                        drive.correctingPower(0, 1);
+                        drive.correctingPower(0, 2);
+                        drive.correctingPower(0, 3);
+                    }
+                    else{
                         state = "getToZero";
                     }
-
                     break;
 
 
@@ -303,11 +287,12 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                     if (drive.IatStrafingPos()){
                         drive.stopMotors();
                         drive.resetStrafingPos();
+                        time.reset();
 
-                        state = "lookingForSkystone";
+                        state = "angle adjust 2";
                     }
-
                     break;
+
             }
 
 

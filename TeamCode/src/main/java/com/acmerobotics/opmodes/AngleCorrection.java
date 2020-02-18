@@ -6,6 +6,7 @@ import com.acmerobotics.robot.AngleCorrector;
 import com.acmerobotics.robot.Drive;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -18,6 +19,7 @@ public class AngleCorrection extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException{
         Drive drive = new Drive(hardwareMap, false);
+        ElapsedTime time = new ElapsedTime();
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
         Telemetry dashboardTelemetry = dashboard.getTelemetry();
@@ -49,15 +51,25 @@ public class AngleCorrection extends LinearOpMode{
 
                 if (drive.IatStrafingPos()) {
                     drive.stopMotors();
+                    time.reset();
                     state++;
                 }
                 break;
                 case 1:
-                    drive.correctingPower(0, 0);
-                    drive.correctingPower(0, 1);
-                    drive.correctingPower(0, 2);
-                    drive.correctingPower(0, 3);
+                    if (time.seconds() < 1) {
+                        drive.correctingPower(0, 0);
+                        drive.correctingPower(0, 1);
+                        drive.correctingPower(0, 2);
+                        drive.correctingPower(0, 3);
+                    }
+                    else{
+                        state++;
+                    }
                     break;
+
+                case 2:
+                    dashboardTelemetry.addLine("here");
+
             }
 
 
