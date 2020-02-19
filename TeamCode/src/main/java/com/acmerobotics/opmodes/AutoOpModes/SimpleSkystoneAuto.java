@@ -82,7 +82,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
                 case "goToBlocks":
 
-                    drive.IgoToStrafingPos(28, "right");
+                    drive.IgoToStrafingPos(27, "right");
 
                     if (drive.IatStrafingPos()){
                         drive.stopMotors();
@@ -107,43 +107,12 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
 
                 case "atBlocks":
-
                     drive.resetEncoders();
                     drive.resetEncoderOmni();
                     traveled = 0;
 
-                    state = "approach1";
+                    state = "lookingForSkystone";
 
-                    break;
-
-                case "approach1":
-
-                    drive.IgoToStrafingPos(3, "right");
-
-                    if (drive.IatStrafingPos()){
-                        drive.stopMotors();
-                        drive.resetStrafingPos();
-
-                        drive.resetEncoders();
-                        drive.resetEncoderOmni();
-                        traveled = drive.motors[0].getCurrentPosition();
-                        time.reset();
-
-                        state = "angle adjust 2";
-                    }
-                    break;
-
-
-                case "angle adjust 2":
-                    if (time.seconds() < 1) {
-                        drive.correctingPower(0, 0);
-                        drive.correctingPower(0, 1);
-                        drive.correctingPower(0, 2);
-                        drive.correctingPower(0, 3);
-                    }
-                    else{
-                        state = "lookingForSkystone";
-                    }
                     break;
 
 
