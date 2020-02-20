@@ -93,17 +93,17 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                     }
                     break;
 
-                case "angle adjust 1":
-                    if (time.seconds() < 1) {
-                        drive.correctingPower(0, 0);
-                        drive.correctingPower(0, 1);
-                        drive.correctingPower(0, 2);
-                        drive.correctingPower(0, 3);
-                    }
-                    else{
-                        state = "atBlocks";
-                    }
-                    break;
+//                case "angle adjust 1":
+//                    if (time.seconds() < 1) {
+//                        drive.correctingPower(0, 0, "");
+//                        drive.correctingPower(0, 1, "");
+//                        drive.correctingPower(0, 2, "");
+//                        drive.correctingPower(0, 3, "");
+//                    }
+//                    else{
+//                        state = "atBlocks";
+//                    }
+//                    break;
 
 
                 case "atBlocks":
@@ -123,7 +123,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                         drive.stopMotors();
                         traveled = drive.motors[0].getCurrentPosition();
 
-                        state = "approach2";
+                        state = "approach1";
 
                     } else {
                         drive.moveForward(-0.28);
@@ -133,32 +133,42 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                     break;
 
 
-                case "approach2":
+                case "approach1":
 
                     // 2 in
-                    drive.IgoToStrafingPos(2, "right"); ////////////////////////////////////////
+                    drive.IgoToStrafingPos(2, "right");
 
                     if (drive.IatStrafingPos()){
                         drive.stopMotors();
                         drive.resetStrafingPos();
                         time.reset();
+                        drive.resetEncoders();
 
-                        state = "angle adjust 3";
+                        state = "move3";
                     }
                     break;
 
 
-                case "angle adjust 3":
-                    if (time.seconds() < 1) {
-                        drive.correctingPower(0, 0);
-                        drive.correctingPower(0, 1);
-                        drive.correctingPower(0, 2);
-                        drive.correctingPower(0, 3);
-                    }
-                    else{
+//                case "angle adjust 3":
+//                    if (time.seconds() < 1) {
+//                        drive.correctingPower(0, 0);
+//                        drive.correctingPower(0, 1);
+//                        drive.correctingPower(0, 2);
+//                        drive.correctingPower(0, 3);
+//                    }
+//                    else{
+//                        state = "grabBlock";
+//                    }
+//                    break;
+
+                case "move3":
+                    drive.goToPosition(-4, 0.25);
+
+                    if (drive.atLinearPos()){
+                        drive.stopMotors();
+
                         state = "grabBlock";
                     }
-                    break;
 
 
                 case "grabBlock":
@@ -171,29 +181,30 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
                 case "retreat":
 
-                    //4 in
-                    drive.IgoToStrafingPos(6, "left");  ////////////////////////////////////////
+                    drive.Pcoefficient = 0.03;
+                    drive.IgoToStrafingPos(6, "left");
 
                     if (drive.IatStrafingPos()){
                         drive.resetStrafingPos();
                         drive.stopMotors();
                         time.reset();
-                        state = "angle adjust 4";
-                    }
-                    break;
-
-
-                case "angle adjust 4":
-                    if (time.seconds() < 1) {
-                        drive.correctingPower(0, 0);
-                        drive.correctingPower(0, 1);
-                        drive.correctingPower(0, 2);
-                        drive.correctingPower(0, 3);
-                    }
-                    else{
+                        drive.resetEncoders();
                         state = "getToZero";
                     }
                     break;
+
+
+//                case "angle adjust 4":
+//                    if (time.seconds() < 1) {
+//                        drive.correctingPower(0, 0);
+//                        drive.correctingPower(0, 1);
+//                        drive.correctingPower(0, 2);
+//                        drive.correctingPower(0, 3);
+//                    }
+//                    else{
+//                        state = "getToZero";
+//                    }
+//                    break;
 
 
                 case "getToZero":
@@ -201,6 +212,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
                     if (drive.atLinearPos()){
                         drive.stopMotors();
+                        drive.resetEncoders();
 
                         state = "score";
                     }
@@ -223,13 +235,13 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                     drive.release();
                     Thread.sleep(1500);
 
-                    if (grabbed == 2){
-                        drive.goToPosition((int)underBridge, 0.3);
-                    }
+//                    if (grabbed == 2){
+//                        drive.goToPosition((int)underBridge, 0.3);
+//                    }
 
-                    else {
-                        state = "return";
-                    }
+//                    else {
+//                        state = "return";
+//                    }
 
                     break;
 
@@ -251,7 +263,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                 case "resetStrafe":
 
                     // 16
-                    drive.IgoToStrafingPos(6, "right");  ////////////////////////////////////////
+                    drive.IgoToStrafingPos(6, "right");
 
                     if (drive.IatStrafingPos()){
                         drive.stopMotors();
@@ -270,7 +282,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
             telemetry.addData( "skystone", colorSensor.isSkystoneSat());
             telemetry.addData( "current position 0", drive.motors[0].getCurrentPosition());
-            telemetry.addData("traveled", traveled);
+            telemetry.addData("pCoefficient", drive.Pcoefficient);
             telemetry.addLine();
 
             telemetry.addLine();

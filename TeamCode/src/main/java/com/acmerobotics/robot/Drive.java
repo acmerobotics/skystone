@@ -81,8 +81,8 @@ public class Drive {
     private boolean atTargetOmniPos = false;
     private int zeroPos;
 
-    public static double Pcoefficient = 0.1;
-    public static double PcoefficientTurn = 0.05;
+    public double Pcoefficient = 0.1;
+    public static double PcoefficientTurn = 0.04;
 
     public double error;
     public double newPower;
@@ -467,14 +467,14 @@ public class Drive {
 
         if (direction.equals("right")){
             motors[0].setPower(-power);
-            correctingPower(power, 1);
-            correctingPower(-power, 2);
+            correctingPower(power, 1, "right");
+            correctingPower(-power, 2, "right");
             motors[3].setPower(power);
 
         } else if (direction.equals("left")) {
             motors[0].setPower(power);
-            correctingPower(-power, 1);
-            correctingPower(power, 2);
+            correctingPower(-power, 1, "left");
+            correctingPower(power, 2, "left");
             motors[3].setPower(-power);
         }
     }
@@ -504,8 +504,6 @@ public class Drive {
     }
 
 
-
-
     ///////////////////////////////////////Angle Corrector//////////////////////////////////////////////
 
     public void setZero(){
@@ -524,12 +522,13 @@ public class Drive {
         return output;
     }
 
+
     private double PcontrollerTurn(){
         return PcoefficientTurn * error;
     }
 
 
-    public void correctingPower(double defaultPower, int motorNum){
+    public void correctingPower(double defaultPower, int motorNum, String direction){
         setError();
 
         double correctionPower = Pcontroller();
@@ -539,7 +538,13 @@ public class Drive {
 
         if (defaultPower != 0) {
 
-            newPower = defaultPower - (correctionPower * changeSign);
+            if (direction.equals("right")) {
+                newPower = defaultPower - (correctionPower * changeSign);
+            }
+
+            if (direction.equals("left")) {
+                newPower = defaultPower + (correctionPower * changeSign); // added instead of subtracted bc opposite adjustment to error is needed from right strafe
+            }
         }
 
         else {
@@ -554,7 +559,5 @@ public class Drive {
 
         motors[motorNum].setPower(newPower);
     }
-
-
 
 }

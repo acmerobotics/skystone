@@ -45,31 +45,16 @@ public class AngleCorrection extends LinearOpMode{
 //            angleCorrector.setNewPower(0, 2);
 //            angleCorrector.setNewPower(0, 3);
 
+            drive.Pcoefficient = 0.03;
             switch(state) {
                 case 0:
-                drive.IgoToStrafingPos(24, "right");
+                    drive.IgoToStrafingPos(24, "left");
 
-                if (drive.IatStrafingPos()) {
-                    drive.stopMotors();
-                    time.reset();
-                    state++;
-                }
-                break;
-                case 1:
-                    if (time.seconds() < 1) {
-                        drive.correctingPower(0, 0);
-                        drive.correctingPower(0, 1);
-                        drive.correctingPower(0, 2);
-                        drive.correctingPower(0, 3);
-                    }
-                    else{
+                    if (drive.IatStrafingPos()) {
+                        drive.stopMotors();
                         state++;
                     }
                     break;
-
-                case 2:
-                    dashboardTelemetry.addLine("here");
-
             }
 
 

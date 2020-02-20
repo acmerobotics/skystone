@@ -352,7 +352,7 @@ public class TeleOp extends LinearOpMode {
             /////////////////////// Lift Grab Capstone //////////////////////////
 
             if (gamepad2.back){
-                arm.moveTo(8);
+                arm.runTo(8);
                 lift.runTo(1340, 1);
             }
 
