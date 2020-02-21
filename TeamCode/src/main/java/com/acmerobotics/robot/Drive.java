@@ -46,7 +46,7 @@ public class Drive {
     private double wheelOmega = 0;
     private double degrees;
     private double globalAngle;
-    private double grabPosition = 0.70;
+    private double grabPosition = 0.75;
     private double releasePosition = 0.20;
     private double ticksPerRev = 560.0;
 
@@ -399,12 +399,12 @@ public class Drive {
 
     }
 
-    private int motorEncodersInchesToTicks(int inches) {
+    private int motorEncodersInchesToTicks(double inches) {
         double circumference = 2 * Math.PI * WHEEL_RADIUS;
         return (int) Math.round(inches * ticksPerRev / circumference);
     }
 
-    public void goToPosition(int position, double power){
+    public void goToPosition(double position, double power){
         setMotorEncoders(motorEncodersInchesToTicks(position), power);
 
         targetMotorPos = motorEncodersInchesToTicks(position);
@@ -504,7 +504,7 @@ public class Drive {
     }
 
 
-    ///////////////////////////////////////Angle Corrector//////////////////////////////////////////////
+    ///////////////////////////////////////Angle Corrector//////////////////////////////////////////
 
     public void setZero(){
         resetAngle();
@@ -542,7 +542,7 @@ public class Drive {
                 newPower = defaultPower - (correctionPower * changeSign);
             }
 
-            if (direction.equals("left")) {
+            else if (direction.equals("left")) {
                 newPower = defaultPower + (correctionPower * changeSign); // added instead of subtracted bc opposite adjustment to error is needed from right strafe
             }
         }

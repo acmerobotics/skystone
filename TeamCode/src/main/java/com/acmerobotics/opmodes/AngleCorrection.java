@@ -48,13 +48,16 @@ public class AngleCorrection extends LinearOpMode{
             drive.Pcoefficient = 0.03;
             switch(state) {
                 case 0:
-                    drive.IgoToStrafingPos(24, "left");
+                    drive.IgoToStrafingPos(12, "left");
 
                     if (drive.IatStrafingPos()) {
                         drive.stopMotors();
                         state++;
                     }
                     break;
+
+                case 1:
+
             }
 
 
