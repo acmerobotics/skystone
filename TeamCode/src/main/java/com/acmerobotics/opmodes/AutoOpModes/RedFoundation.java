@@ -12,9 +12,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class RedFoundation extends LinearOpMode {
     private int state;
 
-    // FtcDashboard dashboard  = FtcDashboard.getInstance();
-    //Telemetry dashboardTelemetry = dashboard.getTelemetry();
-
     @Override
     public void runOpMode() throws InterruptedException {
         Drive drive = new Drive(hardwareMap, false);
@@ -64,7 +61,7 @@ public class RedFoundation extends LinearOpMode {
 
                 case 2:
 
-                    drive.goToPosition(29, 0.25);
+                    drive.goToPosition(30, 0.25);
                     state++;
 
                     break;
@@ -72,7 +69,6 @@ public class RedFoundation extends LinearOpMode {
                 case 3:
 
                     if(drive.atLinearPos()){
-                        drive.moveForward(0.18);
                         foundationMover.moveToGrab();
 
                         Thread.sleep(1000);
@@ -105,37 +101,18 @@ public class RedFoundation extends LinearOpMode {
                     drive.setDegrees(179);
 
 
-                    if(drive.getAngle() == 0) {
-                        drive.clockwise();
-                    }
-
-                    if(drive.getDegrees() > 0) {
-
-                        if(drive.getAngle() < drive.getDegrees()){
-                            drive.counterClockwise();
-
-                        } else {
-
-                            drive.stopMotors();
-                            state++;
-                        }
-
-                    } else {
-
-                        if(drive.getAngle() > drive.getDegrees()){
-                            drive.clockwise();
-
-                        } else {
-
-                            drive.stopMotors();
-                            state++;
-                        }
-
-                    }
-
                     break;
 
                 case 6:
+
+                    drive.executeAngle();
+
+                    state++;
+
+
+                    break;
+
+                case 7:
 
                     drive.resetEncoders();
 
@@ -145,7 +122,7 @@ public class RedFoundation extends LinearOpMode {
 
                     break;
 
-                case 7:
+                case 8:
 
                     if(drive.atLinearPos()){
                         drive.stopMotors();
@@ -155,7 +132,7 @@ public class RedFoundation extends LinearOpMode {
 
                     break;
 
-                case 8:
+                case 9:
 
                     foundationMover.moveToStore();
 
@@ -164,7 +141,7 @@ public class RedFoundation extends LinearOpMode {
                     break;
 
 
-                case 9:
+                case 10:
 
                     time.reset();
 
@@ -172,7 +149,7 @@ public class RedFoundation extends LinearOpMode {
 
                     break;
 
-                case 10:
+                case 11:
 
                     if(time.seconds() < 0.2){
                         drive.moveBack(0.5);
@@ -187,7 +164,7 @@ public class RedFoundation extends LinearOpMode {
                     break;
 
 
-                case 11:
+                case 12:
 
                     drive.setDegrees(-75);
 
@@ -224,7 +201,7 @@ public class RedFoundation extends LinearOpMode {
                     break;
 
 
-                case 12:
+                case 13:
 
                     drive.resetEncoders();
 
@@ -234,7 +211,7 @@ public class RedFoundation extends LinearOpMode {
 
                     break;
 
-                case 13:
+                case 14:
 
                     if(drive.atLinearPos()){
                         drive.stopMotors();
@@ -245,7 +222,7 @@ public class RedFoundation extends LinearOpMode {
                     break;
 
 
-                case 14:
+                case 15:
 
                     arm.runTo(110);
 
