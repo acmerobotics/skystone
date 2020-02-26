@@ -29,11 +29,12 @@ public class armEncoder {
 
     private int gearRatio = 2;
 
+    //^^^^^^^^^^^^^^^^^^^^used in encoder math^^^^^^^^^^^//
     private double armLength = 14;
 
     //^^^^^^^^^^^^^^^^^^^^used in math^^^^^^^^^^^//
 
-    public double rotateCenter = 140/255;
+    public double rotateCenter = 0.55;
 
 
     public static double P = 16; // 12
@@ -42,6 +43,7 @@ public class armEncoder {
     public static double F = 0;
 
     public static PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F, MotorControlAlgorithm.LegacyPID);
+
 
     private double handOpenPos = 0.59;
     private double handClosePos = 0.1;
@@ -53,7 +55,6 @@ public class armEncoder {
     public armEncoder(HardwareMap hardwareMap){
 
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
-        //rotationServo = hardwareMap.get(Servo.class, "rotationServo");
         handServo = hardwareMap.get(Servo.class, "handServo");
 
     }
@@ -75,7 +76,7 @@ public class armEncoder {
 
         armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-        //rotationServo.setPosition(rotateCenter);
+        rotationServo.setPosition(rotateCenter);
     }
 
 

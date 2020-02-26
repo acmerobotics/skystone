@@ -14,6 +14,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.robomatic.util.StickyGamepad;
 import com.acmerobotics.util.JoystickTransform;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -54,7 +55,12 @@ public class TeleOp extends LinearOpMode {
     public static int oneExtraBlock = 220;
     public static int twoExtraBlock = 250;
 
+    private boolean timeReset = false;
+
     public int extraBlocks = 0;
+
+
+    private StickyGamepad stickyGamepad1, stickyGamepad2;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -65,47 +71,76 @@ public class TeleOp extends LinearOpMode {
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         Intake intake = new Intake(hardwareMap);
         JoystickTransform transform = new JoystickTransform();
+        stickyGamepad1 = new StickyGamepad(gamepad1);
+        stickyGamepad2 = new StickyGamepad(gamepad2);
         ElapsedTime time = new ElapsedTime();
         
         /////////////////////////////////FtcDashboard dashboard = FtcDashboard.getInstance();
         /////////////////////////////Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
+        while (true) {
+            if (!lift.bottomSet) {
+                arm.runTo(110);
 
-        arm.runTo(100); // gets arm out of the intake's way
+                lift.tightenLiftString();
 
-        intake.rightFullyOpen();
-        isRightOpen = true;
+                lift.goToBottom();
 
-        time.reset();
-
-            if(time.seconds() > 1){
-                intake.leftFullyOpen();
-                isLeftOpen = true;
-                isFullyOpen = true;
+            } else {
+                break;
             }
+        }
 
-            lift.goToBottom();
+        lift.resetEncoder();
 
-                if (time.seconds() > 2){
-                    isIntakeReady = true;
+        arm.runTo(130); // gets arm out of the intake's way
+
+        while (true) {
+
+            if (arm.armMotor.getCurrentPosition() > 100) {
+
+                if (timeReset == false){
+                    time.reset();
+                    timeReset = true;
+                }
+
+                intake.rightFullyOpen();
+                isRightOpen = true;
+
+                if (time.seconds() > 1.25) {
+                    intake.leftFullyOpen();
+                    isLeftOpen = true;
+                    isFullyOpen = true;
+                    timeReset = false;
+                    break;
                 }
             }
 
-/*
+        }
 
-        lift.goToStartHeight(); // raise lift so arm is ready for blocks coming in from intake
 
-        arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        arm.armMotor.setPower(0.08); // arm goes to place where the 0 position will be
+        while(true){
+            if (timeReset == false){
+                time.reset();
+                timeReset = true;
+            }
+
+            if (time.seconds() > 1.25) {
+
+                lift.goToStartHeight(); // raise lift so arm is ready for blocks coming in from intake
+
+                arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                arm.armMotor.setPower(0.08); // arm goes to place where the 0 position will be
+                break;
+            }
+        }
 
         waitForStart();
 
-        arm.resetEncoder();
-
             if(!armReady) {
-                arm.resetEncoder();
-                arm.setHand("open");
-                armReady = true;
+                    arm.resetEncoder();
+                    arm.setHand("open");
+                    armReady = true;
             }
 
         while (!isStopRequested()){
@@ -168,17 +203,18 @@ public class TeleOp extends LinearOpMode {
 
                         intake.rightOpen();
                         isRightOpen = true;
-                    }
 
-                    else{
+                    } else {
+
                         intake.rightClose();
                         isRightOpen = false;
                         isFullyOpen = false;
                     }
-                }
-            }
 
-            else if (!gamepad1.left_bumper && !isFullyOpen) {
+                }
+
+
+            } else if (!gamepad1.left_bumper && !isFullyOpen && isLeftBumperPressed) {
 
                 isLeftBumperPressed = false;
 
@@ -186,11 +222,11 @@ public class TeleOp extends LinearOpMode {
 
                     intake.leftOpen();
                     isLeftOpen = true;
-                }
 
-                else{
+                } else {
                     intake.leftClose();
                     isLeftOpen = false;
+
                 }
             }
 
@@ -201,27 +237,48 @@ public class TeleOp extends LinearOpMode {
                     isRightBumperPressed = true;
 
                     if(isFullyOpen == false) {
+
                         isFullyOpen = true;
 
                         intake.rightFullyOpen();
                         intake.leftFullyOpen();
-                    }
 
-                    else{
+                    } else {
+
                         isFullyOpen = false;
 
                         intake.rightOpen();
                         intake.leftOpen();
                     }
                 }
-            }
 
-            else {
+
+            } else {
+
                 isRightBumperPressed = false;
             }
 
-            intake.setIntakePower(-gamepad1.left_trigger);
-            intake.setIntakePower(gamepad1.right_trigger);
+
+
+
+            if (gamepad1.left_trigger > 0) {
+
+                intake.setIntakePower(-1);
+
+
+            } else {
+
+                intake.setIntakePower(0);
+            }
+
+            if (gamepad1.right_trigger > 0){
+
+                intake.setIntakePower(1);
+
+            } else {
+
+                intake.setIntakePower(0);
+            }
 
 
             /////////////////////////////////////// gamepad2   /////////////////////////////////////////////
@@ -295,7 +352,7 @@ public class TeleOp extends LinearOpMode {
             /////////////////////// Lift Grab Capstone //////////////////////////
 
             if (gamepad2.back){
-                arm.moveTo(8);
+                arm.runTo(8);
                 lift.runTo(1340, 1);
             }
 
@@ -383,11 +440,11 @@ public class TeleOp extends LinearOpMode {
             telemetry.addData("isBusy", arm.armMotor.isBusy());
             telemetry.addData("current pos", arm.armMotor.getCurrentPosition());
 
+            telemetry.addData("1/2 speed drive", slowDrive);
+
             telemetry.update();
 
 
         }
     }
-    
- */
 }
