@@ -58,13 +58,11 @@ public class Drive {
     Orientation lastAngle = new Orientation();
     private double degrees;
     private double globalAngle;
-    private double grabPosition = 0.75;
-    private double releasePosition = 0.20;
-    private double ticksPerRev = 560.0;
 
     // servo variables
-    private double grabPosition;
-    private double releasePosition;
+    private double grabPosition = 0.75;
+    private double releasePosition = 0.20;
+
 
 
     // vector/pos variables
@@ -90,8 +88,6 @@ public class Drive {
     private static final double trackerRadius = DistanceUnit.INCH.fromMm(35.0 / 2.0);
     private static final double trackerTicksPerInch = (500 * 4) / (2 * trackerRadius * Math.PI);
 
-    public double targetOmniPos;
-    private boolean atTargetOmniPos = false;
     private int zeroPos;
 
     public double Pcoefficient = 0.1;
@@ -100,7 +96,7 @@ public class Drive {
     public double error;
     public double newPower;
 
-    public Drive(HardwareMap hardwareMap, boolean inTeleOp){
+    public Drive(HardwareMap hardwareMap, boolean inTeleOp) {
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -114,40 +110,38 @@ public class Drive {
         motors[2] = hardwareMap.get(DcMotorEx.class, "m2");
         motors[3] = hardwareMap.get(DcMotorEx.class, "m3");
 
-<<<<<<<
         stoneServo = hardwareMap.get(Servo.class, "stoneServo");
-=======
 
->>>>>>>
 
-        if(!inTeleOp){
+        if (!inTeleOp) {
             omniTracker = hardwareMap.get(DcMotorEx.class, "rightMotor");
             omniTracker.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        if(!inTeleOp){
-            omniTracker = hardwareMap.get(DcMotorEx.class, "rightMotor");
-            omniTracker.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            if (!inTeleOp) {
+                omniTracker = hardwareMap.get(DcMotorEx.class, "rightMotor");
+                omniTracker.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            motors[0].setDirection(DcMotorEx.Direction.FORWARD);
-            motors[1].setDirection(DcMotorEx.Direction.FORWARD);
-            motors[2].setDirection(DcMotorEx.Direction.REVERSE);
-            motors[3].setDirection(DcMotorEx.Direction.REVERSE);
-        } else {
+                motors[0].setDirection(DcMotorEx.Direction.FORWARD);
+                motors[1].setDirection(DcMotorEx.Direction.FORWARD);
+                motors[2].setDirection(DcMotorEx.Direction.REVERSE);
+                motors[3].setDirection(DcMotorEx.Direction.REVERSE);
+            } else {
 
-            motors[0].setDirection(DcMotorEx.Direction.FORWARD);
-            motors[1].setDirection(DcMotorEx.Direction.REVERSE);
-            motors[2].setDirection(DcMotorEx.Direction.FORWARD);
-            motors[3].setDirection(DcMotorEx.Direction.REVERSE);
-        }
+                motors[0].setDirection(DcMotorEx.Direction.FORWARD);
+                motors[1].setDirection(DcMotorEx.Direction.REVERSE);
+                motors[2].setDirection(DcMotorEx.Direction.FORWARD);
+                motors[3].setDirection(DcMotorEx.Direction.REVERSE);
+            }
 
 
-        for(int i=0; i<4; i++){
-            motors[i].setPower(0);
-        }
+            for (int i = 0; i < 4; i++) {
+                motors[i].setPower(0);
+            }
 
-        for (int i = 0; i < 4; i++){
-            motors[i].setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            motors[i].setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+            for (int i = 0; i < 4; i++) {
+                motors[i].setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                motors[i].setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+            }
         }
     }
 
@@ -352,9 +346,7 @@ public class Drive {
         return targetOmniPos;
     }
 
-<<<<<<<
 
-=======
     public void moveForward(double power){
         for(int i = 0; i < 4; i++){
             motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
@@ -364,7 +356,7 @@ public class Drive {
         motors[2].setPower(power);
         motors[3].setPower(power);
     }
->>>>>>>
+
 
     //regular driving (forward and backward)
     public void moveBack(double power){
@@ -448,20 +440,6 @@ public class Drive {
 
     }
 
-<<<<<<<
-
-=======
-
-    public void grab() {
-
-        stoneServo.setPosition(grabPosition);
-    }
-
-    public void release() {
-
-        stoneServo.setPosition(releasePosition);
-    }
-
 
     public int getCurrentPos(){
         int motorZeroPos = motors[0].getCurrentPosition();
@@ -471,7 +449,6 @@ public class Drive {
         return (motorZeroPos + motorOnePos + motorTwoPos + motorThreePos) / 4;
     }
 
->>>>>>>
     public int getTargetMotorPos(){
         return targetMotorPos;
     }
@@ -494,10 +471,11 @@ public class Drive {
     }
     ////////////////////////////////////////////////////////
 
-    public void moveBack(double power){
-        for(int i = 0; i < 4; i++){
+    public void moveBack(double power) {
+        for (int i = 0; i < 4; i++) {
             motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
+    }
     public double realTicksPerInch(int ticks){
         double D = 1.4;
         int ticksPerRev = 2000;
@@ -514,13 +492,14 @@ public class Drive {
 
     //stop motors
 
-    public void stopMotors(){
+    public void stopMotors() {
         motors[0].setPower(0);
         motors[1].setPower(0);
         motors[2].setPower(0);
         motors[3].setPower(0);
 
         motorsStopped = true;
+    }
 
     public double IcurrentPosition(){
         return realTicksPerInch(omniTracker.getCurrentPosition());
@@ -531,22 +510,23 @@ public class Drive {
     }
 
     public void IsetTrackingOmni(double power, String direction){
-        motors[0].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motors[1].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motors[2].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motors[3].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motors[0].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motors[1].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motors[2].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motors[3].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        if (direction.equals("right")){
-            motors[0].setPower(-power);
-            correctingPower(power, 1, "right");
-            correctingPower(-power, 2, "right");
-            motors[3].setPower(power);
+            if (direction.equals("right")) {
+                motors[0].setPower(-power);
+                correctingPower(power, 1, "right");
+                correctingPower(-power, 2, "right");
+                motors[3].setPower(power);
 
-        } else if (direction.equals("left")) {
-            motors[0].setPower(power);
-            correctingPower(-power, 1, "left");
-            correctingPower(power, 2, "left");
-            motors[3].setPower(-power);
+            } else if (direction.equals("left")) {
+                motors[0].setPower(power);
+                correctingPower(-power, 1, "left");
+                correctingPower(power, 2, "left");
+                motors[3].setPower(-power);
+            }
         }
     //skystone grabber
 
@@ -559,8 +539,6 @@ public class Drive {
 
         stoneServo.setPosition(releasePosition);
     }
-
-
 
 
 
