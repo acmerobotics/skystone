@@ -22,38 +22,48 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 @Config
 public class Drive {
 
-    private static double MAX_V = 30;
-    private static double MAX_O = 30;
-
-    public static double slow_v = MAX_V/2;
-    public static double slow_o = MAX_O/2;
-
-    public double strafePower = 0.28;
-    public double turnPower = 0.5;
-  
+    //constants
     private static final double WHEEL_RADIUS = 2;
 
+    private static final double TRACKER_RADIUS = DistanceUnit.INCH.fromMm(35.0 / 2.0);
+    private static final double TRACKER_TICKS_PER_INCH = (500 * 4) / (2 * TRACKER_RADIUS * Math.PI);
 
-    private int targetMotorPos;
-    private boolean atTargetMotorPos = false;
+    //hardware devices
+    public DcMotorEx[] motors = new DcMotorEx[4];
+    public DcMotorEx omniTracker;
+    private BNO055IMU imu;
+    private Servo stoneServo;
+
+    // motors and motor encoder variables
+    private static double MAX_V = 30;
+    private static double MAX_O = 30;
+    public static double SLOW_V = MAX_V/2;
+    public static double SLOW_O = MAX_O/2;
 
     private boolean motorsStopped = false;
 
-    private Pose2d targetVelocity = new Pose2d(0, 0, 0);
-
-    Orientation lastAngle = new Orientation();
-
-    private double wheelOmega = 0;
-    private double degrees;
-    private double globalAngle;
-    private double grabPosition = 0.75;
-    private double releasePosition = 0.20;
     private double ticksPerRev = 560.0;
 
-    FtcDashboard dashboard = FtcDashboard.getInstance();
-    TelemetryPacket packet = new TelemetryPacket();
+    private int targetMotorPos;
 
+    // misc. motor powers
+    public double strafePower = 0.28;
+    public double turnPower = 0.5;
 
+    // omni variables
+    public double targetOmniPos;
+    private boolean atTargetOmniPos = false;
+
+    // imu variables
+    Orientation lastAngle = new Orientation();
+    private double degrees;
+    private double globalAngle;
+
+    // servo positions
+    private double grabPosition = 0.75;
+    private double releasePosition = 0.20;
+
+    // vector/pos variables
     private static Vector2d[] WHEEL_POSITIONS = {
             new Vector2d(6, 7.5),
             new Vector2d(-6, 7.5),
@@ -68,32 +78,20 @@ public class Drive {
       new Vector2d(1, -1)
     };
 
-    public DcMotorEx[] motors = new DcMotorEx[4];
-    private BNO055IMU imu;
-    private Servo stoneServo;
+    private Pose2d targetVelocity = new Pose2d(0, 0, 0);
 
-    public DcMotorEx omniTracker;
+    private double wheelOmega = 0;
 
-    private static final double trackerRadius = DistanceUnit.INCH.fromMm(35.0 / 2.0);
-    private static final double trackerTicksPerInch = (500 * 4) / (2 * trackerRadius * Math.PI);
-
-    public double targetOmniPos;
-    private boolean atTargetOmniPos = false;
-    private int zeroPos;
-
+    // correction variables
     public double Pcoefficient = 0.1;
     public static double PcoefficientTurn = 0.04;
 
     public double error;
     public double newPower;
+    private int zeroPos;
 
+    // hardware map
     public Drive(HardwareMap hardwareMap, boolean inTeleOp){
-        //super("drive");
-
-       // motors[0] = robot.getMotor("m0");
-      // motors[1] = robot.getMotor("m1");
-      // motors[2] = robot.getMotor("m2");
-      // motors[3] = robot.getMotor( "m3");
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -136,40 +134,7 @@ public class Drive {
             motors[i].setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         }
 
-       //imu = robot.getRevHubImu(0);
-      // BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-       //parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-       //BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-      // parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-
-       //imu.initialize(parameters);
     }
-
-   /*
-
-    public void setPower(Vector2d v, double omega) {
-
-        setVelocity(v.times(MAX_V), omega * MAX_O);
-
-    }
-
-
-    public void setVelocity(Vector2d v, double omega) {
-        for (int i = 0; i < 4; i++) {
-            Vector2d wheelVelocity = new Vector2d(v.getX() - omega * WHEEL_POSITIONS[i].getY(),
-                    v.getY() + omega * WHEEL_POSITIONS[i].getX());
-            wheelOmega = (wheelVelocity.dot(ROTOR_DIRECTIONS[i]) * Math.sqrt(2)) / RADIUS;
-            motors[i].setVelocity(wheelOmega, AngleUnit.RADIANS);
-
-        }
-
-    }
-
-     */
-
-//   public void initAngleCorrector(Drive drive){
-//       angleCorrector = new AngleCorrector(hardwareMap);
-//   }
 
 
     public void setPower(Pose2d target) {
@@ -185,9 +150,9 @@ public class Drive {
 
 
     public void setSlowPower(Pose2d target) {
-        double v = target.vec().norm() * slow_v;
+        double v = target.vec().norm() * SLOW_V;
         double theta = Math.atan2(target.getX(), target.getY());
-        double omega = target.getHeading() * slow_o;
+        double omega = target.getHeading() * SLOW_O;
 
         targetVelocity = new Pose2d(v * Math.cos(theta), v * Math.sin(theta), omega);
 
@@ -208,8 +173,9 @@ public class Drive {
     }
 
 
-
     /////////////////// Auto specific methods //////////////////////////////////////////////////////
+
+    // turning and angles stuff
     public void setDegrees(double degrees){
         this.degrees = degrees;
     }
@@ -231,7 +197,6 @@ public class Drive {
 
         double deltaAngle = angles.firstAngle - lastAngle.firstAngle;
 
-
         if (deltaAngle < -180)
             deltaAngle += 360;
         else if (deltaAngle > 180)
@@ -243,6 +208,10 @@ public class Drive {
 
         return globalAngle;
 
+    }
+
+    public double getCurrentAngle(){
+        return globalAngle;
     }
 
     public void counterClockwise(){
@@ -267,6 +236,7 @@ public class Drive {
         motors[3].setPower(turnPower);
     }
 
+    // strafing
     public double getCurrentTrackerPosInches(){
         return omniEncoderTicksToInches(omniTracker.getCurrentPosition());
     }
@@ -308,13 +278,13 @@ public class Drive {
     }
 
     private int omniEncodersInchesToTicks(int inches) {
-        double circumference = 2 * Math.PI * trackerRadius;
+        double circumference = 2 * Math.PI * TRACKER_RADIUS;
         return (int) Math.round(inches * (500 * 4) / circumference);
     }
 
     public double omniEncoderTicksToInches(int ticks){
-        double revs = ticks / trackerTicksPerInch;
-        return 2 * Math.PI * trackerRadius * revs;
+        double revs = ticks / TRACKER_TICKS_PER_INCH;
+        return 2 * Math.PI * TRACKER_RADIUS * revs;
     }
 
     public boolean atStrafingPos(){
@@ -331,6 +301,77 @@ public class Drive {
 
     public double getTargetOmniPos(){
         return targetOmniPos;
+    }
+
+    // regular driving (forward and backward)
+    private void setMotorEncoders(int distance, double power){
+        motors[0].setTargetPosition(distance);
+        motors[1].setTargetPosition(distance);
+        motors[2].setTargetPosition(distance);
+        motors[3].setTargetPosition(distance);
+
+        motors[0].setTargetPositionTolerance(20);
+        motors[1].setTargetPositionTolerance(20);
+        motors[2].setTargetPositionTolerance(20);
+        motors[3].setTargetPositionTolerance(20);
+
+        motors[0].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motors[1].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motors[2].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motors[3].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        for (int i = 0; i < 4; i++){
+
+            motors[i].setPower(power);
+        }
+
+    }
+
+    public void goToPosition(double position, double power){
+        setMotorEncoders(motorEncodersInchesToTicks(position), power);
+
+        targetMotorPos = motorEncodersInchesToTicks(position);
+
+    }
+
+    public int getCurrentPos(){
+        int motorZeroPos = motors[0].getCurrentPosition();
+        int motorOnePos = motors[1].getCurrentPosition();
+        int motorTwoPos = motors[2].getCurrentPosition();
+        int motorThreePos = motors[3].getCurrentPosition();
+        return (motorZeroPos + motorOnePos + motorTwoPos + motorThreePos) / 4;
+    }
+
+    public void resetEncoders(){
+        for(int i = 0; i < 4; i++){
+            motors[i].setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        }
+    }
+
+    public double ticksToInches(int ticks) {
+        double revs = ticks / ticksPerRev;
+        return 2 * Math.PI * WHEEL_RADIUS * revs;
+
+    }
+
+    private int motorEncodersInchesToTicks(double inches) {
+        double circumference = 2 * Math.PI * WHEEL_RADIUS;
+        return (int) Math.round(inches * ticksPerRev / circumference);
+    }
+
+
+    public void stopMotors(){
+        motors[0].setPower(0);
+        motors[1].setPower(0);
+        motors[2].setPower(0);
+        motors[3].setPower(0);
+
+        motorsStopped = true;
+
+    }
+
+    public boolean areMotorsStopped(){
+        return motorsStopped;
     }
 
     public void moveForward(double power){
@@ -354,64 +395,19 @@ public class Drive {
         motors[3].setPower(-power);
     }
 
-    public void stopMotors(){
-        motors[0].setPower(0);
-        motors[1].setPower(0);
-        motors[2].setPower(0);
-        motors[3].setPower(0);
 
-        motorsStopped = true;
-
+    public int getTargetMotorPos(){
+        return targetMotorPos;
     }
 
-    public boolean areMotorsStopped(){
-        return motorsStopped;
-    }
+    public boolean atLinearPos(){
 
-    private void setMotorEncoders(int distance, double power){
-        motors[0].setTargetPosition(distance);
-        motors[1].setTargetPosition(distance);
-        motors[2].setTargetPosition(distance);
-        motors[3].setTargetPosition(distance);
-
-        motors[0].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        motors[1].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        motors[2].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        motors[3].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-        for (int i = 0; i < 4; i++){
-
-            motors[i].setPower(power);
-        }
+        return Math.abs(targetMotorPos - getCurrentPos()) < 10;
 
     }
 
 
-    public void resetEncoders(){
-        for(int i = 0; i < 4; i++){
-            motors[i].setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        }
-    }
-
-    public double ticksToInches(int ticks) {
-        double revs = ticks / ticksPerRev;
-        return 2 * Math.PI * WHEEL_RADIUS * revs;
-
-    }
-
-    private int motorEncodersInchesToTicks(double inches) {
-        double circumference = 2 * Math.PI * WHEEL_RADIUS;
-        return (int) Math.round(inches * ticksPerRev / circumference);
-    }
-
-    public void goToPosition(double position, double power){
-        setMotorEncoders(motorEncodersInchesToTicks(position), power);
-
-        targetMotorPos = motorEncodersInchesToTicks(position);
-
-    }
-
-
+    // servo
     public void grab() {
 
         stoneServo.setPosition(grabPosition);
@@ -422,30 +418,7 @@ public class Drive {
         stoneServo.setPosition(releasePosition);
     }
 
-
-    public int getCurrentPos(){
-        int motorZeroPos = motors[0].getCurrentPosition();
-        int motorOnePos = motors[1].getCurrentPosition();
-        int motorTwoPos = motors[2].getCurrentPosition();
-        int motorThreePos = motors[3].getCurrentPosition();
-        return (motorZeroPos + motorOnePos + motorTwoPos + motorThreePos) / 4;
-    }
-
-    public int getTargetMotorPos(){
-        return targetMotorPos;
-    }
-
-    public double getCurrentAngle(){
-        return globalAngle;
-    }
-
-    public boolean atLinearPos(){
-
-        return Math.abs(targetMotorPos - getCurrentPos()) < 14;
-
-    }
-    ////////////////////////////////////////////////////////
-
+    // more omni??
     public double realTicksPerInch(int ticks){
         double D = 1.4;
         int ticksPerRev = 2000;
