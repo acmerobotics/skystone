@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Config
 public class Intake {
 
-    private DcMotorEx leftMotor, rightMotor;
+    private DcMotorEx intakeMotor;
     public Servo leftServo, rightServo;
 
 
@@ -23,24 +23,21 @@ public class Intake {
     private double RfullyOpen = 0.9;
 
     public Intake(HardwareMap hardwareMap){
-        leftMotor = hardwareMap.get(DcMotorEx.class, "leftMotor");
-        rightMotor = hardwareMap.get(DcMotorEx.class, "rightMotor");
+        intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
 
         leftServo = hardwareMap.get(Servo.class, "leftServo");
         rightServo = hardwareMap.get(Servo.class, "rightServo");
 
-        rightMotor.setDirection(DcMotorEx.Direction.REVERSE);
 
     }
 
 
-    public void internalSetVelocity(double leftIntakePower, double rightIntakePower){
-        leftMotor.setPower(leftIntakePower);
-        rightMotor.setPower(rightIntakePower);
+    public void internalSetVelocity(double intakePower){
+        intakeMotor.setPower(intakePower);
     }
 
     public void setIntakePower(double intakePower) {
-        internalSetVelocity(intakePower, intakePower);
+        internalSetVelocity(intakePower);
     }
 
     public void leftOpen(){
