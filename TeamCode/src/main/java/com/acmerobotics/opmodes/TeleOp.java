@@ -2,6 +2,7 @@ package com.acmerobotics.opmodes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.robot.CapstonePlacer;
 import com.acmerobotics.robot.liftEncoder;
 import com.acmerobotics.robot.Drive;
 import com.acmerobotics.robot.FoundationMover;
@@ -70,6 +71,7 @@ public class TeleOp extends LinearOpMode {
         liftEncoder lift = new liftEncoder(hardwareMap);
         FoundationMover foundationMover = new FoundationMover(hardwareMap);
         Intake intake = new Intake(hardwareMap);
+        CapstonePlacer capstonePlacer = new CapstonePlacer(hardwareMap);
         JoystickTransform transform = new JoystickTransform();
         stickyGamepad1 = new StickyGamepad(gamepad1);
         stickyGamepad2 = new StickyGamepad(gamepad2);
@@ -278,6 +280,14 @@ public class TeleOp extends LinearOpMode {
             } else {
 
                 intake.setIntakePower(0);
+            }
+
+            if (gamepad1.dpad_up){
+                capstonePlacer.moveToPlace();
+            }
+
+            if (gamepad1.dpad_down) {
+                capstonePlacer.moveToStore();
             }
 
 
