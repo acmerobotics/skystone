@@ -64,7 +64,7 @@ public class RedBridgeParkingBuildingZone extends LinearOpMode {
 
                 case 3:
 
-                    drive.goToStrafingPos(100, 0.5, "left");
+                    drive.IgoToStrafingPos(10, "right");
 
                     state++;
 
@@ -73,7 +73,7 @@ public class RedBridgeParkingBuildingZone extends LinearOpMode {
 
                 case 4:
 
-                    if(drive.atStrafingPos()){
+                    if(drive.IatStrafingPos()){
                         drive.stopMotors();
 
                         state++;

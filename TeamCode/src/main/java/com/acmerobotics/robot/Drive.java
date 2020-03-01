@@ -310,10 +310,10 @@ public class Drive {
         motors[2].setTargetPosition(distance);
         motors[3].setTargetPosition(distance);
 
-        motors[0].setTargetPositionTolerance(20);
-        motors[1].setTargetPositionTolerance(20);
-        motors[2].setTargetPositionTolerance(20);
-        motors[3].setTargetPositionTolerance(20);
+        motors[0].setTargetPositionTolerance(30);
+        motors[1].setTargetPositionTolerance(30);
+        motors[2].setTargetPositionTolerance(30);
+        motors[3].setTargetPositionTolerance(30);
 
         motors[0].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         motors[1].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -402,7 +402,7 @@ public class Drive {
 
     public boolean atLinearPos(){
 
-        return Math.abs(targetMotorPos - getCurrentPos()) < 10;
+        return Math.abs(targetMotorPos - getCurrentPos()) < 20;
 
     }
 

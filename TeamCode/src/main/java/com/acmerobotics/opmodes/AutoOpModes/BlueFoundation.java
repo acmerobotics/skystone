@@ -43,14 +43,14 @@ public class BlueFoundation extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToStrafingPos(40, 0.5, "left");
+                    drive.IgoToStrafingPos(10, "right");
                     state++;
 
                     break;
 
                 case 1:
 
-                    if(drive.atStrafingPos()){
+                    if(drive.IatStrafingPos()){
                         drive.stopMotors();
                         drive.resetEncoders();
 
