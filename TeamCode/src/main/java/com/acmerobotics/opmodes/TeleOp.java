@@ -386,7 +386,7 @@ public class TeleOp extends LinearOpMode {
                 int blockLifted = foundation;
 
                 arm.runTo(blockLifted);
-                lift.runTo(0, lift.liftPower);
+                lift.runTo(liftEncoder.bottomPosition, lift.liftPower); // using bottom position instead of 0
             }
 
 

@@ -124,7 +124,7 @@ public class liftEncoder {
                 liftMotor.setPower(-0.1);
 
             } else {
-                bottomPosition = 0;
+                bottomPosition = -25;
                 liftMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
                 bottomSet = true;
             }
