@@ -23,6 +23,7 @@ public class RedFoundation extends LinearOpMode {
         liftEncoder lift = new liftEncoder(hardwareMap);
         ElapsedTime time = new ElapsedTime();
 
+        drive.strafePower = 0.5;
 
         state = 0;
         drive.resetEncoders();
@@ -45,14 +46,14 @@ public class RedFoundation extends LinearOpMode {
 
                 case 0:
 
-                    drive.goToStrafingPos(40, 0.5, "right");
+                    drive.IgoToStrafingPos(10, "left");
                     state++;
 
                     break;
 
                 case 1:
 
-                    if(drive.atStrafingPos()){
+                    if(drive.IatStrafingPos()){
                         drive.stopMotors();
                         drive.resetEncoders();
 
@@ -75,7 +76,7 @@ public class RedFoundation extends LinearOpMode {
                         drive.moveForward(0.18);
                         foundationMover.moveToGrab();
 
-                        Thread.sleep(1000);
+                        Thread.sleep(900);
 
                         state++;
 

@@ -64,7 +64,7 @@ public class BlueBridgeParkingLoadingZone extends LinearOpMode {
 
                 case 3:
 
-                    drive.goToStrafingPos(100, 0.5, "left");
+                    drive.IgoToStrafingPos(10, "right");
 
                     state++;
 
