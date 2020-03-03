@@ -16,7 +16,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class armEncoder {
 
     public DcMotorEx armMotor;
-    public Servo rotationServo;
     public Servo handServo;
 
     private double TICKS_PER_REV_MOTOR = 560;
@@ -26,6 +25,8 @@ public class armEncoder {
     private double TICKs_PER_DEGREE = TICKS_PER_REV_GEAR / 360;
 
     private double ARM_MOTOR_DIAMETER = 1;
+
+    public static double armPower = 0;
 
     private int gearRatio = 2;
 
@@ -75,8 +76,6 @@ public class armEncoder {
         //setPID(coefficients)
 
         armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-
-        rotationServo.setPosition(rotateCenter);
     }
 
 
@@ -106,7 +105,7 @@ public class armEncoder {
         armMotor.setTargetPosition(position);
         armMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        armMotor.setPower(1);
+        armMotor.setPower(armPower);
     }
 
 

@@ -31,8 +31,6 @@ public class EncoderTest extends LinearOpMode {
 
         arm.resetEncoder();
 
-        arm.leaveReset();
-
         waitForStart();
 
         arm.resetEncoder();
@@ -43,7 +41,7 @@ public class EncoderTest extends LinearOpMode {
 
             //////////////////////////// ARM //////////////////////////
 
-            arm.runTo(armTargetPosition);  //from 0, 2 in the encoder value is 50
+            arm.runTo(armTargetPosition);
 
             //arm.moveTo(desiredInches);
 
