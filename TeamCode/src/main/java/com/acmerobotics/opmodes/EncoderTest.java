@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-//@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="EncoderTest")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="EncoderTest")
 
 @Config
 public class EncoderTest extends LinearOpMode {

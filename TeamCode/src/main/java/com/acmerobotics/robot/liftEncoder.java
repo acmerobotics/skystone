@@ -44,7 +44,8 @@ public class liftEncoder {
 
     public Mode mode;
 
-    public static PIDFCoefficients coefficients = new PIDFCoefficients(10, 0.05, 0, 0, MotorControlAlgorithm.LegacyPID);
+    //TODO set a softStop for the lift height (max height is 4500 encoder ticks form the bottom)
+    public static PIDFCoefficients coefficients = new PIDFCoefficients(5, 0.055, 0, 0, MotorControlAlgorithm.LegacyPID);
 
 
     public liftEncoder(HardwareMap hardwareMap){
