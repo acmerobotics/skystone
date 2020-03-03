@@ -107,7 +107,7 @@ public class Drive {
 
 
         if(!inTeleOp){
-            omniTracker = hardwareMap.get(DcMotorEx.class, "rightMotor");
+            omniTracker = hardwareMap.get(DcMotorEx.class, "intakeMotor");
             omniTracker.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             motors[0].setDirection(DcMotorEx.Direction.FORWARD);
