@@ -159,9 +159,6 @@ public class liftEncoder {
 
     ////////// encoder math, inches to encoder ticks ///////////////
 
-
-    //TODO test and adjust height math (doesn't seem to be correct)
-
     public double blocksToTotalHeight(int blocks){
         double height = (blocks * blockHeight) + foundationHeight + extraHeight;
         return (height);

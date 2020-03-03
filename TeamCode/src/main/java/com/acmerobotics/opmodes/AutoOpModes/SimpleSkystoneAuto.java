@@ -25,6 +25,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
     private int grabbed = 0;
 
     private String state = "goToBlocks";
+    private String state2 = "liftDown";
     private int path = 0;
 
     @Override
@@ -47,13 +48,24 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
         while (!isStopRequested()) {
 
-            arm.runTo(110);
+            switch(state2){
+                case "liftDown":
+                    arm.runTo(110);
 
-            if (!lift.bottomSet) {
+                    if (!lift.bottomSet) {
 
-                lift.tightenLiftString();
+                        lift.tightenLiftString();
 
-                lift.goToBottom();
+                        lift.goToBottom();
+                    }
+                    break;
+
+                case "liftUp":
+                    arm.armMotor.setPower(0);
+
+                    lift.goToStartHeight();
+
+                    break;
             }
 
             switch(state){
@@ -76,6 +88,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                 ////////////////////////////////////////////////////////////////////////////
 
                 case "goToBlocks":
+                    state2 = "liftDown";
 
                     drive.IgoToStrafingPos(27, "right");
 
@@ -217,6 +230,8 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
 
                 case "getToZero":
+                    state2 = "liftDown"; // might need time delay so lift has time to move to position
+
                     double zero = drive.ticksToInches(-traveled);
 
                     drive.goToPosition(zero, 0.3);
@@ -224,7 +239,6 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                     if (drive.atLinearPos()){
                         drive.stopMotors();
                         drive.resetEncoders();
-
 
                         state = "score";
                     }
@@ -262,6 +276,8 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
 
                 case "pickPath2":
+                    state2 = "liftUp"; // might need time delay so lift has time to move to position
+
                     if (path == 1){
                         drive.goToPosition(underBridge - 10, 0.3); // might need to adjust the subtraction
 
@@ -273,6 +289,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
                     if (path == 2){
                         double return1 = traveled - 24;
+
 
                         drive.goToPosition(return1, 0.28);
 
@@ -292,6 +309,8 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                             state = "resetStrafe";
                         }
                     }
+
+                    break;
 
 
                 case "resetStrafe":
@@ -320,7 +339,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
 
 
-            ////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////
 
             telemetry.addData("traveled", traveled);
             telemetry.addLine();

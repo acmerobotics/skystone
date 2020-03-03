@@ -45,9 +45,14 @@ public class liftEncoderTest extends LinearOpMode{
             lift.runTo(targetPosition, thePower);
 
 
-            dashboardTelemetry.addData("current position ", lift.liftMotor.getCurrentPosition());
-            dashboardTelemetry.addData("target position ", lift.liftMotor.getTargetPosition());
-            dashboardTelemetry.addData("pid coefficients", lift.liftMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+            dashboardTelemetry.addData("current position ", lift.liftMotor1.getCurrentPosition());
+            dashboardTelemetry.addData("target position ", lift.liftMotor1.getTargetPosition());
+            dashboardTelemetry.addData("pid coefficients", lift.liftMotor1.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+
+
+            dashboardTelemetry.addData("current position 2", lift.liftMotor2.getCurrentPosition());
+            dashboardTelemetry.addData("target position 2", lift.liftMotor2.getTargetPosition());
+            dashboardTelemetry.addData("pid coefficients 2", lift.liftMotor2.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
 
             dashboardTelemetry.update();
 
