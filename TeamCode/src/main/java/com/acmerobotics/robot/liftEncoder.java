@@ -31,16 +31,12 @@ public class liftEncoder {
 
     public static int blockEncoderHeight = 1204; //1560
 
-    // 1980   // x
-    // 35     // 27
-
-
     private int radius = 1;
     private int TICKS_PER_REV = 280;
 
     private int maxHeight = 4600;
 
-    public double liftPower = 1;
+    public double liftPower = 0.5;
 
     private int stateb = 0;
 
@@ -113,8 +109,8 @@ public class liftEncoder {
 
         blockPosition = (blockEncoderHeight * position);// + startHeight;
 
-        if (blockPosition >= 4000){
-            blockPosition = 3999;
+        if (blockPosition >= maxHeight){
+            blockPosition = 4599;
         }
 
         liftMotor1.setTargetPosition(blockPosition);
@@ -160,8 +156,8 @@ public class liftEncoder {
                     case 0:
                         if (!isAtBottom) {
 
-                            liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-                            liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                            liftMotor1.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+                            liftMotor2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
                             liftMotor1.setPower(-0.1);
                             liftMotor2.setPower(-0.1);
@@ -185,12 +181,11 @@ public class liftEncoder {
                         break;
 
                     case 3:
-                        bottomPosition = 0;
                         liftMotor1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
                         liftMotor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+                        bottomPosition = 0;
                         bottomSet = true;
                         stateb++;
-
             }
         }
     }
@@ -239,6 +234,7 @@ public class liftEncoder {
 
     public void setPID(){//PIDFCoefficients coefficients){
         liftMotor1.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coefficients);
+        liftMotor2.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coefficients);
     }
 
 }

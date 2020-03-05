@@ -49,8 +49,9 @@ public class TeleOp extends LinearOpMode {
 
     private int blocks = 0;
 
-    public static int foundation = 165;
-    public static int lower = 145;
+    public static int foundation = 155; // 165
+    public static int lower = 135; // 145
+
 
     public static int oneExtraBlock = 220;
     public static int twoExtraBlock = 250;
@@ -92,6 +93,19 @@ public class TeleOp extends LinearOpMode {
             } else {
                 break;
             }
+
+            telemetry.addData("current pos 1", lift.liftMotor1.getCurrentPosition());
+            telemetry.addData("current pos 1", lift.liftMotor2.getCurrentPosition());
+
+            telemetry.addLine();
+
+            telemetry.addData("lift busy 1", lift.liftMotor1.isBusy());
+            telemetry.addData("lift busy 2", lift.liftMotor2.isBusy());
+
+            telemetry.addLine();
+
+            telemetry.addData("at bottom", lift.bottomSet);
+            telemetry.update();
         }
 
         lift.resetEncoder();
@@ -118,7 +132,6 @@ public class TeleOp extends LinearOpMode {
                     break;
                 }
             }
-
         }
 
 
@@ -136,6 +149,7 @@ public class TeleOp extends LinearOpMode {
                 arm.armMotor.setPower(0.08); // arm goes to place where the 0 position will be
                 break;
             }
+
         }
 
         waitForStart();
@@ -446,12 +460,24 @@ public class TeleOp extends LinearOpMode {
 
             ////////////////////////// Telemetry //////////////////////////////
 
-            telemetry.addData("blocks", blocks);
+//            telemetry.addData("blocks", blocks);
+//
+//            telemetry.addData("1/2 speed drive", slowDrive);
+//
+//            telemetry.addLine();
 
-            telemetry.addData("isBusy", arm.armMotor.isBusy());
-            telemetry.addData("current pos", arm.armMotor.getCurrentPosition());
+            telemetry.addData("current pos 1", lift.liftMotor1.getCurrentPosition());
+            telemetry.addData("current pos 2", lift.liftMotor2.getCurrentPosition());
 
-            telemetry.addData("1/2 speed drive", slowDrive);
+            telemetry.addLine();
+
+
+            telemetry.addData("lift busy 1", lift.liftMotor1.isBusy());
+            telemetry.addData("lift busy 2", lift.liftMotor2.isBusy());
+
+            telemetry.addLine();
+
+            telemetry.addData("at bottom", lift.bottomSet);
 
             telemetry.update();
 
