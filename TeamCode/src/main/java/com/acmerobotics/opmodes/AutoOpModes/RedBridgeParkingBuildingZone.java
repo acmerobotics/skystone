@@ -64,7 +64,7 @@ public class RedBridgeParkingBuildingZone extends LinearOpMode {
 
                 case 3:
 
-                    drive.IgoToStrafingPos(10, "right");
+                    drive.IgoToStrafingPos(24, "right");
 
                     state++;
 

@@ -61,7 +61,7 @@ public class BlueFoundation extends LinearOpMode {
 
                 case 2:
 
-                    drive.goToPosition(27, 0.3);
+                    drive.goToPosition(21, 0.5);
                     state++;
 
                     break;
@@ -72,7 +72,7 @@ public class BlueFoundation extends LinearOpMode {
                         drive.moveForward(0.18);
                         foundationMover.moveToGrab();
 
-                        Thread.sleep(1500);
+                        Thread.sleep(900);
 
                         state++;
 
@@ -182,7 +182,7 @@ public class BlueFoundation extends LinearOpMode {
 
                 case 11:
 
-                    drive.setDegrees(75);
+                    drive.setDegrees(80);
 
                     drive.getDegrees();
 
@@ -221,7 +221,7 @@ public class BlueFoundation extends LinearOpMode {
 
                     drive.resetEncoders();
 
-                    drive.goToPosition(42, -0.5);
+                    drive.goToPosition(45, -0.5);
 
                     state++;
 

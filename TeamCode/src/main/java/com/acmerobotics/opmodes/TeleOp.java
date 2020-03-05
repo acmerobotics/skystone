@@ -30,7 +30,6 @@ public class TeleOp extends LinearOpMode {
     public boolean isLeftOpen = false;
     public boolean isRightBumperPressed = false;
     public boolean isRightOpen = false;
-
     private boolean isFullyOpen = false;
     private boolean isIntakeReady = false;
 
@@ -270,25 +269,25 @@ public class TeleOp extends LinearOpMode {
                 intake.setIntakePower(-1);
 
 
-            } else {
-
-                intake.setIntakePower(0);
-            }
-
-            if (gamepad1.right_trigger > 0){
+            } else if (gamepad1.right_trigger > 0){
 
                 intake.setIntakePower(1);
 
             } else {
 
                 intake.setIntakePower(0);
+
             }
 
-            if (gamepad1.dpad_up){
+
+
+
+
+            if (gamepad1.dpad_down){
                 capstonePlacer.moveToPlace();
             }
 
-            if (gamepad1.dpad_down) {
+            if (gamepad1.dpad_up) {
                 capstonePlacer.moveToStore();
             }
 
