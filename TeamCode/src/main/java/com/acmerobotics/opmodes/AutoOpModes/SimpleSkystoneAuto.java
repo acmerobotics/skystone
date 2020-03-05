@@ -42,6 +42,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
         drive.resetStrafingPos();
 
         //drive.moveForwardPower = 0.3;
+        arm.resetEncoder();
 
         waitForStart();
         //time.reset();
@@ -50,7 +51,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
 
             switch(state2){
                 case "liftDown":
-                    arm.runTo(110);
+                    arm.runTo(80);
 
                     if (!lift.bottomSet) {
 
@@ -61,9 +62,9 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                     break;
 
                 case "liftUp":
-                    arm.armMotor.setPower(0);
+                    arm.armMotor.setPower(-0.2);
 
-                    lift.goToStartHeight();
+                    lift.runTo(2000, 0.5);
 
                     break;
             }
@@ -176,6 +177,8 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                         state = "approach1";
                     }
 
+                    break;
+
 
                 case "approach1":
 
@@ -269,7 +272,38 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                     }
 
                     else {
-                        state = "pickPath2";
+                        state = "traveled";
+                    }
+
+                    break;
+
+
+                case "traveled":
+                    if (path == 1){
+                        drive.goToPosition(underBridge, 0.28);
+
+                        if (drive.atLinearPos()){
+                            drive.stopMotors();
+                            state = "pickPath2";
+                        }
+                    }
+
+                    if (path == 2){
+                        drive.goToPosition(traveled, 0.28);
+
+                        if (drive.atLinearPos()){
+                            drive.stopMotors();
+                            state = "pickPath2";
+                        }
+                    }
+
+                    if (path == 3){
+                        drive.goToPosition(traveled, 0.28);
+
+                        if (drive.atLinearPos()){
+                            drive.stopMotors();
+                            state = "pickPath2";
+                        }
                     }
 
                     break;
@@ -279,7 +313,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                     state2 = "liftUp"; // might need time delay so lift has time to move to position
 
                     if (path == 1){
-                        drive.goToPosition(underBridge - 10, 0.3); // might need to adjust the subtraction
+                        drive.goToPosition( -10, 0.28); // might need to adjust the subtraction
 
                         if (drive.atLinearPos()){
                             drive.stopMotors();
@@ -288,10 +322,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                     }
 
                     if (path == 2){
-                        double return1 = traveled - 24;
-
-
-                        drive.goToPosition(return1, 0.28);
+                        drive.goToPosition(-24, 0.28);
 
                         if (drive.atLinearPos()){
                             drive.stopMotors();
@@ -300,9 +331,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                     }
 
                     if (path == 3){
-                        double return2 = traveled - 8;
-
-                        drive.goToPosition(return2, 0.28);
+                        drive.goToPosition(-8, 0.28);
 
                         if (drive.atLinearPos()){
                             drive.stopMotors();
@@ -326,7 +355,7 @@ public class SimpleSkystoneAuto extends LinearOpMode { /////////////////////////
                             state = "lookingForSkystone";
                         }
                         else {
-                            state = "approach 1";
+                            state = "approach1";
                         }
                     }
                     break;

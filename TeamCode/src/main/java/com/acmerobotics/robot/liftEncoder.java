@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.util.Range;
 
 @Config
 public class liftEncoder {
@@ -19,7 +20,7 @@ public class liftEncoder {
     public double blockHeight = 5;
     public double foundationHeight = 2;
     public double extraHeight = 0.5; // will get height greater than target so it doesn't run into it
-    public static int startHeight = 1980;
+    public static int startHeight = 1528; // 1980
     public static int bottomPosition = 0;
 
     public  boolean stringTightened = false;
@@ -28,13 +29,20 @@ public class liftEncoder {
     //////////////////////
     public int blockPosition = 0;
 
-    public static int blockEncoderHeight = 1560;
+    public static int blockEncoderHeight = 1204; //1560
+
+    // 1980   // x
+    // 35     // 27
 
 
     private int radius = 1;
     private int TICKS_PER_REV = 280;
 
+    private int maxHeight = 4600;
+
     public double liftPower = 1;
+
+    private int stateb = 0;
 
     public enum Mode{
         BLOCKS,
@@ -44,7 +52,6 @@ public class liftEncoder {
 
     public Mode mode;
 
-    //TODO set a softStop for the lift height (max height is 4500 encoder ticks form the bottom)
     public static PIDFCoefficients coefficients = new PIDFCoefficients(5, 0.055, 0, 0, MotorControlAlgorithm.LegacyPID);
 
 
@@ -87,6 +94,10 @@ public class liftEncoder {
 
     public void runTo(int position, double power) {
 
+        if (position >= maxHeight){
+            position = 4599;
+        }
+
         liftMotor1.setTargetPosition(position);
         liftMotor2.setTargetPosition(position);
 
@@ -101,6 +112,10 @@ public class liftEncoder {
     public void runToBlocks(int position, double power){
 
         blockPosition = (blockEncoderHeight * position);// + startHeight;
+
+        if (blockPosition >= 4000){
+            blockPosition = 3999;
+        }
 
         liftMotor1.setTargetPosition(blockPosition);
         liftMotor2.setTargetPosition(blockPosition);
@@ -125,11 +140,11 @@ public class liftEncoder {
     }
 
     public void tightenLiftString(){
-        int tightPosition = 100;
+        int tightPosition = 50;
         if(stringTightened == false) {
             runTo(tightPosition, liftPower);
 
-            if (!liftMotor1.isBusy()) {
+            if (liftMotor1.getCurrentPosition() >= (tightPosition - 10)) {
                 stringTightened = true;
             }
         }
@@ -139,20 +154,43 @@ public class liftEncoder {
     public void goToBottom(){
         boolean isAtBottom = isAtBottom();
         if(bottomSet == false && stringTightened == true) {
-            if (!isAtBottom) {
 
-                liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-                liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            switch (stateb){
 
-                liftMotor1.setPower(-0.1);
-                liftMotor2.setPower(-0.1);
+                    case 0:
+                        if (!isAtBottom) {
 
-            } else {
+                            liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                            liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-                bottomPosition = 0;
-                liftMotor1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-                liftMotor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-                bottomSet = true;
+                            liftMotor1.setPower(-0.1);
+                            liftMotor2.setPower(-0.1);
+                        }
+                        else{
+                            stateb++;
+                        }
+                        break;
+
+                    case 1:
+                        liftMotor1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+                        liftMotor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+                        stateb++;
+
+                    case 2:
+                        runTo(-100, 0.1);
+
+                        if (liftMotor1.getCurrentPosition() <= -100){
+                            stateb++;
+                        }
+                        break;
+
+                    case 3:
+                        bottomPosition = 0;
+                        liftMotor1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+                        liftMotor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+                        bottomSet = true;
+                        stateb++;
+
             }
         }
     }

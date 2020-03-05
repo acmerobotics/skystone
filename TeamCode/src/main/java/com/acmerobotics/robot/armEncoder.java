@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -26,16 +27,30 @@ public class armEncoder {
 
     private double ARM_MOTOR_DIAMETER = 1;
 
-    public static double armPower = 0;
+    public static double armPower = 1;
 
     private int gearRatio = 2;
 
-    //^^^^^^^^^^^^^^^^^^^^used in encoder math^^^^^^^^^^^//
+    //^^^^^^^^^^^^^^^^^^^^ used in encoder math ^^^^^^^^^^^^^^^^^^^//
     private double armLength = 14;
 
-    //^^^^^^^^^^^^^^^^^^^^used in math^^^^^^^^^^^//
+    //^^^^^^^^^^^^^^^^^^^^ used in math ^^^^^^^^^^^^^^^^^^^^^^^^^^^//
 
-    public double rotateCenter = 0.55;
+    private double ticksPerRev = 4000;
+    private double error;
+
+    public static double Pcoefficient = 0;
+    public static double Icoefficient = 0;
+
+    public double loopCount = 0;
+
+    public double adder = 1;
+
+    public double Ii = 0;
+
+    public static double maxL = 0;
+
+    //^^^^^^^^^^^^^^^^^^^^^^ used in p controller ^^^^^^^^^^^^^^^^^//
 
 
     public static double P = 16; // 12
@@ -235,7 +250,34 @@ public class armEncoder {
         runTo(position);
     }
 
-
-
     //////////////////////////////////////^ degree angle math code math ^/////////////////////////////////////
+
+
+    ///////////////////////////////////// P controller ////////////////////////////////////////////////
+
+    public void updateError(double target){
+        error = target - armMotor.getCurrentPosition();
+    }
+
+    public void updateLoopCount(){
+        loopCount += adder;
+    }
+
+    public void controller(double target){
+        updateError(target);
+
+        if (error == 0){
+            loopCount = 0;
+        }
+
+        double P = error * Pcoefficient;
+
+        double L = error * loopCount * Icoefficient;
+        Ii = Ii + L;
+        Range.clip(Ii, -maxL, maxL);
+
+        double output = P + I;
+
+        armMotor.setPower(output);
+    }
 }

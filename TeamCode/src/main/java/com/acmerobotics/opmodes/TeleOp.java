@@ -80,9 +80,11 @@ public class TeleOp extends LinearOpMode {
         /////////////////////////////////FtcDashboard dashboard = FtcDashboard.getInstance();
         /////////////////////////////Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
+        arm.resetEncoder();
+
         while (true) {
             if (!lift.bottomSet) {
-                arm.runTo(110);
+                arm.runTo(100);
 
                 lift.tightenLiftString();
 
@@ -95,11 +97,11 @@ public class TeleOp extends LinearOpMode {
 
         lift.resetEncoder();
 
-        arm.runTo(130); // gets arm out of the intake's way
+        arm.runTo(100); // gets arm out of the intake's way
 
         while (true) {
 
-            if (arm.armMotor.getCurrentPosition() > 100) {
+            if (arm.armMotor.getCurrentPosition() > 80){
 
                 if (timeReset == false){
                     time.reset();

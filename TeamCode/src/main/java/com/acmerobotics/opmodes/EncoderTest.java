@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class EncoderTest extends LinearOpMode {
 
-    public static int armTargetPosition = 0;
+    public static int armTargetPosition = 100;
 
     @Override
     public void runOpMode(){
@@ -55,7 +55,11 @@ public class EncoderTest extends LinearOpMode {
 
             dashboardTelemetry.update();
 
+            telemetry.addData("target position", arm.armMotor.getTargetPosition());
+            telemetry.addData("current position", arm.armMotor.getCurrentPosition());
+            telemetry.addData("pid", arm.armMotor.getPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION));
 
+            telemetry.update();
         }
     }
 }
