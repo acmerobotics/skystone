@@ -9,8 +9,8 @@ public class CapstonePlacer  {
 
     private Servo servo;
 
-    public static final double PLACING = 0.75;
-    public static final double STORING = 0.14;
+    public static final double PLACING = 0.942;
+    public static final double STORING = 0.1;
 
     public CapstonePlacer(HardwareMap hardwareMap){
 
