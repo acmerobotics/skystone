@@ -79,7 +79,7 @@ public class Drive {
     private double wheelOmega = 0;
 
     // correction variables
-    public double Pcoefficient = 0.1;
+    public double Pcoefficient = 0.1; // 0.2
     public static double PcoefficientTurn = 0.04;
 
     public double error;
@@ -330,6 +330,45 @@ public class Drive {
 
     }
 
+    public void LsetMotorEncoders(String direction, int distance, double power){
+        motors[0].setTargetPosition(distance);
+        motors[1].setTargetPosition(distance);
+        motors[2].setTargetPosition(distance);
+        motors[3].setTargetPosition(distance);
+
+        motors[0].setTargetPositionTolerance(30);
+        motors[1].setTargetPositionTolerance(30);
+        motors[2].setTargetPositionTolerance(30);
+        motors[3].setTargetPositionTolerance(30);
+
+        motors[0].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motors[1].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motors[2].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motors[3].setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        if (direction.equals("forward")) {
+            motors[0].setPower(power);
+            motors[1].setPower(power);
+            correctingPower(power, 2, "right");
+            correctingPower(power, 3, "right");
+        }
+
+        if (direction.equals("back")){
+            motors[0].setPower(power);
+            motors[1].setPower(power);
+            correctingPower(power, 2, "left");
+            correctingPower(power, 3, "left");
+        }
+    }
+
+
+    public void LgoToPosition(String direction, double position, double power){
+        LsetMotorEncoders(direction, motorEncodersInchesToTicks(position), power);
+
+        targetMotorPos = motorEncodersInchesToTicks(position);
+
+    }
+
     public int getCurrentPos(){
         int motorZeroPos = motors[0].getCurrentPosition();
         int motorOnePos = motors[1].getCurrentPosition();
@@ -414,7 +453,6 @@ public class Drive {
         stoneServo.setPosition(releasePosition);
     }
 
-    // more omni??
     public double realTicksPerInch(int ticks){
         double D = 1.4;
         int ticksPerRev = 2000;
@@ -460,9 +498,6 @@ public class Drive {
     public boolean IatStrafingPos(){
         return Math.abs(realTicksPerInch(omniTracker.getCurrentPosition())) > Math.abs(targetOmniPos);
     }
-
-
-
 
 
 //////////////////////// Auto specific methods end//////////////////////////////////////////////////

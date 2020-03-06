@@ -20,8 +20,8 @@ public class liftEncoderTest extends LinearOpMode{
 
     private int blocks = 0;
 
-    public static int targetPosition = 0;
-    public static double thePower = 0;
+    public static int targetPosition = 1980;
+    public static double thePower = 0.5;
 
     @Override
     public void runOpMode(){
@@ -29,6 +29,7 @@ public class liftEncoderTest extends LinearOpMode{
         Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
         liftEncoder lift = new liftEncoder(hardwareMap);
+        armEncoder arm = new armEncoder(hardwareMap);
 
         lift.init();
 
@@ -37,24 +38,29 @@ public class liftEncoderTest extends LinearOpMode{
         waitForStart();
 
         lift.resetEncoder();
+        arm.resetEncoder();
 
         while (!isStopRequested()) {
 
-            lift.setPID();
+//            lift.setPID();
+//
+//            lift.runTo(targetPosition, thePower);
 
-            lift.runTo(targetPosition, thePower);
+            arm.runTo(80);
 
+            lift.tightenLiftString();
 
-            dashboardTelemetry.addData("current position ", lift.liftMotor1.getCurrentPosition());
-            dashboardTelemetry.addData("target position ", lift.liftMotor1.getTargetPosition());
-            dashboardTelemetry.addData("pid coefficients", lift.liftMotor1.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+            lift.goToBottom();
 
+            telemetry.addData("current position ", lift.liftMotor1.getCurrentPosition());
+            telemetry.addData("target position ", lift.liftMotor1.getTargetPosition());
 
-            dashboardTelemetry.addData("current position 2", lift.liftMotor2.getCurrentPosition());
-            dashboardTelemetry.addData("target position 2", lift.liftMotor2.getTargetPosition());
-            dashboardTelemetry.addData("pid coefficients 2", lift.liftMotor2.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+            telemetry.addLine();
 
-            dashboardTelemetry.update();
+            telemetry.addData("bottom set", lift.bottomSet);
+            telemetry.addData("arm position", arm.armMotor.getCurrentPosition());
+
+            telemetry.update();
 
             ///////////////////////////////////////////////////////////////////////////////
             // Moves lift back to bottom prevents positions from being changed and

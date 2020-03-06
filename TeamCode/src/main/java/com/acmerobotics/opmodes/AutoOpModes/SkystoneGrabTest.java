@@ -29,135 +29,26 @@ public class SkystoneGrabTest extends LinearOpMode{
 
         @Override
         public void runOpMode() throws InterruptedException {
-            TheColorSensor colorSensor = new TheColorSensor(hardwareMap);
             Drive drive = new Drive(hardwareMap, false);
-            armEncoder arm = new armEncoder(hardwareMap);
-            ElapsedTime time = new ElapsedTime();
+            drive.Pcoefficient = 0.2; // 0.1 is default
 
             drive.resetEncoders();
 
             waitForStart();
-            time.reset();
 
             while(!isStopRequested()){
-                colorSensor.HSV();
 
-                switch (state) {
+                drive.LgoToPosition("forward",-48, 0.28);
 
-                    case "atParking":
-                        drive.resetEncoders();
-
-
-                    case "firstBlock":
-                        if (time.seconds() > timeToPark){
-                            if (drive.motors[0].getCurrentPosition() < passedBlocks){
-                                if (!stone1Detected) {
-                                    if (colorSensor.isSkystoneSat()) {
-
-                                        stone1Detected = true;
-                                        ticksTraveled1 = drive.motors[0].getCurrentPosition();
-
-                                    } else {
-                                        drive.moveBack(0.5);
-                                        ticksTraveled1 = drive.motors[0].getCurrentPosition();
-                                    }
-                                } else {
-
-                                    //move towards block   ////////////////////////////////////////////////
-                                    drive.grab();
-                                    Thread.sleep(1500);
-                                    //back up ////////////////////////////////////////////////////
-
-                                    drive.goToPosition(-48, 0.6);
-
-                                    drive.release();
-                                    Thread.sleep(1000);
-
-                                    drive.goToPosition(0, 0.5); // get under bridge
-
-                                    stonesMoved = 1;
-                                    state = "secondBlock";
-                                }
-
-                            } else{
-                                // passed blocks so just go park
-                                double inchesTobackUp = -(drive.ticksToInches(ticksTraveled1));
-                                drive.goToPosition((int)inchesTobackUp, 0.6);
-                            }
-
-                        } else{
-                            // only enough time to park
-                            double inchesTobackUp = -(drive.ticksToInches(ticksTraveled1));
-                            drive.goToPosition((int)inchesTobackUp, 0.6);
-                        }
-
-                        break;
-
-
-                    case "secondBlock":
-                        if (time.seconds() > timeToPark){
-                            if (drive.motors[0].getCurrentPosition() < passedBlocks){
-                                if (!inStone1Position){
-                                    double stone1Position = drive.ticksToInches(ticksTraveled2);
-                                    drive.goToPosition((int)stone1Position + 5, 0.6);
-                                    inStone1Position = true;
-                                }
-
-                                else {
-                                    if (!stone2Detected) {
-                                        if (colorSensor.isSkystoneHue()) {
-
-                                            ticksTraveled2 = drive.motors[0].getCurrentPosition();
-                                            stone2Detected = true;
-
-                                        } else {
-                                            drive.moveBack(0.5);
-                                            ticksTraveled2 = drive.motors[0].getCurrentPosition();
-                                        }
-
-                                    }else{
-
-                                        //move towards block   /////////////////////////////////////////////////
-                                        drive.grab();
-                                        Thread.sleep(1500);
-                                        //back up ////////////////////////////////////////////////////
-
-                                        double inchesTobackUp = -(drive.ticksToInches(ticksTraveled2));
-                                        drive.goToPosition((int)inchesTobackUp + 6, 0.6);
-
-                                        drive.release();
-                                        Thread.sleep(1000);
-
-                                        drive.goToPosition(-6, 0.5); // get under bridge
-
-                                        stonesMoved = 2;
-                                        state = "thirdBlock";
-                                    }
-                                }
-
-                            } else{
-                                // passed blocks so just go park
-                                double inchesTobackUp = -(drive.ticksToInches(ticksTraveled2));
-                                drive.goToPosition((int)inchesTobackUp, 0.6);
-                            }
-
-                        } else{
-                            // only enough time to park
-                            double inchesTobackUp = -(drive.ticksToInches(ticksTraveled2));
-                            drive.goToPosition((int)inchesTobackUp, 0.6);
-                        }
-
-                        break;
-
-                    case "thirdBlock":
-                        //if there is enough time grab any block (closest to bridge)
-                }
+                // drive.IgoToPosition("right", -48, 0.28);
 
                 telemetry.addData( "current position", drive.motors[0].getCurrentPosition());
-                telemetry.addData("time" , time.seconds());
-                telemetry.addData( "skystone", colorSensor.isSkystoneSat());
-                telemetry.addData("state" , state);
-                //telemetry.addData( , );
+                telemetry.addData("target position", drive.motors[0].getTargetPosition());
+
+                telemetry.addLine();
+
+                telemetry.addData("angle", drive.getAngle());
+
                 telemetry.update();
 
             }
