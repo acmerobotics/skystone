@@ -32,9 +32,8 @@ public class RedBridgeParkingBuildingZone extends LinearOpMode {
 
                     if (lift.bottomSet){
                         state++;
-                    }
 
-                    else{
+                    } else {
                         lift.tightenLiftString();
 
                         lift.goToBottom();
@@ -83,8 +82,15 @@ public class RedBridgeParkingBuildingZone extends LinearOpMode {
 
                     break;
 
-
             }
+
+
+
+            telemetry.addData("current angle", drive.getCurrentAngle());
+            telemetry.addData("target pos", drive.getTargetMotorPos());
+            telemetry.addData("current pos", drive.getCurrentPos());
+            telemetry.update();
+
 
         }
     }

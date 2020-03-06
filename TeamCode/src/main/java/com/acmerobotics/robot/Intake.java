@@ -13,10 +13,10 @@ public class Intake {
     public Servo leftServo, rightServo;
 
 
-    private double leftOpen = 0.677;
+    private double leftOpen = 0.549;
     private double leftClose = 0.99;
 
-    private double rightOpen = 0.333;
+    private double rightOpen = 0.392;
     private double rightClose = 0.001;
 
     public double LfullyOpen = 0.375;

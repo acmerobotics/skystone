@@ -27,29 +27,13 @@ public class BlueBridgeParkingBuildingZone extends LinearOpMode {
 
                 case 0:
 
-                    arm.runTo(110);
-
-                    if (lift.bottomSet){
-                        state++;
-                    }
-
-                    else{
-                        lift.tightenLiftString();
-
-                        lift.goToBottom();
-                    }
-
-                    break;
-
-                case 1:
-
                     drive.goToPosition(-5, 0.5);
 
                     state++;
 
                     break;
 
-                case 2:
+                case 1:
 
                     if(drive.atLinearPos()){
                         drive.stopMotors();
@@ -60,7 +44,7 @@ public class BlueBridgeParkingBuildingZone extends LinearOpMode {
                     break;
 
 
-                case 3:
+                case 2:
 
                     drive.IgoToStrafingPos(10, "right");
 
@@ -69,12 +53,29 @@ public class BlueBridgeParkingBuildingZone extends LinearOpMode {
                     break;
 
 
-                case 4:
+                case 3:
 
                     if(drive.IatStrafingPos()){
                         drive.stopMotors();
 
                         state++;
+                    }
+
+                    break;
+
+
+                case 4:
+
+                    arm.runTo(110);
+
+                    if (lift.bottomSet){
+                        state++;
+                    }
+
+                    else{
+                        lift.tightenLiftString();
+
+                        lift.goToBottom();
                     }
 
                     break;
