@@ -17,7 +17,7 @@ public class RedBridgeParkingLoadingZone extends LinearOpMode {
         liftEncoder lift = new liftEncoder(hardwareMap);
 
         state = 0;
-
+        drive.resetEncoderOmni();
         waitForStart();
 
 
@@ -37,6 +37,7 @@ public class RedBridgeParkingLoadingZone extends LinearOpMode {
 
                     if(drive.atLinearPos()){
                         drive.stopMotors();
+                        drive.resetEncoderOmni();
 
                         state++;
                     }
@@ -46,7 +47,7 @@ public class RedBridgeParkingLoadingZone extends LinearOpMode {
 
                 case 2:
 
-                    drive.IgoToStrafingPos(10,"right");
+                    drive.goToStrafingPos(30,0.5, "left");
 
                     state++;
 
@@ -55,7 +56,7 @@ public class RedBridgeParkingLoadingZone extends LinearOpMode {
 
                 case 3:
 
-                    if(drive.IatStrafingPos()){
+                    if(drive.atStrafingPos()){
                         drive.stopMotors();
 
                         state++;
