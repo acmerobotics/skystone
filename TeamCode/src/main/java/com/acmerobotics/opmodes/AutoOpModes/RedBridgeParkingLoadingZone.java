@@ -18,7 +18,9 @@ public class RedBridgeParkingLoadingZone extends LinearOpMode {
 
         state = 0;
         drive.resetEncoderOmni();
+        drive.resetEncoders();
         waitForStart();
+        telemetry.clear();
 
 
         while(!isStopRequested()){
@@ -47,7 +49,7 @@ public class RedBridgeParkingLoadingZone extends LinearOpMode {
 
                 case 2:
 
-                    drive.goToStrafingPos(30,0.5, "left");
+                    drive.goToStrafingPos(100, 0.5, "left");
 
                     state++;
 
@@ -70,9 +72,7 @@ public class RedBridgeParkingLoadingZone extends LinearOpMode {
 
                     if (lift.bottomSet){
                         state++;
-                    }
-
-                    else{
+                    } else {
                         lift.tightenLiftString();
 
                         lift.goToBottom();
@@ -81,6 +81,13 @@ public class RedBridgeParkingLoadingZone extends LinearOpMode {
                     break;
 
             }
+
+
+
+            telemetry.addData("current angle", drive.getCurrentAngle());
+            telemetry.addData("target pos", drive.getTargetMotorPos());
+            telemetry.addData("current pos", drive.getCurrentPos());
+            telemetry.update();
 
         }
 
