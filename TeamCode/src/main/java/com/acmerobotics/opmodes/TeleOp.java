@@ -83,6 +83,7 @@ public class TeleOp extends LinearOpMode {
         arm.resetEncoder();
 
         while (true) {
+
             if (!lift.bottomSet) {
                 arm.runTo(100);
 
@@ -94,17 +95,17 @@ public class TeleOp extends LinearOpMode {
                 break;
             }
 
-            telemetry.addData("current pos 1", lift.liftMotor1.getCurrentPosition());
-            telemetry.addData("current pos 1", lift.liftMotor2.getCurrentPosition());
+            telemetry.addData("current position ", lift.liftMotor1.getCurrentPosition());
+            telemetry.addData("target position ", lift.setPoint);
 
             telemetry.addLine();
 
-            telemetry.addData("lift busy 1", lift.liftMotor1.isBusy());
-            telemetry.addData("lift busy 2", lift.liftMotor2.isBusy());
+            telemetry.addData("bottom set", lift.bottomSet);
 
             telemetry.addLine();
 
-            telemetry.addData("at bottom", lift.bottomSet);
+            telemetry.addData("step", 0);
+
             telemetry.update();
         }
 
@@ -132,10 +133,17 @@ public class TeleOp extends LinearOpMode {
                     break;
                 }
             }
+
+            telemetry.addData("step", 1);
+
+            telemetry.update();
+
         }
 
 
         while(true){
+            lift.PController();
+
             if (timeReset == false){
                 time.reset();
                 timeReset = true;
@@ -145,25 +153,36 @@ public class TeleOp extends LinearOpMode {
 
                 lift.goToStartHeight(); // raise lift so arm is ready for blocks coming in from intake
 
-                arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                arm.armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 arm.armMotor.setPower(0.08); // arm goes to place where the 0 position will be
-                break;
+
+                if (lift.liftMotor1.getCurrentPosition() >= (lift.setPoint - 50)) {
+
+                    if(!armReady) {
+                        arm.resetEncoder();
+                        arm.setHand("open");
+                        armReady = true;
+                    }
+
+                    break;
+                }
             }
 
+            telemetry.addData("current position ", lift.liftMotor1.getCurrentPosition());
+            telemetry.addData("target position ", lift.setPoint);
+
+            telemetry.addLine();
+
+            telemetry.addData("step", 2);
+
+            telemetry.update();
         }
 
         waitForStart();
 
-            if(!armReady) {
-                    arm.resetEncoder();
-                    arm.setHand("open");
-                    armReady = true;
-            }
-
         while (!isStopRequested()){
-            time.reset();
 
-            lift.setPID();
+            lift.PController();
 
             //////////////////////////////////// gamepad1   //////////////////////////////////////////
 
@@ -318,7 +337,7 @@ public class TeleOp extends LinearOpMode {
                     isDpadDown = false;
 
                     blocks += 1;
-                    //lift.runTo(blocks, lift.liftPower, liftEncoder.Mode.BLOCKS);
+                    //lift.setPosition(blocks, lift.liftPower, liftEncoder.Mode.BLOCKS);
                     lift.runToBlocks(blocks, lift.liftPower);
                 }
             }
@@ -373,27 +392,14 @@ public class TeleOp extends LinearOpMode {
                 isLeftTriggerPressed = false;
             }
 
-
-            /////////////////////// Lift Grab Capstone //////////////////////////
-
-            if (gamepad2.back){
-                arm.runTo(8);
-                lift.runTo(1340, 1);
-            }
-
-            ///////////////////////////////////////////////////////////////
-
-
-
             //////////////////////// ARM //////////////////////////
-
 
             if (gamepad2.a){
                 //starting height, arm at rest (at hard stop)
 
                 //hand will grab block
 
-                lift.runTo(liftEncoder.startHeight, lift.liftPower);
+                lift.setPosition(liftEncoder.startHeight);
 
                 arm.runTo(8);
 
@@ -411,7 +417,7 @@ public class TeleOp extends LinearOpMode {
                 int blockLifted = foundation;
 
                 arm.runTo(blockLifted);
-                lift.runTo(liftEncoder.bottomPosition, lift.liftPower); // using bottom position instead of 0
+                lift.setPosition(liftEncoder.bottomPosition); // using bottom position instead of 0
             }
 
 
@@ -460,24 +466,16 @@ public class TeleOp extends LinearOpMode {
 
             ////////////////////////// Telemetry //////////////////////////////
 
-//            telemetry.addData("blocks", blocks);
-//
-//            telemetry.addData("1/2 speed drive", slowDrive);
-//
-//            telemetry.addLine();
+            telemetry.addData("bottom set", lift.bottomSet);
 
-            telemetry.addData("current pos 1", lift.liftMotor1.getCurrentPosition());
-            telemetry.addData("current pos 2", lift.liftMotor2.getCurrentPosition());
+            telemetry.addData("blocks", blocks);
+
+            telemetry.addData("1/2 speed drive", slowDrive);
 
             telemetry.addLine();
 
-
-            telemetry.addData("lift busy 1", lift.liftMotor1.isBusy());
-            telemetry.addData("lift busy 2", lift.liftMotor2.isBusy());
-
-            telemetry.addLine();
-
-            telemetry.addData("at bottom", lift.bottomSet);
+            telemetry.addData("lift position" ,lift.liftMotor1.getCurrentPosition());
+            telemetry.addData("lift target", lift.setPoint);
 
             telemetry.update();
 

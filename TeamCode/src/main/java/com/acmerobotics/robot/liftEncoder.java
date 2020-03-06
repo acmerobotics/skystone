@@ -17,10 +17,21 @@ public class liftEncoder {
     private DigitalChannel bottomHallEffect;
 
 
+
+    ////////////// P control ///////////////
+
+    public int error;
+
+    public int setPoint;
+
+    public static double Pcoefficient = 0.0009;
+
+    //////////////////////////////////
+
     public double blockHeight = 5;
     public double foundationHeight = 2;
     public double extraHeight = 0.5; // will get height greater than target so it doesn't run into it
-    public static int startHeight = 1528; // 1980
+    public static int startHeight = 1475; // 1528
     public static int bottomPosition = 0;
 
     public  boolean stringTightened = false;
@@ -29,7 +40,7 @@ public class liftEncoder {
     //////////////////////
     public int blockPosition = 0;
 
-    public static int blockEncoderHeight = 1204; //1560
+    public static int blockEncoderHeight = 1070; //1560
 
     private int radius = 1;
     private int TICKS_PER_REV = 280;
@@ -113,32 +124,25 @@ public class liftEncoder {
             blockPosition = 4599;
         }
 
-        liftMotor1.setTargetPosition(blockPosition);
-        liftMotor2.setTargetPosition(blockPosition);
-
-        liftMotor1.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        liftMotor2.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-        liftMotor1.setPower(power);
-        liftMotor2.setPower(power);
+        setPosition(blockPosition);
     }
 
 
     public void runToIncrement(int position){
         int targetPosition = liftMotor1.getCurrentPosition() + position; //make 50 to 150
 
-        runTo(targetPosition, liftPower);
+        runTo(targetPosition, 0.5);
     }
 
 
     public void goToStartHeight(){
-        runTo(startHeight, liftPower);
+        setPosition(startHeight);
     }
 
     public void tightenLiftString(){
         int tightPosition = 50;
         if(stringTightened == false) {
-            runTo(tightPosition, liftPower);
+            runTo(tightPosition, 0.5);
 
             if (liftMotor1.getCurrentPosition() >= (tightPosition - 10)) {
                 stringTightened = true;
@@ -156,8 +160,8 @@ public class liftEncoder {
                     case 0:
                         if (!isAtBottom) {
 
-                            liftMotor1.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-                            liftMotor2.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+                            liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                            liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
                             liftMotor1.setPower(-0.1);
                             liftMotor2.setPower(-0.1);
@@ -173,9 +177,9 @@ public class liftEncoder {
                         stateb++;
 
                     case 2:
-                        runTo(-100, 0.1);
+                        runTo(-100, 0.5);
 
-                        if (liftMotor1.getCurrentPosition() <= -100){
+                        if (liftMotor1.getCurrentPosition() <= -90){
                             stateb++;
                         }
                         break;
@@ -237,4 +241,46 @@ public class liftEncoder {
         liftMotor2.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, coefficients);
     }
 
+
+    ////////////////////// P control /////////////////////////////
+
+    private void updateError(){
+        error = setPoint - liftMotor1.getCurrentPosition();
+    }
+
+    private void setUp(){
+        liftMotor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
+    }
+
+    public void PController(){
+        updateError();
+
+        setUp();
+
+        double P = Pcoefficient * error;
+
+        if (P > 1){
+            P = 1;
+        }
+
+        if(P < -1){
+            P = -1;
+        }
+
+        liftMotor1.setPower(P);
+        liftMotor2.setPower(P);
+    }
+
+    public void setPosition(int target){
+
+        if (target >= maxHeight){
+            target = 4599;
+        }
+
+        setPoint = target;
+    }
+
+    /////////////////////////////////////////////////
 }

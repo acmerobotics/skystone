@@ -1,5 +1,7 @@
 package com.acmerobotics.opmodes;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.robot.armEncoder;
@@ -18,10 +20,11 @@ public class liftEncoderTest extends LinearOpMode{
     private boolean isDpadDown = false;
     private boolean isDpadLeft = false;
 
-    private int blocks = 0;
-
     public static int targetPosition = 1980;
     public static double thePower = 0.5;
+
+    public static int initH = 1528;
+    public static int block = 1204;
 
     @Override
     public void runOpMode(){
@@ -37,30 +40,54 @@ public class liftEncoderTest extends LinearOpMode{
 
         waitForStart();
 
-        lift.resetEncoder();
-        arm.resetEncoder();
-
         while (!isStopRequested()) {
+            lift.PController();
 
-//            lift.setPID();
+            if (gamepad2.x){
+                lift.setPosition(0);
+            }
+
+            if (gamepad2.a){
+                lift.setPosition(initH);
+            }
+
+            if (gamepad2.b){
+                lift.setPosition(block);
+            }
+
+            //////////////////////////////////////////////
+
+
+            dashboardTelemetry.addData("current 1", lift.liftMotor1.getCurrentPosition());
+            dashboardTelemetry.addData("current 2", lift.liftMotor2.getCurrentPosition());
+
+            dashboardTelemetry.addLine();
+
+            dashboardTelemetry.addData("target", lift.setPoint);
+
+            dashboardTelemetry.addLine();
+
+            dashboardTelemetry.addData("error", lift.error);
+
+            dashboardTelemetry.update();
+
+//            telemetry.addData("current position ", lift.liftMotor1.getCurrentPosition());
+//            telemetry.addData("target position ", lift.liftMotor1.getTargetPosition());
 //
-//            lift.runTo(targetPosition, thePower);
-
-            arm.runTo(80);
-
-            lift.tightenLiftString();
-
-            lift.goToBottom();
-
-            telemetry.addData("current position ", lift.liftMotor1.getCurrentPosition());
-            telemetry.addData("target position ", lift.liftMotor1.getTargetPosition());
-
-            telemetry.addLine();
-
-            telemetry.addData("bottom set", lift.bottomSet);
-            telemetry.addData("arm position", arm.armMotor.getCurrentPosition());
-
-            telemetry.update();
+//            telemetry.addLine();
+//
+//            telemetry.addData("bottom set", lift.bottomSet);
+//            telemetry.addData("arm position", arm.armMotor.getCurrentPosition());
+//
+//            telemetry.update();
+//
+//            Log.d("FTC-DBG", "lift1 pos: " + lift.liftMotor1.getCurrentPosition());
+//            Log.d("FTC-DGB", "lift1 target" + lift.liftMotor1.getCurrentPosition());
+//            Log.d("FTC-DBG", "lift1 power" + lift.liftMotor1.getPower());
+//
+//            Log.d("FTC-DBG", "lift2 pos: " + lift.liftMotor2.getCurrentPosition());
+//            Log.d("FTC-DGB", "lift2 target" + lift.liftMotor2.getCurrentPosition());
+//            Log.d("FTC-DBG", "lift2 power" + lift.liftMotor2.getPower());
 
             ///////////////////////////////////////////////////////////////////////////////
             // Moves lift back to bottom prevents positions from being changed and
