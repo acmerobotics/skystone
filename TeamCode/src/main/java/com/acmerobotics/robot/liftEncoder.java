@@ -131,7 +131,7 @@ public class liftEncoder {
     public void runToIncrement(int position){
         int targetPosition = liftMotor1.getCurrentPosition() + position; //make 50 to 150
 
-        runTo(targetPosition, 0.5);
+        setPosition(targetPosition);
     }
 
 
