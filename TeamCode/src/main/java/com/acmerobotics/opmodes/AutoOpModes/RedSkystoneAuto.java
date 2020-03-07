@@ -16,7 +16,7 @@ public class RedSkystoneAuto extends LinearOpMode {
     private int traveled = 0;
 
     private double blockLocation = 26;
-    private double underBridge = 22;
+    private double underBridge = 26;
     private double awayBridge = 26;
 
     private int grabbed = 0;
@@ -83,19 +83,6 @@ public class RedSkystoneAuto extends LinearOpMode {
                     break;
 
 
-                case "angle adjust 1": // might remove because the error is not worth the time to fix it
-                    if (time.seconds() < 1.5) {
-                        drive.correctingPower(0, 0, "");
-                        drive.correctingPower(0, 1, "");
-                        drive.correctingPower(0, 2, "");
-                        drive.correctingPower(0, 3, "");
-                    }
-                    else{
-                        state = "atBlocks";
-                    }
-                    break;
-
-
                 case "atBlocks":
                     drive.resetEncoders();
                     drive.resetEncoderOmni();
@@ -114,7 +101,8 @@ public class RedSkystoneAuto extends LinearOpMode {
                         traveled = drive.motors[0].getCurrentPosition();
 
                         if (path == 1){
-                            state = "approach1";
+                            drive.resetEncoders();
+                            state = "move3"; // change
                         }
 
                         else {
@@ -122,7 +110,7 @@ public class RedSkystoneAuto extends LinearOpMode {
                         }
 
                     } else {
-                        drive.moveForward(0.28); // move back
+                        drive.moveForward(0.28);
                         traveled = drive.motors[0].getCurrentPosition();
                     }
 
@@ -131,28 +119,40 @@ public class RedSkystoneAuto extends LinearOpMode {
 
                 case "pickPath1":
                     //path 1
-                    if (drive.ticksToInches(-traveled) == 0){
+                    if (drive.ticksToInches(-traveled) >= -2 && drive.ticksToInches(-traveled) <= 2){
                         path = 1;
+                        drive.goToPosition(8, 2.8);
 
-                        colorSensor.HSV();
-                        if (!colorSensor.isSkystoneHue()){
-                            drive.moveForward(0.28); // move back
-                        }
-
-                        else{
+                        if (drive.atLinearPos()){
                             drive.stopMotors();
+
+                            traveled = drive.motors[0].getCurrentPosition();
+
                             state = "lookingForSkystone";
                         }
                     }
 
                     else{
-                        state = "approach1";
+                        drive.resetEncoders();
+                        state = "move3"; // change
                     }
 
                     break;
 
 
-                case "approach1":
+                case "move3": // change
+                    drive.goToPosition(-3.9, 0.25);
+
+                    if (drive.atLinearPos()){
+                        drive.stopMotors();
+                        drive.resetStrafingPos(); // change
+
+                        state = "approach1";
+                    }
+                    break;
+
+
+                case "approach1": // change
 
                     // 2 in
                     drive.IgoToStrafingPos(4.2, "right");
@@ -160,21 +160,9 @@ public class RedSkystoneAuto extends LinearOpMode {
                     if (drive.IatStrafingPos()){
                         drive.stopMotors();
                         drive.resetStrafingPos();
-                        time.reset();
                         drive.resetEncoders();
 
-                        state = "move3";
-                    }
-                    break;
-
-
-                case "move3":
-                    drive.goToPosition(3.9, 0.25); // move back
-
-                    if (drive.atLinearPos()){
-                        drive.stopMotors();
-
-                        state = "grabBlock";
+                        state = "grabBlock"; // change
                     }
                     break;
 
@@ -191,13 +179,11 @@ public class RedSkystoneAuto extends LinearOpMode {
 
                 case "retreat":
 
-                    drive.Pcoefficient = 0.03;
                     drive.IgoToStrafingPos(6, "left");
 
                     if (drive.IatStrafingPos()){
                         drive.resetStrafingPos();
                         drive.stopMotors();
-                        time.reset();
                         drive.resetEncoders();
                         state = "getToZero";
                     }
@@ -205,9 +191,8 @@ public class RedSkystoneAuto extends LinearOpMode {
 
 
                 case "getToZero":
-                    state2 = "liftDown"; // might need time delay so lift has time to move to position
 
-                    double zero = drive.ticksToInches(traveled);
+                    double zero = drive.ticksToInches(-traveled);
 
                     drive.goToPosition(zero, 0.3);
 
@@ -232,6 +217,29 @@ public class RedSkystoneAuto extends LinearOpMode {
                     }
                     break;
 
+//                case "final strafe1":
+//                    drive.IgoToStrafingPos(3, "right");
+//
+//                    if (drive.IatStrafingPos()){
+//                        drive.stopMotors();
+//                        drive.resetStrafingPos();
+//                        drive.resetEncoders();
+//                        state = "final strafe2";
+//                    }
+//                    break;
+//
+//
+//                case "final strafe2":
+//                    drive.IgoToStrafingPos(3, "left");
+//
+//                    if (drive.IatStrafingPos()){
+//                        drive.stopMotors();
+//                        drive.resetStrafingPos();
+//                        drive.resetEncoders();
+//                        state = "next";
+//                    }
+//                    break;
+
 
                 case "next":
 
@@ -245,18 +253,24 @@ public class RedSkystoneAuto extends LinearOpMode {
 
                 case "park":
                     drive.goToPosition(-(int)underBridge, 0.3);
+
             }
 
             ///////////////////////////////////////////////////////////////////////////////////////
 
             telemetry.addData("traveled", traveled);
-            telemetry.addLine();
 
             telemetry.addLine();
 
             telemetry.addData("angle error", drive.error);
 
             telemetry.addData("state", state);
+
+            telemetry.addLine();
+
+            telemetry.addData("bottom set", lift.bottomSet);
+            telemetry.addData("stateB", lift.stateb);
+
             telemetry.update();
         }
 

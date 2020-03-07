@@ -1,5 +1,7 @@
 package com.acmerobotics.opmodes.AutoOpModes;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.robot.Drive;
 import com.acmerobotics.robot.TheColorSensor;
@@ -83,19 +85,6 @@ public class BlueSkystoneAuto extends LinearOpMode {
                     break;
 
 
-                case "angle adjust 1": // might remove because the error is not worth the time to fix it
-                    if (time.seconds() < 1.5) {
-                        drive.correctingPower(0, 0, "");
-                        drive.correctingPower(0, 1, "");
-                        drive.correctingPower(0, 2, "");
-                        drive.correctingPower(0, 3, "");
-                    }
-                    else{
-                        state = "atBlocks";
-                    }
-                    break;
-
-
                 case "atBlocks":
                     drive.resetEncoders();
                     drive.resetEncoderOmni();
@@ -114,7 +103,8 @@ public class BlueSkystoneAuto extends LinearOpMode {
                         traveled = drive.motors[0].getCurrentPosition();
 
                         if (path == 1){
-                            state = "approach1";
+                            drive.resetEncoders();
+                            state = "move3";
                         }
 
                         else {
@@ -131,24 +121,35 @@ public class BlueSkystoneAuto extends LinearOpMode {
 
                 case "pickPath1":
                     //path 1
-                    if (drive.ticksToInches(-traveled) == 0){
+                    if (drive.ticksToInches(-traveled) >= -2 && drive.ticksToInches(-traveled) <= 2){
                         path = 1;
+                        drive.goToPosition(-8, 2.8);
 
-                        colorSensor.HSV();
-                        if (!colorSensor.isSkystoneHue()){
-                            drive.moveForward(-0.28);
-                        }
-
-                        else{
+                        if (drive.atLinearPos()){
                             drive.stopMotors();
+
+                            traveled = drive.motors[0].getCurrentPosition();
+
                             state = "lookingForSkystone";
                         }
                     }
 
                     else{
-                        state = "approach1";
+                        drive.resetEncoders();
+                        state = "move3";
                     }
 
+                    break;
+
+
+                case "move3":
+                    drive.goToPosition(-3.9, 0.25);
+
+                    if (drive.atLinearPos()){
+                        drive.stopMotors();
+
+                        state = "approach1";
+                    }
                     break;
 
 
@@ -160,19 +161,7 @@ public class BlueSkystoneAuto extends LinearOpMode {
                     if (drive.IatStrafingPos()){
                         drive.stopMotors();
                         drive.resetStrafingPos();
-                        time.reset();
                         drive.resetEncoders();
-
-                        state = "move3";
-                    }
-                    break;
-
-
-                case "move3":
-                    drive.goToPosition(-3.9, 0.25);
-
-                    if (drive.atLinearPos()){
-                        drive.stopMotors();
 
                         state = "grabBlock";
                     }
@@ -197,7 +186,6 @@ public class BlueSkystoneAuto extends LinearOpMode {
                     if (drive.IatStrafingPos()){
                         drive.resetStrafingPos();
                         drive.stopMotors();
-                        time.reset();
                         drive.resetEncoders();
                         state = "getToZero";
                     }
@@ -222,7 +210,7 @@ public class BlueSkystoneAuto extends LinearOpMode {
 
                 case "score":
 
-                    drive.goToPosition(((underBridge + awayBridge)), 0.3);
+                    drive.goToPosition((underBridge + awayBridge), 0.3);
 
                     if (drive.atLinearPos()){
                         drive.stopMotors();
@@ -252,13 +240,13 @@ public class BlueSkystoneAuto extends LinearOpMode {
             ///////////////////////////////////////////////////////////////////////////////////////
 
             telemetry.addData("traveled", traveled);
-            telemetry.addLine();
 
             telemetry.addLine();
 
-            telemetry.addData("angle error", drive.error);
+            telemetry.addData("path", path);
 
             telemetry.addData("state", state);
+
             telemetry.update();
         }
 

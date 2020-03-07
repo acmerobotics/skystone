@@ -29,8 +29,6 @@ public class EncoderTest extends LinearOpMode {
 
         arm.init();
 
-        armEncoder.armPower = 0;
-
         waitForStart();
 
         arm.resetEncoder();
@@ -43,6 +41,10 @@ public class EncoderTest extends LinearOpMode {
 
             arm.runTo(armTargetPosition);
 
+            //arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            //arm.armMotor.setPower(1);
+
             //arm.moveTo(desiredInches);
 
             ///////////////////////////////////////////////////////////////
@@ -51,6 +53,7 @@ public class EncoderTest extends LinearOpMode {
 
             dashboardTelemetry.addData("target position", arm.armMotor.getTargetPosition());
             dashboardTelemetry.addData("current position", arm.armMotor.getCurrentPosition());
+            dashboardTelemetry.addData("power", arm.armMotor.getPower());
             dashboardTelemetry.addData("pid", arm.armMotor.getPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION));
 
             dashboardTelemetry.update();

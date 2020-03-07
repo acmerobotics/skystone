@@ -50,7 +50,7 @@ public class TeleOp extends LinearOpMode {
     private int blocks = 0;
 
     public static int foundation = 155; // 165
-    public static int underB = 100; // 135
+    public static int underB = 110; // 135
 
 
     public static int oneExtraBlock = 220;
@@ -312,10 +312,6 @@ public class TeleOp extends LinearOpMode {
 
             }
 
-
-
-
-
             if (gamepad1.dpad_down){
                 capstonePlacer.moveToPlace();
             }
@@ -471,6 +467,10 @@ public class TeleOp extends LinearOpMode {
 
             telemetry.addData("lift position" ,lift.liftMotor1.getCurrentPosition());
             telemetry.addData("lift target", lift.setPoint);
+
+            telemetry.addLine();
+
+            telemetry.addData("lift power", lift.liftMotor1.getPower());
 
             telemetry.update();
 

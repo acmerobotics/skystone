@@ -13,14 +13,14 @@ public class Intake {
     public Servo leftServo, rightServo;
 
 
-    private double leftOpen = 0.549;
+    private double leftOpen = 0.7;
     private double leftClose = 0.99;
 
-    private double rightOpen = 0.392;
+    private double rightOpen = 0.35;
     private double rightClose = 0.001;
 
-    public double LfullyOpen = 0.375;
-    private double RfullyOpen = 0.6;
+    public double LfullyOpen = 0.47;
+    private double RfullyOpen = 0.57;
 
     public Intake(HardwareMap hardwareMap){
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");

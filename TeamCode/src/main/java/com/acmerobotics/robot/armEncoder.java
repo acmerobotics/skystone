@@ -53,8 +53,8 @@ public class armEncoder {
     //^^^^^^^^^^^^^^^^^^^^^^ used in p controller ^^^^^^^^^^^^^^^^^//
 
 
-    public static double P = 16; // 12
-    public static double I = 0.22; // 0.5
+    public static double P = 20; // 12
+    public static double I = 0.25; // 0.5
     public static double D = 0;
     public static double F = 0;
 

@@ -24,7 +24,7 @@ public class liftEncoder {
 
     public int setPoint;
 
-    public static double Pcoefficient = 0.0009;
+    public static double Pcoefficient = 0.001;
 
     //////////////////////////////////
 
@@ -45,11 +45,11 @@ public class liftEncoder {
     private int radius = 1;
     private int TICKS_PER_REV = 280;
 
-    private int maxHeight = 4600;
+    private int maxHeight = 5200;
 
     public double liftPower = 0.5;
 
-    private int stateb = 0;
+    public int stateb = 0;
 
     public enum Mode{
         BLOCKS,
@@ -276,7 +276,7 @@ public class liftEncoder {
     public void setPosition(int target){
 
         if (target >= maxHeight){
-            target = 4599;
+            target = 5199;
         }
 
         setPoint = target;
