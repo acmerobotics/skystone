@@ -16,7 +16,7 @@ public class Intake {
     private double leftOpen = 0.7;
     private double leftClose = 0.99;
 
-    private double rightOpen = 0.35;
+    private double rightOpen = 0.353;
     private double rightClose = 0.001;
 
     public double LfullyOpen = 0.47;
