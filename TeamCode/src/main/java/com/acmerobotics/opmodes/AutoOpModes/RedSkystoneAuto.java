@@ -1,5 +1,6 @@
 package com.acmerobotics.opmodes.AutoOpModes;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.robot.Drive;
 import com.acmerobotics.robot.TheColorSensor;
 import com.acmerobotics.robot.armEncoder;
@@ -7,12 +8,15 @@ import com.acmerobotics.robot.liftEncoder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="SkystoneBlue")
+@Config
+
 public class RedSkystoneAuto extends LinearOpMode {
 
     private int traveled = 0;
 
     private double blockLocation = 26;
-    private double underBridge = 24;
+    private double underBridge = 22;
     private double awayBridge = 26;
 
     private int grabbed = 0;
@@ -67,7 +71,7 @@ public class RedSkystoneAuto extends LinearOpMode {
                 case "goToBlocks":
                     state2 = "liftDown";
 
-                    drive.IgoToStrafingPos(27, "right");
+                    drive.IgoToStrafingPos(28, "right");
 
                     if (drive.IatStrafingPos()){
                         drive.stopMotors();
@@ -118,7 +122,7 @@ public class RedSkystoneAuto extends LinearOpMode {
                         }
 
                     } else {
-                        drive.moveForward(-0.28);
+                        drive.moveForward(0.28); // move back
                         traveled = drive.motors[0].getCurrentPosition();
                     }
 
@@ -132,7 +136,7 @@ public class RedSkystoneAuto extends LinearOpMode {
 
                         colorSensor.HSV();
                         if (!colorSensor.isSkystoneHue()){
-                            drive.moveForward(-0.28);
+                            drive.moveForward(0.28); // move back
                         }
 
                         else{
@@ -151,7 +155,7 @@ public class RedSkystoneAuto extends LinearOpMode {
                 case "approach1":
 
                     // 2 in
-                    drive.IgoToStrafingPos(3.5, "right");
+                    drive.IgoToStrafingPos(4.2, "right");
 
                     if (drive.IatStrafingPos()){
                         drive.stopMotors();
@@ -165,7 +169,7 @@ public class RedSkystoneAuto extends LinearOpMode {
 
 
                 case "move3":
-                    drive.goToPosition(-3.7, 0.25);
+                    drive.goToPosition(3.9, 0.25); // move back
 
                     if (drive.atLinearPos()){
                         drive.stopMotors();
@@ -203,7 +207,7 @@ public class RedSkystoneAuto extends LinearOpMode {
                 case "getToZero":
                     state2 = "liftDown"; // might need time delay so lift has time to move to position
 
-                    double zero = drive.ticksToInches(-traveled);
+                    double zero = drive.ticksToInches(traveled);
 
                     drive.goToPosition(zero, 0.3);
 
@@ -218,7 +222,7 @@ public class RedSkystoneAuto extends LinearOpMode {
 
                 case "score":
 
-                    drive.goToPosition(((underBridge + awayBridge)), 0.3);
+                    drive.goToPosition(-(underBridge + awayBridge), 0.3);
 
                     if (drive.atLinearPos()){
                         drive.stopMotors();
@@ -240,10 +244,8 @@ public class RedSkystoneAuto extends LinearOpMode {
                     break;
 
                 case "park":
-                    drive.goToPosition((int)underBridge, 0.3);
-
+                    drive.goToPosition(-(int)underBridge, 0.3);
             }
-
 
             ///////////////////////////////////////////////////////////////////////////////////////
 

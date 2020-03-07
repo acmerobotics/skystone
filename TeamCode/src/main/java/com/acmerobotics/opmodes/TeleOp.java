@@ -50,7 +50,7 @@ public class TeleOp extends LinearOpMode {
     private int blocks = 0;
 
     public static int foundation = 155; // 165
-    public static int lower = 135; // 145
+    public static int underB = 100; // 135
 
 
     public static int oneExtraBlock = 220;
@@ -372,7 +372,7 @@ public class TeleOp extends LinearOpMode {
             if (gamepad2.right_trigger > 0){
                 if (!isRightTriggerPressed){
                     isRightTriggerPressed = true;
-                    lift.runToIncrement(150);
+                    lift.runToIncrement(200);
                 }
             }
 
@@ -384,7 +384,7 @@ public class TeleOp extends LinearOpMode {
             if (gamepad2.left_trigger > 0){
                 if (!isLeftTriggerPressed){
                     isLeftTriggerPressed = true;
-                    lift.runToIncrement(-150);
+                    lift.runToIncrement(-200);
                 }
             }
 
@@ -422,13 +422,8 @@ public class TeleOp extends LinearOpMode {
 
 
             if (gamepad2.b){
-                // arm moves down 1 in. to place block on foundation
 
-                // hand releases block
-
-                int blockPlaced = lower;
-
-                arm.runTo(blockPlaced);
+                arm.runTo(underB);
             }
 
             if (gamepad2.y){
