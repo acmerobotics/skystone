@@ -91,7 +91,8 @@ public class liftEncoder {
 
 
     public void resetEncoder(){
-        // motor's current encoder position is set as the zero position
+        // motor's
+        // current encoder position is set as the zero position
 
         liftMotor1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -177,19 +178,24 @@ public class liftEncoder {
                         stateb++;
 
                     case 2:
-                        runTo(-100, 0.5);
-
-                        if (liftMotor1.getCurrentPosition() <= -90){
-                            stateb++;
-                        }
-                        break;
-
-                    case 3:
-                        liftMotor1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-                        liftMotor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-                        bottomPosition = 0;
+                        bottomPosition = -100;
                         bottomSet = true;
                         stateb++;
+//
+//                    case 2:
+//                        runTo(-100, 0.5);
+//
+//                        if (liftMotor1.getCurrentPosition() <= -90){
+//                            stateb++;
+//                        }
+//                        break;
+//
+//                    case 3:
+//                        liftMotor1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//                        liftMotor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//                        bottomPosition = 0;
+//                        bottomSet = true;
+//                        stateb++;
             }
         }
     }

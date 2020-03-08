@@ -295,8 +295,6 @@ public class TeleOp extends LinearOpMode {
             }
 
 
-
-
             if (gamepad1.left_trigger > 0) {
 
                 intake.setIntakePower(-1);
