@@ -23,14 +23,13 @@ public class SkystoneGrabTest extends LinearOpMode{
     private int stonesMoved = 0;
 
     private int timeToPark = 8; // minimum time needed to park
-    private int passedBlocks; // amount of ticks equal to the length of block, checks if drive passed the blocks
 
     private String state = "atParking"; // "grabFirst"  "returnFirst" "grabSecond" "returnSecond" "grabAny"
 
         @Override
         public void runOpMode() throws InterruptedException {
             Drive drive = new Drive(hardwareMap, false);
-            drive.Pcoefficient = 0.2; // 0.1 is default
+            drive.Pcoefficient = 0.2; // 0.1 is default             ////////////////////////
 
             drive.resetEncoders();
 
@@ -39,6 +38,7 @@ public class SkystoneGrabTest extends LinearOpMode{
             while(!isStopRequested()){
 
                 drive.LgoToPosition("forward",-48, 0.28);
+                //drive.goToPosition(-48, 0.28);
 
                 // drive.IgoToPosition("right", -48, 0.28);
 
