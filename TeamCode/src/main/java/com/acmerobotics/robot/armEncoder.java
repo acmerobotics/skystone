@@ -239,7 +239,7 @@ public class armEncoder {
         // and this has been converted to find the ticks needed for the arm gear which is 2 times
         // more than the motor gear arc tick count.
 
-        return (int) toArmGearTicks(angle); //TODO find out how to round up before converting to int
+        return (int) toArmGearTicks(angle);
     }
 
 
@@ -274,7 +274,14 @@ public class armEncoder {
 
         double L = error * loopCount * Icoefficient;
         Ii = Ii + L;
-        Range.clip(Ii, -maxL, maxL);
+
+        if (Ii > maxL){
+            Ii = maxL;
+        }
+
+        if (Ii < -maxL){
+            Ii = -maxL;
+        }
 
         double output = P + I;
 
