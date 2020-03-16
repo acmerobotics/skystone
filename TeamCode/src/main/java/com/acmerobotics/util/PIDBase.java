@@ -83,6 +83,8 @@ public class PIDBase {
 
     ///////////////////////// ticks and unit of measurement converters /////////////////////////////
 
+    // (I can probably add this to its own class because, although useful, it does not fit the PIDBase title (tuConverter).
+
     // unit used depends on the units of the diameter given. Meaning unit could be anything (in, cm, and more).
 
     public double ticksToUnits(int ticksPerRev, int diameter, int ticks){

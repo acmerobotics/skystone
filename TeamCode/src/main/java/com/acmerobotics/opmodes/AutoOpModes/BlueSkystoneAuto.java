@@ -66,6 +66,11 @@ public class BlueSkystoneAuto extends LinearOpMode {
                     lift.runTo(2000, 0.5);
 
                     break;
+
+                default:
+                    telemetry.addData("lost state2, the lost state is:", state2);
+                    telemetry.update();
+                    break;
             }
 
             switch(state){
@@ -233,6 +238,11 @@ public class BlueSkystoneAuto extends LinearOpMode {
 
                 case "park":
                     drive.goToPosition((int)underBridge, 0.3);
+
+                default:
+                    telemetry.addData("lost state, the lost state is:", state);
+                    telemetry.update();
+                    break;
 
             }
 

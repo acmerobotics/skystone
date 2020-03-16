@@ -66,6 +66,7 @@ public class liftEncoder {
         liftMotor1 = hardwareMap.get(DcMotorEx.class, "liftMotor1");
         liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor2");
         bottomHallEffect = hardwareMap.digitalChannel.get("bottomHallEffect");
+        //bottomHallEffect = hardwareMap.get(DigitalChannel.class, "bottomHallEffect");
 
         liftMotor1.setDirection(DcMotorEx.Direction.FORWARD);
         liftMotor2.setDirection(DcMotorEx.Direction.FORWARD);
