@@ -1,6 +1,7 @@
 package com.acmerobotics.RobomaticTesting;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.robomatic.hardware.CachingSensor;
 import com.acmerobotics.robomatic.robot.Robot;
 import com.acmerobotics.robomatic.robot.Subsystem;
@@ -14,6 +15,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 /***
  * Robomatic Subsystem test/example with explanations of what happens behind the scenes
  */
+
+@Config
 
 public class roboSubsystem extends Subsystem {
 

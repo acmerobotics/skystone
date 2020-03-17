@@ -126,7 +126,12 @@ public class armEncoder {
 
     public void setPID(PIDFCoefficients pidfCoefficients){
         //will set the pid coefficients
-        armMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION, pidfCoefficients);
+
+        // should only set the pid coefficients if they are different from the current ones
+        if (pidfCoefficients != coefficients) {
+            armMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION, pidfCoefficients);
+            coefficients = pidfCoefficients;
+        }
     }
 
     public void setHand(String position){
