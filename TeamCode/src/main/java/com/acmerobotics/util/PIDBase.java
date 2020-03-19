@@ -98,7 +98,7 @@ public class PIDBase {
 
     ///////////////////////// ticks and unit of measurement converters /////////////////////////////
 
-    // (I can probably add this to its own class because, although useful, it does not fit the PIDBase title (tuConverter).
+    // (I can probably add this to its own class because, although useful, it does not fit the PIDBase title ( should to a "Converter" class).
 
     // unit used depends on the units of the diameter given. Meaning unit could be anything (in, cm, and more).
 
