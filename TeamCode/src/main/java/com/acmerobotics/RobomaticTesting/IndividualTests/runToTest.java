@@ -1,12 +1,15 @@
-package com.acmerobotics.robot;
+package com.acmerobotics.RobomaticTesting.IndividualTests;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.robomatic.robot.Robot;
+import com.acmerobotics.robomatic.robot.Subsystem;
 import com.acmerobotics.util.PIDBase;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class PIDBaseSubsystem {
+// NOTE: pid testing through the dashboard will occur through the PIDBase instance for each motor
+
+public class runToTest extends Subsystem {
 
     public DcMotorEx motor1;
     public DcMotorEx motor2;
@@ -14,16 +17,24 @@ public class PIDBaseSubsystem {
     private PIDBase motor1PID = new PIDBase();
     private PIDBase motor2PID = new PIDBase();
 
-    public PIDBaseSubsystem(HardwareMap hardwareMap){
+    public runToTest(Robot robot){
+        super("runToTest");
 
         // drive motors
-        motor1 = hardwareMap.get(DcMotorEx.class, "m0");
-        motor2 = hardwareMap.get(DcMotorEx.class, "m1");
+        motor1 = robot.getMotor("motor1");
+        motor2 = robot.getMotor("motor2");
 
         // each motor has to be added to its own PID Base so they can independently interact with each other
         motor1PID.addMotor(motor1);
         motor2PID.addMotor(motor2);
     }
+
+    @Override
+    public void update(Canvas overlay){
+        telemetryData.addData("current pos", motor1.getCurrentPosition());
+        telemetryData.addData("target pos", motor1.getTargetPosition());
+    }
+
 
     public void init(){
         motor1.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -47,6 +58,4 @@ public class PIDBaseSubsystem {
         motor1PID.runTo(1200);
         motor2PID.runTo(1200);
     }
-
-
 }

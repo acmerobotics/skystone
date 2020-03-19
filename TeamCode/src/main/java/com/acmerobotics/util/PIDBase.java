@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import java.util.ArrayList;
+
 /***
 
 This is a FTC SDK PID Base for a single motor of a subsystem. This system will reduce the lines of code
@@ -36,6 +38,8 @@ public class PIDBase {
 
     private double PIDMotorPower = 1;
 
+    private double setPoint = 0;
+
     public PIDBase(){
     }
 
@@ -53,8 +57,18 @@ public class PIDBase {
 
     // PID Setup
 
+    // you might not have to use this method, ideally tuning will occur in this class for each PIDBase instance
+    public void setPID(PIDFCoefficients pidfCoefficients){
+        if (pidfCoefficients != this.pidfCoefficients) {
+            P = pidfCoefficients.p;
+            I = pidfCoefficients.i;
+            D = pidfCoefficients.d;
+            F = pidfCoefficients.f;
+        }
+    }
+
     private void setPID(){
-        motor.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION,pidfCoefficients);
+        motor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION,pidfCoefficients);
     }
 
     private void setPIDRunAt(){
@@ -66,11 +80,12 @@ public class PIDBase {
     public void runTo(int position){
         setPID();
 
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        motor.setTargetPosition(position);
-
-        motor.setPower(PIDMotorPower);
+        if (position != setPoint) {
+            motor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            motor.setTargetPosition(position);
+            motor.setPower(PIDMotorPower);
+            setPoint = position;
+        }
     }
 
     public void runtAt(double power){

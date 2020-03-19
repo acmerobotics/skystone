@@ -2,6 +2,7 @@ package com.acmerobotics.RobomaticTesting;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.robomatic.hardware.CachingDcMotorEx;
 import com.acmerobotics.robomatic.robot.Robot;
 import com.acmerobotics.robomatic.robot.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -60,8 +61,6 @@ public class roboArm extends Subsystem {
     public void resetEncoder(){
         // motor's current encoder position is set as the zero position
 
-        //todo add similar method to Robomatic
-
         armMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
     }
@@ -70,8 +69,6 @@ public class roboArm extends Subsystem {
     public void runTo(int position) {
         // target position is set and the motor is set to run to that position and a set power
         // target position is held with pid
-
-        //todo add similar method to Robomatic
 
         setPID(coefficients);
 

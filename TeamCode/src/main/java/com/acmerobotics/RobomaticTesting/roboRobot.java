@@ -13,6 +13,8 @@ public class roboRobot extends Robot {
     public final roboArm arm;
     public final roboLift lift;
     public final roboIntake intake;
+    // public final runToTest;
+    // public final ImuTest
 
     public roboRobot(LinearOpMode opMode){
         super(opMode); // gets LinearOpMode and hardwareMap so Robotic can interact with them
@@ -25,11 +27,15 @@ public class roboRobot extends Robot {
         arm = new roboArm(this);
         lift = new roboLift(this);
         intake = new roboIntake(this);
+        // runToTest = new runToTest(this);
+        // ImyTest = new ImuTest(this);
 
         // will put subsystem into a list of subsystems to run their update method
-        registerSubsytem(drive);
+        registerSubsytem(drive); // subsystem is spelt wrong here (subsytem)
         registerSubsytem(arm);
         registerSubsytem(lift);
         registerSubsytem(intake);
+        // registerSubsytem(runToTest);
+        // registerSubsytem(ImuTest);
     }
 }

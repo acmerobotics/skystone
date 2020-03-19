@@ -103,7 +103,7 @@ public class roboDrive extends Subsystem {
 
         BNO055IMUImpl imu = robot.getRevHubImu(0, new Robot.Orientation(Robot.Axis.POSITIVE_X, Robot.Axis.POSITIVE_Y, Robot.Axis.POSITIVE_Z)); // creates BN0055-IMU-Impl, imu orientation is remapped
         imuSensor = new CachingSensor<>(() -> imu.getAngularOrientation().firstAngle); // gets heading
-        robot.registerCachingSensor(imuSensor); // adds imu to caching sensors that will then update the heading
+        robot.registerCachingSensor(imuSensor); // adds imu to caching sensors, will then update the heading
 
         for (int i=0; i<4;i++){
             motors[i] = robot.getMotor("m" + i);
