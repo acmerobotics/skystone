@@ -521,7 +521,6 @@ public class Drive {
         error = getAngle();
     }
 
-
     private double Pcontroller(){
         double output = Pcoefficient * error;
         return output;

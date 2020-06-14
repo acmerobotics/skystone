@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+
+<!--
+    This is a base for hardwareMapping with an xml file.
+    Copy and past this to your current project and replace
+    the [] with actual values. Also replace the XTypeHere
+    with the actual motor, or other hardware device tags.
+    See bottom for some tags.
+-->
+
+<Robot type="FirstInspires-FTC">
+    <LynxUsbDevice name="Expansion Hub Portal 1" serialNumber="[...]" parentModuleAdress="[...]">
+        <LynxModule name="hub1" port="[]"> <!-- where phone is connected -->
+            <LynxEmbeddedIMU name="imu" port="0" bus="0" /> <!-- always this port -->
+            <motorTypeHere name="[]" port="[]" />
+            <servo name="[]" port ="[]" />
+            <AnalogInput name="[]" port ="[]" />
+            <digitalDevice name="[]" port="[]" />
+        </LynxModule>
+        <LynxModule name="hub2" port="[]">
+            <motorTypeHere name="[]" port="[]" />
+            <servo name="[]" port ="[]" />
+            <AnalogInput name="[]" port ="[]" />
+            <digitalDevice name="[]" port="[]" />
+        </LynxModule>
+    </LynxUsbDevice>
+</Robot>
+
+
+<!--
+    tags:
+
+    DcMotors:
+        Andymark Gearmotors:
+            <NeveRest20Gearmotor name="[]" port="[]" />
+            <NeveRest40Gearmotor name="[]" port="[]" />
+            <NeveRest60Gearmotor name="[]" port="[]" />
+        Rev Robotics Gearmotors:
+            <RevRobotics20HDHexMotor name="[]" port="[]" />
+            <RevRobotics40HDHexMotor name="[]" port="[]" />
+            <RevRoboticsCoreHexMotor name="[]" port="[]" />
+        Tetrix Gearmotors:
+            <TetrixMotor name="[]" port="[]" />
+    Servos:
+        <Servo name="[]" port="[]" />
+        <ContinuousRotationServo name="[]" port="[]" />
+    Digital Devices:
+        <DigitalDevice name="[]" port="[]" />
+        <RevTouchSensor name="[]" port="[]" />
+    I2C Devices:
+        (if bus used == 0 then port = 1
+        else use labeled but at port 0)
+
+        <RevColorSensorV3 name="[]" port="[]" />
+
+I should do more testing with the xml file configuration before
+applying to the competition robot "To retrieve configuration files
+configured through the app, simply do
+adb pull /sdcard/FIRST/<config name>.xml <dest> or use the
+normal MTP file system"
+-->

@@ -180,6 +180,11 @@ public class TeleOp extends LinearOpMode {
 
         waitForStart();
 
+        // prevents init stop glitch
+        if (isStopRequested()){
+            return;
+        }
+
         while (!isStopRequested()){
 
             lift.PController();
