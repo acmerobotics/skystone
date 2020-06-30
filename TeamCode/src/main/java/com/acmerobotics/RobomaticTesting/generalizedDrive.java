@@ -275,7 +275,6 @@ public class generalizedDrive extends Subsystem {
     ///////////////////////////////////////// Auto ////////////////////////////////////////////
 
     // linear movements
-    // TODO make an automatic encoder reset between method usage or just let user reset when needed
 
     public void moveForward(double inches){
         Ytarget = inches;
