@@ -197,7 +197,26 @@ public class armEncoder {
 
     ///////////////////////////// degree angle math code (discontinued) /////////////////////////////
 
-    public double ticksPerInch(){
+    public int heightToEncoder(double height){
+
+        /*
+         * This is the new and final version ot the angle math code. A triangle is created with the
+         * users desired arm height. The angle is found of that triangle then translated to encoder
+         * ticks.
+         */
+
+        double degreesPerTick = TICKS_PER_REV_MOTOR / 360;
+
+        double armAngle = Math.ceil( 2 * Math.asin((height/2) / armLength)); // calculate angle arm needs to move
+
+        double motorAngle = armAngle * 2; // calculate motor angle based on arm and motor gear ratio.
+
+        double ticks = motorAngle * degreesPerTick; // translate the angle to ticks
+
+        return (int) ticks;
+    }
+
+    private double ticksPerInch(){
         // number of ticks per inch based on the arm gear circumference
 
         return TICKS_PER_REV_GEAR/ Math.PI * ARM_MOTOR_DIAMETER;
@@ -206,7 +225,7 @@ public class armEncoder {
     }
 
 
-    public double arcLength(double angle ){
+    private double arcLength(double angle ){
         // get the length of the arc, in inches, of the arm motor gear based on an angle
 
         return (angle/ 360) * (Math.PI * ARM_MOTOR_DIAMETER);
@@ -214,7 +233,7 @@ public class armEncoder {
     }
 
 
-    public double arcInchesToTicks(double angle){
+    private double arcInchesToTicks(double angle){
         // get ticks of arc
 
         double ticksPerInch = ticksPerInch();
@@ -227,7 +246,7 @@ public class armEncoder {
     }
 
 
-    public double toArmGearTicks(double angle){
+    private double toArmGearTicks(double angle){
         // convert motor gear ticks to the ticks needed to get the same result on the arm gear, this is done
         // by multipling the motor gear ticks by the 2 because the arm to motor gear ratio is 2:1
 
@@ -239,7 +258,7 @@ public class armEncoder {
     }
 
 
-    public int setEncoderTicks(double angle){
+    private int setEncoderTicks(double angle){
         //final step of encoder math, by now the ticks of the arc have been found for the motor gear
         // and this has been converted to find the ticks needed for the arm gear which is 2 times
         // more than the motor gear arc tick count.

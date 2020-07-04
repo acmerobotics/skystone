@@ -39,13 +39,17 @@ public class EncoderTest extends LinearOpMode {
 
             //////////////////////////// ARM //////////////////////////
 
-            arm.runTo(armTargetPosition);
+            //arm.runTo(armTargetPosition);
 
             //arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             //arm.armMotor.setPower(1);
 
             //arm.moveTo(desiredInches);
+
+            int position = arm.heightToEncoder(5);
+
+            arm.runTo(position);
 
             ///////////////////////////////////////////////////////////////
 

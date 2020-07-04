@@ -17,6 +17,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+// TODO rename the final version of this class GenDrive or something
+
 public class generalizedDrive extends Subsystem {
 
     //constants
@@ -123,6 +125,9 @@ public class generalizedDrive extends Subsystem {
 
         if (opModeEquals("roboTeleOp") || opModeEquals("TeleOpUsingGenDrive")){ // insert a list of or statements with TeleOps that use the drive
             inTeleOp = true;
+        }
+        else {
+            inTeleOp = false;
         }
 
         if(!inTeleOp){
@@ -508,7 +513,7 @@ public class generalizedDrive extends Subsystem {
         resetEncoderOmni();
     }
 
-    public boolean opModeEquals(String opMode){
+    private boolean opModeEquals(String opMode){
         if (String.valueOf(this.opMode).equals(opMode)){
             return true;
         }

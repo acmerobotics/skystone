@@ -36,9 +36,9 @@ public class vuforiaTest extends LinearOpMode {
         vision.activate();
 
         while (!isStopRequested()){
-            vision.goToSkystone(drive, intake);
+            vision.goToSkystone(drive, intake); // detect and approach skystone
 
-            vision.moveToBridge(drive);
+            vision.moveToBridge(drive); // move and score skystone
 
             vision.telemetry(telemetry);
         }
