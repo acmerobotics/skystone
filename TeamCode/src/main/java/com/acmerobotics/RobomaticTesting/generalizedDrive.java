@@ -80,6 +80,15 @@ public class generalizedDrive extends Subsystem {
 
     private PIDController pidController;
 
+    public static double P = 0;
+    public static double I = 0;
+    public static double D = 0;
+
+    // might need different coeff for turning
+    public static double Pturn = 0;
+    public static double Iturn = 0;
+    public static double Dturn = 0;
+
     // event triggers
 
     private enum AutoMode{
@@ -188,11 +197,17 @@ public class generalizedDrive extends Subsystem {
 
             switch (autoMode){
                 case UNKNOWN:
+
+                    pidController = new PIDController(P, I, D);
+
                     // create variables that will be used in other cases
                     double target;
                     double correction;
 
                 case Y:
+
+                    pidController = new PIDController(P, I, D);
+
                     target = motors[0].getCurrentPosition() + Ytarget;
                     error = target - motors[0].getCurrentPosition();
 
@@ -206,6 +221,9 @@ public class generalizedDrive extends Subsystem {
 
 
                 case STRAFE:
+
+                    pidController = new PIDController(P, I, D);
+
                     // TODO add strafe alignment correction
                     // the target and error are based on motors 0 and 2 but the values and the same
                     // for motors 1 and 3 but opposite sign
@@ -222,6 +240,9 @@ public class generalizedDrive extends Subsystem {
                     break;
 
                 case TURN:
+
+                    pidController = new PIDController(Pturn, Iturn, Dturn);
+
                     target = getAngle() + turnTarget;
                     error = target - getAngle();
 
