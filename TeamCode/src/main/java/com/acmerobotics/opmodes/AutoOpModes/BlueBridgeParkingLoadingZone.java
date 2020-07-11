@@ -18,6 +18,7 @@ public class BlueBridgeParkingLoadingZone extends LinearOpMode {
 
 
         state = 0;
+        drive.resetEncoderOmni();
 
         waitForStart();
 
@@ -45,7 +46,7 @@ public class BlueBridgeParkingLoadingZone extends LinearOpMode {
 
                 case 1:
 
-                    drive.goToPosition(5, 0.5);
+                    drive.goToPosition(-6, 0.5);
 
                     state++;
 
@@ -55,6 +56,7 @@ public class BlueBridgeParkingLoadingZone extends LinearOpMode {
 
                     if(drive.atLinearPos()){
                         drive.stopMotors();
+                        drive.resetEncoderOmni();
 
                         state++;
                     }
@@ -64,7 +66,7 @@ public class BlueBridgeParkingLoadingZone extends LinearOpMode {
 
                 case 3:
 
-                    drive.IgoToStrafingPos(10, "right");
+                    drive.goToStrafingPos(100, 0.5, "left");
 
                     state++;
 

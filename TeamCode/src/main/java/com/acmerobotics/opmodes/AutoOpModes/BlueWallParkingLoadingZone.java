@@ -50,7 +50,7 @@ public class BlueWallParkingLoadingZone extends LinearOpMode {
 
                 case 1:
 
-                    drive.goToPosition(9, 0.5);
+                    drive.goToPosition(-6, 0.5);
 
                     state++;
 

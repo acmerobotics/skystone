@@ -99,37 +99,37 @@ public class BlueFoundation extends LinearOpMode {
 
                     drive.setDegrees(-179);
 
-                    drive.getDegrees();
+                drive.getDegrees();
 
-                    if(drive.getAngle() == 0) {
-                        drive.clockwise();
-                    }
+                if(drive.getAngle() == 0) {
+                    drive.clockwise();
+                }
 
-                    if(drive.getDegrees() > 0) {
+                if(drive.getDegrees() > 0) {
 
-                        if(drive.getAngle() < drive.getDegrees()){
-                            drive.counterClockwise();
-
-                        } else {
-
-                            drive.stopMotors();
-                            state++;
-                        }
+                    if(drive.getAngle() < drive.getDegrees()){
+                        drive.counterClockwise();
 
                     } else {
 
-                        if(drive.getAngle() > drive.getDegrees()){
-                            drive.clockwise();
-
-                        } else {
-
-                            drive.stopMotors();
-                            state++;
-                        }
-
+                        drive.stopMotors();
+                        state++;
                     }
 
-                    break;
+                } else {
+
+                    if(drive.getAngle() > drive.getDegrees()){
+                        drive.clockwise();
+
+                    } else {
+
+                        drive.stopMotors();
+                        state++;
+                    }
+
+                }
+
+                break;
 
                 case 6:
 

@@ -144,7 +144,6 @@ public class Drive {
 
     }
 
-
     public void setSlowPower(Pose2d target) {
         double v = target.vec().norm() * SLOW_V;
         double theta = Math.atan2(target.getX(), target.getY());
