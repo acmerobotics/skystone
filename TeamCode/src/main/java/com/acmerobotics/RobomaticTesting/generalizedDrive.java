@@ -182,6 +182,11 @@ public class generalizedDrive extends Subsystem {
 
         telemetryData.addData("autoMode ", autoMode);
 
+        if (inTeleOp){
+
+            setVelocity(targetVelocity);
+        }
+
         if (!inTeleOp){
 
             // adjust error for a motor power
@@ -269,7 +274,7 @@ public class generalizedDrive extends Subsystem {
 
         targetVelocity = new Pose2d(v * Math.cos(theta), v * Math.sin(theta), omega);
 
-        setVelocity(targetVelocity);
+        //setVelocity(targetVelocity);
 
     }
 
@@ -281,7 +286,7 @@ public class generalizedDrive extends Subsystem {
 
         targetVelocity = new Pose2d(v * Math.cos(theta), v * Math.sin(theta), omega);
 
-        setVelocity(targetVelocity);
+        //setVelocity(targetVelocity);
     }
 
 
