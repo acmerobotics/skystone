@@ -167,6 +167,7 @@ public class roboTeleOp extends LinearOpMode {
             robot.drive.setPower(v);
 
             if (gamepad1.left_bumper) {
+                // close or open normally when left bumper is pressed (works on right)
 
                 if (isLeftBumperPressed == false) {
 
@@ -188,6 +189,7 @@ public class roboTeleOp extends LinearOpMode {
 
 
             } else if (!gamepad1.left_bumper && !isFullyOpen && isLeftBumperPressed) {
+                // close or open normally when left_bumper is released (works on left)
 
                 isLeftBumperPressed = false;
 
@@ -204,6 +206,7 @@ public class roboTeleOp extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
+                // opens intake fully and normal
 
                 if (isRightBumperPressed == false) {
 
