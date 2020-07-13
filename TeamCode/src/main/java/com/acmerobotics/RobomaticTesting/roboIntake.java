@@ -24,6 +24,16 @@ public class roboIntake extends Subsystem {
     public double LfullyOpen = 0.47;
     private double RfullyOpen = 0.57;
 
+    private enum State {
+        UNKNOWN,
+        OPEN,
+        REVERSE_INTAKE,
+        FULLY_OPEN,
+        CLOSED
+    }
+
+    private State state = State.UNKNOWN;
+
     public roboIntake(Robot robot){
         super("Intake");
 
@@ -35,33 +45,83 @@ public class roboIntake extends Subsystem {
     @Override
     public void update(Canvas overlay){
 
+        switch (state){
+
+            //figure out how to make it so the intake wheel don't get stuck
+
+            case UNKNOWN:
+
+                leftClose();
+                rightClose();
+                setIntakePower(0);
+
+                break;
+
+            case OPEN:
+
+                leftOpen();
+                rightOpen();
+                setIntakePower(1);
+
+                break;
+
+            case REVERSE_INTAKE:
+
+                leftOpen();
+                rightOpen();
+                setIntakePower(-1);
+
+
+                break;
+
+            case FULLY_OPEN:
+
+                leftFullyOpen();
+                rightFullyOpen();
+
+
+                break;
+
+            case CLOSED:
+
+                setIntakePower(0);
+                leftClose();
+                rightClose();
+
+
+                break;
+
+        }
+
+
+
     }
 
     public void setIntakePower(double intakePower) {
         intakeMotor.setPower(intakePower);
     }
 
-    public void leftOpen(){
+    public void leftOpen() {
         leftServo.setPosition(leftOpen);
     }
 
-    public void rightOpen(){
+    public void rightOpen() {
         rightServo.setPosition(rightOpen);
     }
 
-    public void leftClose(){
+    public void leftClose() {
         leftServo.setPosition(leftClose);
     }
 
-    public void rightClose(){
+    public void rightClose() {
         rightServo.setPosition(rightClose);
     }
 
-    public void leftFullyOpen(){
+    public void leftFullyOpen() {
         leftServo.setPosition(LfullyOpen);
     }
 
-    public void rightFullyOpen(){
+    public void rightFullyOpen() {
         rightServo.setPosition(RfullyOpen);
     }
 }
