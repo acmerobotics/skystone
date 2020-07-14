@@ -167,8 +167,6 @@ public class roboTeleOp extends LinearOpMode {
             robot.drive.setPower(v);
 
 
-            // I have to figure out how to use the states for the intake to not get caught on itself
-
             if (gamepad1.left_bumper) {
 
                 if (isLeftBumperPressed == false) {

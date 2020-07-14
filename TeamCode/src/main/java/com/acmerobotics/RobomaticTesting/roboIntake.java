@@ -43,7 +43,7 @@ public class roboIntake extends Subsystem {
         rightServo = robot.getServo("rightServo");
     }
     @Override
-    public void update(Canvas overlay){
+    public void update(Canvas overlay) {
 
         switch (state){
 
@@ -51,8 +51,6 @@ public class roboIntake extends Subsystem {
 
             case UNKNOWN:
 
-                leftClose();
-                rightClose();
                 setIntakePower(0);
 
                 break;
@@ -60,6 +58,19 @@ public class roboIntake extends Subsystem {
             case OPEN:
 
                 leftOpen();
+
+                try {
+                    Thread.sleep(1000);
+
+                } catch(InterruptedException ex) {
+
+                    Thread.currentThread().interrupt();  //this is the  best way I could think to get
+                                                        //wheels to close without hitting each other
+                                                        //i suppose I could have had two different states
+                                                        //and then use thread.sleep() in teleop,
+                                                        // but thats not as concise.
+                }
+
                 rightOpen();
                 setIntakePower(1);
 
@@ -68,6 +79,14 @@ public class roboIntake extends Subsystem {
             case REVERSE_INTAKE:
 
                 leftOpen();
+                try {
+                    Thread.sleep(1000);
+
+                } catch(InterruptedException ex) {
+
+                    Thread.currentThread().interrupt();
+                }
+
                 rightOpen();
                 setIntakePower(-1);
 
@@ -86,6 +105,15 @@ public class roboIntake extends Subsystem {
 
                 setIntakePower(0);
                 leftClose();
+
+                try {
+                    Thread.sleep(1000);
+
+                } catch(InterruptedException ex) {
+
+                    Thread.currentThread().interrupt();
+                }
+
                 rightClose();
 
 
