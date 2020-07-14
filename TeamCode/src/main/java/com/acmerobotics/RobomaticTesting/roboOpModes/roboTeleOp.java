@@ -168,68 +168,14 @@ public class roboTeleOp extends LinearOpMode {
 
 
             if (gamepad1.left_bumper) {
+                robot.intake.openAndClose();
 
-                if (isLeftBumperPressed == false) {
-
-                    isLeftBumperPressed = true;
-
-                    if (isRightOpen == false) {
-
-                        robot.intake.rightOpen();
-                        isRightOpen = true;
-
-                    } else {
-
-                        robot.intake.rightClose();
-                        isRightOpen = false;
-                        isFullyOpen = false;
-                    }
-
-                }
-
-
-            } else if (!gamepad1.left_bumper && !isFullyOpen && isLeftBumperPressed) {
-
-                isLeftBumperPressed = false;
-
-                if (isRightOpen == true){
-
-                    robot.intake.leftOpen();
-                    isLeftOpen = true;
-
-                } else {
-                    robot.intake.leftClose();
-                    isLeftOpen = false;
-
-                }
             }
 
             if (gamepad1.right_bumper) {
 
-                if (isRightBumperPressed == false) {
+                robot.intake.fullyOpen();
 
-                    isRightBumperPressed = true;
-
-                    if(isFullyOpen == false) {
-
-                        isFullyOpen = true;
-
-                        robot.intake.rightFullyOpen();
-                        robot.intake.leftFullyOpen();
-
-                    } else {
-
-                        isFullyOpen = false;
-
-                        robot.intake.rightOpen();
-                        robot.intake.leftOpen();
-                    }
-                }
-
-
-            } else {
-
-                isRightBumperPressed = false;
             }
 
 

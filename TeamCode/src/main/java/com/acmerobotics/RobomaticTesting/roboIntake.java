@@ -12,29 +12,38 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class roboIntake extends Subsystem {
 
     private DcMotorEx intakeMotor;
-    public Servo leftServo, rightServo;
+    private Servo leftServo, rightServo;
 
 
-    private double leftOpen = 0.7;
-    private double leftClose = 0.99;
+    private double leftOpen;
+    private double leftClose;
 
-    private double rightOpen = 0.353;
-    private double rightClose = 0.001;
+    private double rightOpen;
+    private double rightClose;
 
-    public double LfullyOpen = 0.47;
-    private double RfullyOpen = 0.57;
+    private double leftFullyOpen;
+    private double rightFullyOpen;
+
+    private double intakePower;
+
+    public boolean isLeftBumperPressed = false;
+    public boolean isLeftOpen = false;
+    public boolean isRightBumperPressed = false;
+    public boolean isRightOpen = false;
+    private boolean isFullyOpen = false;
+
+
 
     private enum State {
         UNKNOWN,
-        OPEN,
-        REVERSE_INTAKE,
-        FULLY_OPEN,
-        CLOSED
+        OPEN_AND_CLOSE,
+        RUN_INTAKE,
+        FULLY_OPEN
     }
 
     private State state = State.UNKNOWN;
 
-    public roboIntake(Robot robot){
+    public roboIntake(Robot robot) {
         super("Intake");
 
         intakeMotor = robot.getMotor("intakeMotor");
@@ -42,6 +51,7 @@ public class roboIntake extends Subsystem {
         leftServo = robot.getServo("leftServo");
         rightServo = robot.getServo("rightServo");
     }
+
     @Override
     public void update(Canvas overlay) {
 
@@ -51,70 +61,83 @@ public class roboIntake extends Subsystem {
 
             case UNKNOWN:
 
-                setIntakePower(0);
+                //umm yeah idk what to put here. I guess there doesn't really need to be anything
 
                 break;
 
-            case OPEN:
+            case OPEN_AND_CLOSE:
 
-                leftOpen();
+                if (isLeftBumperPressed == false) {
 
-                try {
-                    Thread.sleep(1000);
+                    isLeftBumperPressed = true;
 
-                } catch(InterruptedException ex) {
+                    if (isRightOpen == false) {
 
-                    Thread.currentThread().interrupt();  //this is the  best way I could think to get
-                                                        //wheels to close without hitting each other
-                                                        //i suppose I could have had two different states
-                                                        //and then use thread.sleep() in teleop,
-                                                        // but thats not as concise.
+                        rightServo.setPosition(rightOpen);
+                        isRightOpen = true;
+
+                    } else {
+
+                        rightServo.setPosition(rightClose);
+                        isRightOpen = false;
+                        isFullyOpen = false;
+                    }
+
                 }
 
-                rightOpen();
-                setIntakePower(1);
 
-                break;
+                if (!isFullyOpen && isLeftBumperPressed) {
 
-            case REVERSE_INTAKE:
+                    isLeftBumperPressed = false;
 
-                leftOpen();
-                try {
-                    Thread.sleep(1000);
+                    if (isRightOpen == true){
 
-                } catch(InterruptedException ex) {
+                        leftServo.setPosition(leftOpen);
+                        isLeftOpen = true;
 
-                    Thread.currentThread().interrupt();
+                    } else {
+
+                        leftServo.setPosition(leftClose);
+                        isLeftOpen = false;
+
+                    }
                 }
-
-                rightOpen();
-                setIntakePower(-1);
-
 
                 break;
 
             case FULLY_OPEN:
 
-                leftFullyOpen();
-                rightFullyOpen();
+                if (isRightBumperPressed == false) {
+
+                    isRightBumperPressed = true;
+
+                    if(isFullyOpen == false) {
+
+                        isFullyOpen = true;
+
+                        rightServo.setPosition(rightFullyOpen);
+                        leftServo.setPosition(leftFullyOpen);
+
+                            } else {
+
+                                isFullyOpen = false;
+
+                                rightServo.setPosition(rightOpen);
+                                leftServo.setPosition(leftOpen);
+                            }
+
+                } else {
+
+                    isRightBumperPressed = false;
+                }
 
 
                 break;
 
-            case CLOSED:
 
-                setIntakePower(0);
-                leftClose();
+            case RUN_INTAKE:
 
-                try {
-                    Thread.sleep(1000);
-
-                } catch(InterruptedException ex) {
-
-                    Thread.currentThread().interrupt();
-                }
-
-                rightClose();
+                intakeMotor.setPower(intakePower);
 
 
                 break;
@@ -125,31 +148,32 @@ public class roboIntake extends Subsystem {
 
     }
 
-    public void setIntakePower(double intakePower) {
-        intakeMotor.setPower(intakePower);
+    public void setIntakePower(double power) {
+        intakePower = power;
+        state = State.RUN_INTAKE;
     }
 
-    public void leftOpen() {
-        leftServo.setPosition(leftOpen);
+    public void openAndClose(){
+        leftOpen = 0.7;
+        rightOpen = 0.353;
+        leftClose = 0.99;
+        rightClose = 0.001;
+        state = State.OPEN_AND_CLOSE;
     }
 
-    public void rightOpen() {
-        rightServo.setPosition(rightOpen);
-    }
-
-    public void leftClose() {
-        leftServo.setPosition(leftClose);
-    }
-
-    public void rightClose() {
-        rightServo.setPosition(rightClose);
+    public void fullyOpen(){
+        leftFullyOpen = 0.47;
+        rightFullyOpen = 0.57;
+        state = State.FULLY_OPEN;
     }
 
     public void leftFullyOpen() {
-        leftServo.setPosition(LfullyOpen);
+        leftFullyOpen = 0.47;
+        state = State.FULLY_OPEN;
     }
 
     public void rightFullyOpen() {
-        rightServo.setPosition(RfullyOpen);
+        rightFullyOpen = 0.57;
+        state = State.FULLY_OPEN;
     }
 }
