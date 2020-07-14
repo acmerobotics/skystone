@@ -84,11 +84,6 @@ public class generalizedDrive extends Subsystem {
     public static double I = 0;
     public static double D = 0;
 
-    // might need different coeff for turning
-    public static double Pturn = 0;
-    public static double Iturn = 0;
-    public static double Dturn = 0;
-
     // event triggers
 
     private enum AutoMode{
@@ -126,7 +121,7 @@ public class generalizedDrive extends Subsystem {
         imuSensor = new CachingSensor<>(() -> imu.getAngularOrientation().firstAngle); // gets heading
         robot.registerCachingSensor(imuSensor); // adds imu to caching sensors, will then update the heading
 
-        pidController = new PIDController();
+        pidController = new PIDController(P, I, D);
 
         for (int i=0; i<4;i++){
             motors[i] = robot.getMotor("m" + i);
@@ -149,11 +144,15 @@ public class generalizedDrive extends Subsystem {
             motors[3].setDirection(DcMotorEx.Direction.FORWARD);
 
             for (int i = 0; i < 4; i++){
-                motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+                motors[i].setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
                 motors[i].setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
             }
 
         } else {
+
+            //imuSensor.setEnabled(false); //disable the imu if it is not needed (you might have to
+                                                                                // remove te sensor from the
+                                                                                // teleOp telemetry)
 
             motors[0].setDirection(DcMotorEx.Direction.FORWARD);
             motors[1].setDirection(DcMotorEx.Direction.REVERSE);
@@ -161,7 +160,7 @@ public class generalizedDrive extends Subsystem {
             motors[3].setDirection(DcMotorEx.Direction.REVERSE);
 
             for (int i = 0; i < 4; i++){
-                motors[i].setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                motors[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
                 motors[i].setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             }
 
@@ -203,15 +202,11 @@ public class generalizedDrive extends Subsystem {
             switch (autoMode){
                 case UNKNOWN:
 
-                    pidController = new PIDController(P, I, D);
-
                     // create variables that will be used in other cases
                     double target;
                     double correction;
 
                 case Y:
-
-                    pidController = new PIDController(P, I, D);
 
                     target = motors[0].getCurrentPosition() + Ytarget;
                     error = target - motors[0].getCurrentPosition();
@@ -227,7 +222,6 @@ public class generalizedDrive extends Subsystem {
 
                 case STRAFE:
 
-                    pidController = new PIDController(P, I, D);
 
                     // TODO add strafe alignment correction
                     // the target and error are based on motors 0 and 2 but the values and the same
@@ -245,8 +239,6 @@ public class generalizedDrive extends Subsystem {
                     break;
 
                 case TURN:
-
-                    pidController = new PIDController(Pturn, Iturn, Dturn);
 
                     target = getAngle() + turnTarget;
                     error = target - getAngle();

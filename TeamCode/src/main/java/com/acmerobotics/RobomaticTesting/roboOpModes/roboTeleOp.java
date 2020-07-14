@@ -120,7 +120,6 @@ public class roboTeleOp extends LinearOpMode {
 
 
         while(true){
-            robot.lift.PController();
 
             if (timeReset == false){
                 time.reset();
@@ -159,7 +158,6 @@ public class roboTeleOp extends LinearOpMode {
         waitForStart();
 
         while(!isStopRequested()){
-            robot.lift.PController();
 
             //////////////////////////////////// gamepad1   //////////////////////////////////////////
 
@@ -263,7 +261,7 @@ public class roboTeleOp extends LinearOpMode {
 
                     blocks += 1;
                     //lift.setPosition(blocks, lift.liftPower, liftEncoder.Mode.BLOCKS);
-                    robot.lift.runToBlocks(blocks, robot.lift.liftPower);
+                    robot.lift.runToBlocks(blocks);
                 }
             }
 
@@ -282,7 +280,7 @@ public class roboTeleOp extends LinearOpMode {
 
                     blocks -= 1;
                     //lift.runTo(blocks, lift.liftPower, liftEncoder.Mode.BLOCKS);
-                    robot.lift.runToBlocks(blocks, robot.lift.liftPower);
+                    robot.lift.runToBlocks(blocks);
                 }
             }
 
@@ -324,7 +322,7 @@ public class roboTeleOp extends LinearOpMode {
 
                 //hand will grab block
 
-                robot.lift.setPosition(liftEncoder.startHeight);
+                robot.lift.runTo(liftEncoder.startHeight);
 
                 robot.arm.runTo(8);
 
@@ -342,7 +340,7 @@ public class roboTeleOp extends LinearOpMode {
                 int blockLifted = foundation;
 
                 robot.arm.runTo(blockLifted);
-                robot.lift.setPosition(liftEncoder.bottomPosition); // using bottom position instead of 0
+                robot.lift.runTo(liftEncoder.bottomPosition); // using bottom position instead of 0
             }
 
 
@@ -384,26 +382,17 @@ public class roboTeleOp extends LinearOpMode {
             }
 
 
-            ////////////////////////// Telemetry //////////////////////////////
+            robot.update();
 
-            telemetry.addData("bottom set", robot.lift.bottomSet);
+            ////////////////////////// Telemetry //////////////////////////////
 
             telemetry.addData("blocks", blocks);
 
-            telemetry.addLine();
-
-            telemetry.addData("lift position" ,robot.lift.liftMotor1.getCurrentPosition());
-            telemetry.addData("lift target", robot.lift.setPoint);
-
-            telemetry.addLine();
-
-            telemetry.addData("lift power", robot.lift.liftMotor1.getPower());
-
-            telemetry.addLine();
-
-            telemetry.addData("heading", robot.drive.getAngle());
-
             telemetry.update();
+
+            //////////////////////// Robot Update //////////////////////////////
+
+            robot.update();
 
         }
 
