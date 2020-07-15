@@ -382,8 +382,6 @@ public class roboTeleOp extends LinearOpMode {
             }
 
 
-            robot.update();
-
             ////////////////////////// Telemetry //////////////////////////////
 
             telemetry.addData("blocks", blocks);
