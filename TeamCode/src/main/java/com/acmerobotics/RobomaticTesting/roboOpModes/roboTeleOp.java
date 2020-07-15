@@ -49,7 +49,7 @@ public class roboTeleOp extends LinearOpMode {
     public int extraBlocks = 0;
 
     @Override
-    public void runOpMode(){
+    public void runOpMode()throws InterruptedException {
 
         roboRobot robot = new roboRobot(this);
 

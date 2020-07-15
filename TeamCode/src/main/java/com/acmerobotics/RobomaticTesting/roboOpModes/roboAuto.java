@@ -6,7 +6,7 @@ import com.acmerobotics.robomatic.config.ConfigurationLoader;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.AutoTransitioner;
+import com.acmerobotics.util.AutoTransitioner;
 
 @Autonomous(name="roboAuto")
 public class roboAuto extends LinearOpMode {
@@ -24,7 +24,7 @@ public class roboAuto extends LinearOpMode {
         // automatic auto to teleOp transistor when auto is stoped
         AutoTransitioner.transitionOnStop(this, "roboTeleOp");
 
-        robot.runUntilStop(); // will run above until start is pressed, basically a waitForStart() (will loop until stop pressed)
+        waitForStart();
 
         if (config.color == roboConfig.AllianceColor.RED){
             if (config.startLocation == roboConfig.StartLocation.LOADING){
@@ -49,7 +49,7 @@ public class roboAuto extends LinearOpMode {
         }
 
 
-        robot.runUntilStop(); // run until stop is pressed (will loop until pressed)
+        robot.update();
 
     }
 }
