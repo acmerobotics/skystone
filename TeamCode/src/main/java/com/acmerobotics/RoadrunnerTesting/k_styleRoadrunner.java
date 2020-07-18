@@ -257,7 +257,7 @@ public class k_styleRoadrunner extends Subsystem {
     public void runTo(int position){
         setPoint = position;
 
-        goToPosition(position);
+        goToPosition(setPoint);
 
         liftMode = k_styleRoadrunner.mode.RUN_TO;
     }
@@ -269,7 +269,7 @@ public class k_styleRoadrunner extends Subsystem {
 
         setPoint = blockPosition;
 
-        goToPosition(position);
+        goToPosition(setPoint);
 
         liftMode = k_styleRoadrunner.mode.RUN_TO;
     }
@@ -278,7 +278,7 @@ public class k_styleRoadrunner extends Subsystem {
     public void runToIncrement(int position){
         setPoint = liftMotor1.getCurrentPosition() + position; //make 50 to 150
 
-        goToPosition(position);
+        goToPosition(setPoint);
 
         liftMode = k_styleRoadrunner.mode.RUN_TO;
     }
