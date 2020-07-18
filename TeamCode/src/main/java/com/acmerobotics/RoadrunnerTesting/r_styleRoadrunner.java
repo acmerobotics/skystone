@@ -38,11 +38,15 @@ public class r_styleRoadrunner extends Subsystem {
 
     ////////////// Control (PID and Motion Profiling) ///////////////
 
-    public int setPoint;
+    public double setPoint;
 
     public static double P = 0;
     public static double I = 0;
     public static double D = 0;
+
+    public static double rP = 0;
+    public static double rI = 0;
+    public static double rD = 0;
 
     public static double K_V = 0;
     public static double K_A = 0;
@@ -52,7 +56,8 @@ public class r_styleRoadrunner extends Subsystem {
 
     public static PIDCoefficients COEFFICIENTS = new PIDCoefficients(P, I, D);
 
-    public PIDFController controller;
+    public PIDFController controller; // roadrunner PID
+    public PIDController Rcontroller; // robomatic PID
 
     public static double MAX_V = 0;
     public static double MAX_A = 0;
@@ -83,11 +88,13 @@ public class r_styleRoadrunner extends Subsystem {
     private int maxHeight = 5200;
 
     public double liftPower = 0.5;
+    public double currentLiftPower = 0;
 
     public int stateb = 0;
 
     private enum mode{
         RUN_TO,
+        HOLD_POSITION,
         BOTTOM,
 
     }
@@ -107,6 +114,8 @@ public class r_styleRoadrunner extends Subsystem {
         controller = new PIDFController(COEFFICIENTS, K_V, K_A, K_STATIC, (x, v) -> G); // set PID
                                                     //coeff, v, a, static friction, feedfowrad for gravity
                                         // takes potion and velocity
+        Rcontroller = new PIDController(rP, rI, rD);
+
         goToPosition(0);
 
     }
@@ -129,6 +138,19 @@ public class r_styleRoadrunner extends Subsystem {
                     setPoint = maxHeight;
                 }
 
+                double t = time.milliseconds() / 1000; // get time since last goToPos (last time reset) used
+
+                // if the time since goToPos was used is greater than the duration of the motion profile
+                // then the profile has reached its position and ther is no longer a need to continue using
+                // motion profile instead the position can be held by PID alone in HOLD_POSITION
+                if (t > profile.duration()) {
+                    liftMode = mode.HOLD_POSITION;
+                    setPoint = profile.end().getX(); // position at the end of motion profile
+                    currentLiftPower = liftMotor1.getPower();
+                    return;
+                }
+
+
                 MotionState target = profile.get(time.seconds()); // get motion state at current state
 
                 controller.setTargetPosition(target.getX()); // set position target for PID
@@ -143,6 +165,19 @@ public class r_styleRoadrunner extends Subsystem {
                 liftMotor2.setPower(correction);
 
                 break;
+
+
+            case HOLD_POSITION:
+                // hold a position without motion profile just PID
+
+                double error = setPoint - getPosition();
+
+                correction = Rcontroller.update(error);
+
+                liftMotor1.setPower(correction + currentLiftPower); // current liftPower should work
+                // as a feedforward to keep the arm stable and make the PID just correct small errors.
+                liftMotor2.setPower(correction + currentLiftPower);
+
 
             case BOTTOM:
 

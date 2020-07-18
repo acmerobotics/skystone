@@ -40,7 +40,7 @@ public class k_styleRoadrunner extends Subsystem {
 
     public double error;
 
-    public int setPoint;
+    public double setPoint;
 
     public static double P = 2;
     public static double I = 0;
@@ -87,10 +87,13 @@ public class k_styleRoadrunner extends Subsystem {
 
     public double liftPower = 0.5;
 
+    private double currentLiftPower = 0;
+
     public int stateb = 0;
 
     private enum mode{
         RUN_TO,
+        HOLD_POSITION,
         BOTTOM,
 
     }
@@ -131,8 +134,17 @@ public class k_styleRoadrunner extends Subsystem {
 
                 double t = time.milliseconds() / 1000; // get time since last goToPos (last time reset) used
 
-                MotionState target = profile.get(t); // motion state at current time
+                // if the time since goToPos was used is greater than the duration of the motion profile
+                // then the profile has reached its position and ther is no longer a need to continue using
+                // motion profile instead the position can be held by PID alone in HOLD_POSITION
+                if (t > profile.duration()) {
+                    liftMode = mode.HOLD_POSITION;
+                    setPoint = profile.end().getX(); // position at the end of motion profile
+                    currentLiftPower = liftMotor1.getPower();
+                    return;
+                }
 
+                MotionState target = profile.get(t); // motion state at current time
 
                 error = target.getX() - getPosition(); // motion state position - current position
 
@@ -145,6 +157,17 @@ public class k_styleRoadrunner extends Subsystem {
 
                 break;
 
+
+            case HOLD_POSITION:
+                // hold a position without motion profile just PID
+
+                error = setPoint - getPosition();
+
+                correction = controller.update(error);
+
+                liftMotor1.setPower(correction + currentLiftPower); // current liftPower should work
+                        // as a feedforward to keep the arm stable and make the PID just correct small errors.
+                liftMotor2.setPower(correction + currentLiftPower);
 
             case BOTTOM:
 
