@@ -85,7 +85,7 @@ public class skystoneVuforia {
             // for vumarks
         if (((VuforiaTrackableDefaultListener)target.getListener()).isVisible()) { // is vumark visible
             targetVisibale = true;
-            pose = ((VuforiaTrackableDefaultListener)target.getListener()).getPose(); // get vumark position
+            pose = ((VuforiaTrackableDefaultListener)target.getListener()).getPose(); // get vumark pose (x, y, heading)
         }
     }
 

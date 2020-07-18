@@ -155,6 +155,11 @@ public class roboTeleOp extends LinearOpMode {
             telemetry.update();
         }
 
+        //TODO I FOUND A PROBLEM... there is no update method before wait for start so the commends
+        // that are passed during initialization won't control any hardware. This can be fixed by running
+        // the whole init under a single while loop and putting the init sequence in a structured
+        // switch case block
+
         waitForStart();
 
         while(!isStopRequested()){
