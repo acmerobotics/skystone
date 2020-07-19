@@ -138,7 +138,7 @@ public class roboTeleOp extends LinearOpMode {
 
                     if(!armReady) {
                         robot.arm.resetEncoder();
-                        robot.arm.setHand("open");
+                        robot.arm.openHand();
                         armReady = true;
                     }
 
@@ -320,11 +320,11 @@ public class roboTeleOp extends LinearOpMode {
 
 
             if (gamepad2.right_bumper){
-                robot.arm.setHand("open");
+                robot.arm.openHand();
             }
 
             if (gamepad2.left_bumper){
-                robot.arm.setHand("close");
+                robot.arm.closeHand();
             }
 
 

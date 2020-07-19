@@ -26,13 +26,11 @@ public class roboIntake extends Subsystem {
 
     private double intakePower;
 
-    public boolean isLeftBumperPressed = false;
-    public boolean isLeftOpen = false;
-    public boolean isRightBumperPressed = false;
-    public boolean isRightOpen = false;
+    private boolean isLeftBumperPressed = false;
+    private boolean isLeftOpen = false;
+    private boolean isRightBumperPressed = false;
+    private boolean isRightOpen = false;
     private boolean isFullyOpen = false;
-
-
 
     private enum State {
         UNKNOWN,
@@ -43,7 +41,7 @@ public class roboIntake extends Subsystem {
 
     private State state = State.UNKNOWN;
 
-    public roboIntake(Robot robot) {
+    private roboIntake(Robot robot) {
         super("Intake");
 
         intakeMotor = robot.getMotor("intakeMotor");

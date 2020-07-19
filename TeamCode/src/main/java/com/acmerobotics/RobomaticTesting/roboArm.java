@@ -19,18 +19,27 @@ public class roboArm extends Subsystem {
     private Servo handServo;
 
     // PID var
-    public static double P = 20; // 12
-    public static double I = 0.25; // 0.5
-    public static double D = 0;
-    public static double F = 0;
-    public static double armPower = 1;
-    public static PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F, MotorControlAlgorithm.LegacyPID);
+    private static double P = 20; // 12
+    private static double I = 0.25; // 0.5
+    private static double D = 0;
+    private static double F = 0;
+    private static double armPower = 1;
+    private static PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F, MotorControlAlgorithm.LegacyPID);
 
     // handServo pos
-    private double handOpenPos = 0.59;
-    private double handClosePos = 0.1;
+    private double handOpenPos;
+    private double handClosePos;
 
-    public roboArm(Robot robot){
+    private enum State {
+        UNKNOWN,
+        OPEN,
+        CLOSE,
+        GO_TO_POS
+    }
+
+    private State state = State.UNKNOWN;
+
+    private roboArm(Robot robot){
         super("Arm"); // calls Subsystem constructor
 
         // creates obj
@@ -44,6 +53,36 @@ public class roboArm extends Subsystem {
         // telemetry will be sent to dashboard as TelemetryPackets and the data wil have "Arm" prefix
         telemetryData.addData("current pos", armMotor.getCurrentPosition());
         telemetryData.addData("target pos", armMotor.getTargetPosition());
+
+        switch (state) {
+
+            case UNKNOWN:
+
+
+                break;
+
+            case OPEN:
+
+                handServo.setPosition(handOpenPos);
+
+
+                break;
+
+
+            case CLOSE:
+
+                handServo.setPosition(handClosePos);
+
+                break;
+
+
+            case GO_TO_POS:
+
+                armMotor.setPower(armPower);
+
+                break;
+        }
+
     }
 
 
@@ -74,8 +113,7 @@ public class roboArm extends Subsystem {
 
         armMotor.setTargetPosition(position);
         armMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-        armMotor.setPower(armPower);
+        state = State.GO_TO_POS;
     }
 
 
@@ -91,18 +129,17 @@ public class roboArm extends Subsystem {
         }
     }
 
+    public void openHand() {
+        handOpenPos = 0.59;
+        state = State.OPEN;
 
-    public void setHand(String position){
+    }
 
-        if (position.equals("open")){
-            //open hand
-            handServo.setPosition(handOpenPos);
-        }
+    public void closeHand(){
+        handClosePos = 0.1;
+        state = State.CLOSE;
 
-        if (position.equals("close")){
-            //close hand
-            handServo.setPosition(handClosePos);
-        }
+
     }
 
 
