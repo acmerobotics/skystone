@@ -44,10 +44,6 @@ public class r_styleRoadrunner extends Subsystem {
     public static double I = 0;
     public static double D = 0;
 
-    public static double rP = 0;
-    public static double rI = 0;
-    public static double rD = 0;
-
     public static double K_V = 0;
     public static double K_A = 0;
     public static double K_STATIC = 0;
@@ -57,7 +53,6 @@ public class r_styleRoadrunner extends Subsystem {
     public static PIDCoefficients COEFFICIENTS = new PIDCoefficients(P, I, D);
 
     public PIDFController controller; // roadrunner PID
-    public PIDController Rcontroller; // robomatic PID
 
     public static double MAX_V = 0;
     public static double MAX_A = 0;
@@ -88,7 +83,11 @@ public class r_styleRoadrunner extends Subsystem {
     private int maxHeight = 5200;
 
     public double liftPower = 0.5;
-    public double currentLiftPower = 0;
+    public double currentLiftPower = 0; // not sure if needed bc PID already has feedforward for gravity
+                                // but this is suppose to work like a feedforward and the logic is that if
+                    // the power is taken when a motion profile ends (the power it took to get and stay at the
+                    // target position) then if I take that power and add it to the correcting power for HOLD_POS
+                    // then the PID will be doing little work because current power will be holding the arm
 
     public int stateb = 0;
 
@@ -114,8 +113,6 @@ public class r_styleRoadrunner extends Subsystem {
         controller = new PIDFController(COEFFICIENTS, K_V, K_A, K_STATIC, (x, v) -> G); // set PID
                                                     //coeff, v, a, static friction, feedfowrad for gravity
                                         // takes potion and velocity
-        Rcontroller = new PIDController(rP, rI, rD);
-
         goToPosition(0);
 
     }
@@ -153,12 +150,12 @@ public class r_styleRoadrunner extends Subsystem {
 
                 MotionState target = profile.get(time.seconds()); // get motion state at current state
 
-                controller.setTargetPosition(target.getX()); // set position target for PID
+                controller.setTargetPosition(target.getX()); // set position target for PID (setpoint)
                 controller.setTargetVelocity(target.getV()); // set target velocity for PID feedforward calculation
                 controller.setTargetAcceleration(target.getA()); // set target acc for PID feedforward calculation
 
                 double correction = controller.update(getPosition()); // error is calculated by roadrunner
-                                                                        // PIDFcontroller all it needs is
+                                                                        // PIDFcontroller, all it needs is
                                                                         // its current position
 
                 liftMotor1.setPower(correction);
@@ -173,9 +170,9 @@ public class r_styleRoadrunner extends Subsystem {
                 // it took to barely reach the position plus work from a PID controller to maintain and
                 // hold that position.
 
-                double error = setPoint - getPosition();
+                controller.setTargetPosition(setPoint);
 
-                correction = Rcontroller.update(error);
+                correction = controller.update(getPosition());
 
                 liftMotor1.setPower(correction + currentLiftPower); // current liftPower should work
                 // as a feedforward to keep the arm stable and make the PID just correct small errors.
