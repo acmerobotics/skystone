@@ -168,7 +168,10 @@ public class r_styleRoadrunner extends Subsystem {
 
 
             case HOLD_POSITION:
-                // hold a position without motion profile just PID
+                // hold a position without motion profile just PID.
+                // motion profiling isn't needed to hold a position. All that is required is the power
+                // it took to barely reach the position plus work from a PID controller to maintain and
+                // hold that position.
 
                 double error = setPoint - getPosition();
 

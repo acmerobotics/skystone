@@ -34,6 +34,9 @@ public class roboTeleOp extends LinearOpMode {
 
     private boolean armReady = false;
 
+    private int initState = 0;
+
+    private boolean run = true;
 
     private int blocks = 0;
 
@@ -58,107 +61,92 @@ public class roboTeleOp extends LinearOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
-        robot.arm.resetEncoder();
 
-        while (true) {
+        while(run) {
 
-            if (!robot.lift.bottomSet) {
-                robot.arm.runTo(100);
+            // entire init sequence put into a switch case block
+            switch (initState) {
 
-                robot.lift.tightenLiftString();
+                case 0:
+                    robot.arm.resetEncoder();
+                    initState++;
 
-                robot.lift.goToBottom();
+                case 1:
 
-            } else {
-                break;
-            }
+                    if (!robot.lift.bottomSet) {
+                        robot.arm.runTo(100);
 
-            telemetry.addData("current position ", robot.lift.liftMotor1.getCurrentPosition());
-            telemetry.addData("target position ", robot.lift.setPoint);
+                        robot.lift.tightenLiftString();
 
-            telemetry.addLine();
+                        robot.lift.goToBottom();
 
-            telemetry.addData("bottom set", robot.lift.bottomSet);
-
-            telemetry.addLine();
-
-            telemetry.addData("step", 0);
-
-            telemetry.update();
-        }
-
-        robot.lift.resetEncoder();
-
-        robot.arm.runTo(100); // gets arm out of the intake's way
-
-        while (true) {
-
-            if (robot.arm.armMotor.getCurrentPosition() > 80){
-
-                if (timeReset == false){
-                    time.reset();
-                    timeReset = true;
-                }
-
-                robot.intake.rightFullyOpen();
-                isRightOpen = true;
-
-                if (time.seconds() > 1.25) {
-                    robot.intake.leftFullyOpen();
-                    isLeftOpen = true;
-                    isFullyOpen = true;
-                    timeReset = false;
-                    break;
-                }
-            }
-
-            telemetry.addData("step", 1);
-
-            telemetry.update();
-
-        }
-
-
-        while(true){
-
-            if (timeReset == false){
-                time.reset();
-                timeReset = true;
-            }
-
-            if (time.seconds() > 1.25) {
-
-                robot.lift.goToStartHeight(); // raise lift so arm is ready for blocks coming in from intake
-
-                robot.arm.armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                robot.arm.armMotor.setPower(0.08); // arm goes to place where the 0 position will be
-
-                if (robot.lift.liftMotor1.getCurrentPosition() >= (robot.lift.setPoint - 50)) {
-
-                    if(!armReady) {
-                        robot.arm.resetEncoder();
-                        robot.arm.setHand("open");
-                        armReady = true;
+                    } else {
+                        initState++;
                     }
 
                     break;
-                }
+
+                case 2:
+
+                    robot.lift.resetEncoder();
+
+                    robot.arm.runTo(100); // gets arm out of the intake's way
+
+                    initState++;
+
+                case 3:
+                    if (robot.arm.armMotor.getCurrentPosition() > 80) {
+
+                        if (timeReset == false) {
+                            time.reset();
+                            timeReset = true;
+                        }
+
+                        robot.intake.rightFullyOpen();
+                        isRightOpen = true;
+
+                        if (time.seconds() > 1.25) {
+                            robot.intake.leftFullyOpen();
+                            isLeftOpen = true;
+                            isFullyOpen = true;
+                            timeReset = false;
+                            initState++;
+                        }
+                    }
+                    break;
+
+                case 4:
+
+                    if (timeReset == false) {
+                        time.reset();
+                        timeReset = true;
+                    }
+
+                    if (time.seconds() > 1.25) {
+
+                        robot.lift.goToStartHeight(); // raise lift so arm is ready for blocks coming in from intake
+
+                        robot.arm.armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        robot.arm.armMotor.setPower(0.08); // arm goes to place where the 0 position will be
+
+                        if (robot.lift.liftMotor1.getCurrentPosition() >= (robot.lift.setPoint - 50)) {
+
+                            if (!armReady) {
+                                robot.arm.resetEncoder();
+                                robot.arm.setHand("open");
+                                armReady = true;
+                            }
+
+                            run = false; // stops while loop and code continues to waitForStart()
+                            initState++;
+                        }
+                    }
+
+                    break;
             }
 
-            telemetry.addData("current position ", robot.lift.liftMotor1.getCurrentPosition());
-            telemetry.addData("target position ", robot.lift.setPoint);
-
-            telemetry.addLine();
-
-            telemetry.addData("step", 2);
-
-            telemetry.update();
+            robot.update(); // update is ran
         }
-
-        //TODO I FOUND A PROBLEM... there is no update method before wait for start so the commends
-        // that are passed during initialization won't control any hardware. This can be fixed by running
-        // the whole init under a single while loop and putting the init sequence in a structured
-        // switch case block
 
         waitForStart();
 
