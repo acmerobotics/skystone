@@ -41,7 +41,7 @@ public class roboIntake extends Subsystem {
 
     private State state = State.UNKNOWN;
 
-    private roboIntake(Robot robot) {
+    public roboIntake(Robot robot) {
         super("Intake");
 
         intakeMotor = robot.getMotor("intakeMotor");
@@ -54,8 +54,6 @@ public class roboIntake extends Subsystem {
     public void update(Canvas overlay) {
 
         switch (state){
-
-            //figure out how to make it so the intake wheel don't get stuck
 
             case UNKNOWN:
 

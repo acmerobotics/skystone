@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.robomatic.hardware.CachingDcMotorEx;
 import com.acmerobotics.robomatic.robot.Robot;
 import com.acmerobotics.robomatic.robot.Subsystem;
+import com.acmerobotics.robomatic.util.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
@@ -18,17 +19,21 @@ public class roboArm extends Subsystem {
     public DcMotorEx armMotor;
     private Servo handServo;
 
+    //PID
+    private PIDController pidController;
+    public double error;
+
     // PID var
     private static double P = 20; // 12
     private static double I = 0.25; // 0.5
     private static double D = 0;
-    private static double F = 0;
-    private static double armPower = 1;
-    private static PIDFCoefficients coefficients = new PIDFCoefficients(P, I, D, F, MotorControlAlgorithm.LegacyPID);
 
     // handServo pos
     private double handOpenPos;
     private double handClosePos;
+
+    // arm
+    private int armPosition;
 
     private enum State {
         UNKNOWN,
@@ -39,8 +44,10 @@ public class roboArm extends Subsystem {
 
     private State state = State.UNKNOWN;
 
-    private roboArm(Robot robot){
+    public roboArm(Robot robot){
         super("Arm"); // calls Subsystem constructor
+
+        pidController = new PIDController();
 
         // creates obj
         armMotor = robot.getMotor("armMotor");
@@ -57,6 +64,11 @@ public class roboArm extends Subsystem {
         switch (state) {
 
             case UNKNOWN:
+
+                pidController = new PIDController(P, I, D);
+
+                double target;
+                double correction;
 
 
                 break;
@@ -78,7 +90,16 @@ public class roboArm extends Subsystem {
 
             case GO_TO_POS:
 
-                armMotor.setPower(armPower);
+                pidController = new PIDController(P, I, D);
+
+                target = armMotor.getCurrentPosition() + armPosition;
+                error = target - armMotor.getCurrentPosition();
+
+                correction = pidController.update(error);
+
+                for (int i= 0; i < 4; i++) {
+                    armMotor.setPower(correction);
+                }
 
                 break;
         }
@@ -91,7 +112,7 @@ public class roboArm extends Subsystem {
 
         armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
-        setPID(coefficients);
+        pidController = new PIDController(P, I, D);
 
         armMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
     }
@@ -106,28 +127,11 @@ public class roboArm extends Subsystem {
 
 
     public void runTo(int position) {
-        // target position is set and the motor is set to run to that position and a set power
-        // target position is held with pid
-
-        setPID(coefficients);
-
-        armMotor.setTargetPosition(position);
+        armPosition = position;
         armMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         state = State.GO_TO_POS;
     }
 
-
-    public void setPID(PIDFCoefficients pidfCoefficients){
-        //will set the pid coefficients
-
-        //todo add similar method to Robomatic
-
-        // should only set the pid coefficients if they are different from the current ones
-        if (pidfCoefficients != coefficients) {
-            armMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION, pidfCoefficients);
-            coefficients = pidfCoefficients;
-        }
-    }
 
     public void openHand() {
         handOpenPos = 0.59;
