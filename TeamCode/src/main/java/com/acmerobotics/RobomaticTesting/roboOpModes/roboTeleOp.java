@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.robomatic.robot.Robot;
+import com.acmerobotics.robomatic.util.StickyGamepad;
 import com.acmerobotics.robot.liftEncoder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -48,10 +49,15 @@ public class roboTeleOp extends LinearOpMode {
 
     public int extraBlocks = 0;
 
+    private StickyGamepad stickyGamepad1, stickyGamepad2;
+
     @Override
     public void runOpMode(){
 
         roboRobot robot = new roboRobot(this);
+
+        stickyGamepad1 = new StickyGamepad(gamepad1);
+        stickyGamepad2 = new StickyGamepad(gamepad2);
 
         ElapsedTime time = new ElapsedTime();
 
@@ -167,12 +173,12 @@ public class roboTeleOp extends LinearOpMode {
             robot.drive.setPower(v);
 
 
-            if (gamepad1.left_bumper) {
+            if (stickyGamepad1.left_bumper) {
                 robot.intake.openAndClose();
 
             }
 
-            if (gamepad1.right_bumper) {
+            if (stickyGamepad1.right_bumper) {
 
                 robot.intake.fullyOpen();
 
@@ -198,7 +204,7 @@ public class roboTeleOp extends LinearOpMode {
 
 
             ////////////////////// Main Lift Code ///////////////////////
-            if (gamepad2.dpad_up) {
+            if (stickyGamepad2.dpad_up) {
                 if (isDpadUp == false) {
 
                     isDpadUp = true;
@@ -216,7 +222,7 @@ public class roboTeleOp extends LinearOpMode {
             }
 
 
-            if (gamepad2.dpad_down) {
+            if (stickyGamepad2.dpad_down) {
 
                 if (isDpadDown == false) {
 
@@ -263,7 +269,7 @@ public class roboTeleOp extends LinearOpMode {
 
             //////////////////////// ARM //////////////////////////
 
-            if (gamepad2.a){
+            if (stickyGamepad2.a){
                 //starting height, arm at rest (at hard stop)
 
                 //hand will grab block
@@ -277,7 +283,7 @@ public class roboTeleOp extends LinearOpMode {
             }
 
 
-            if (gamepad2.x){
+            if (stickyGamepad2.x){
                 // lift goes to bottom, arm moves to a position where it is greater than the foundation (2 in) and 1 in above
                 // the foundation so it can block a block
 
@@ -290,12 +296,12 @@ public class roboTeleOp extends LinearOpMode {
             }
 
 
-            if (gamepad2.b){
+            if (stickyGamepad2.b){
 
                 robot.arm.runTo(underB);
             }
 
-            if (gamepad2.y){
+            if (stickyGamepad2.y){
                 if (!isYPressed) {
                     isYPressed = true;
 
@@ -319,11 +325,11 @@ public class roboTeleOp extends LinearOpMode {
             ////////////////////////////// HAND ////////////////////////////
 
 
-            if (gamepad2.right_bumper){
+            if (stickyGamepad2.right_bumper){
                 robot.arm.openHand();
             }
 
-            if (gamepad2.left_bumper){
+            if (stickyGamepad2.left_bumper){
                 robot.arm.closeHand();
             }
 
