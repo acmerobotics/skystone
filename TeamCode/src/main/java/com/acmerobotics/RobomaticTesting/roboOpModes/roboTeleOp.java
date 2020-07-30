@@ -49,15 +49,10 @@ public class roboTeleOp extends LinearOpMode {
 
     public int extraBlocks = 0;
 
-    private StickyGamepad stickyGamepad1, stickyGamepad2;
-
     @Override
     public void runOpMode(){
 
-        roboRobot robot = new roboRobot(this);
-
-        stickyGamepad1 = new StickyGamepad(gamepad1);
-        stickyGamepad2 = new StickyGamepad(gamepad2);
+        roboRobot robot = new roboRobot(this);;
 
         ElapsedTime time = new ElapsedTime();
 
@@ -173,12 +168,12 @@ public class roboTeleOp extends LinearOpMode {
             robot.drive.setPower(v);
 
 
-            if (stickyGamepad1.left_bumper) {
+            if (gamepad1.left_bumper) {
                 robot.intake.openAndClose();
 
             }
 
-            if (stickyGamepad1.right_bumper) {
+            if (gamepad1.right_bumper) {
 
                 robot.intake.fullyOpen();
 
@@ -204,7 +199,7 @@ public class roboTeleOp extends LinearOpMode {
 
 
             ////////////////////// Main Lift Code ///////////////////////
-            if (stickyGamepad2.dpad_up) {
+            if (gamepad2.dpad_up) {
                 if (isDpadUp == false) {
 
                     isDpadUp = true;
@@ -222,7 +217,7 @@ public class roboTeleOp extends LinearOpMode {
             }
 
 
-            if (stickyGamepad2.dpad_down) {
+            if (gamepad2.dpad_down) {
 
                 if (isDpadDown == false) {
 
@@ -269,7 +264,7 @@ public class roboTeleOp extends LinearOpMode {
 
             //////////////////////// ARM //////////////////////////
 
-            if (stickyGamepad2.a){
+            if (gamepad2.a){
                 //starting height, arm at rest (at hard stop)
 
                 //hand will grab block
@@ -283,7 +278,7 @@ public class roboTeleOp extends LinearOpMode {
             }
 
 
-            if (stickyGamepad2.x){
+            if (gamepad2.x){
                 // lift goes to bottom, arm moves to a position where it is greater than the foundation (2 in) and 1 in above
                 // the foundation so it can block a block
 
@@ -296,12 +291,12 @@ public class roboTeleOp extends LinearOpMode {
             }
 
 
-            if (stickyGamepad2.b){
+            if (gamepad2.b){
 
                 robot.arm.runTo(underB);
             }
 
-            if (stickyGamepad2.y){
+            if (gamepad2.y){
                 if (!isYPressed) {
                     isYPressed = true;
 
@@ -325,11 +320,11 @@ public class roboTeleOp extends LinearOpMode {
             ////////////////////////////// HAND ////////////////////////////
 
 
-            if (stickyGamepad2.right_bumper){
+            if (gamepad2.right_bumper){
                 robot.arm.openHand();
             }
 
-            if (stickyGamepad2.left_bumper){
+            if (gamepad2.left_bumper){
                 robot.arm.closeHand();
             }
 
