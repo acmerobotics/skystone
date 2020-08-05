@@ -80,7 +80,7 @@ public class skystoneVuforia {
 
 
     // if one target is visible
-    public void targetVisible(VuforiaTrackable target){
+    public void searchForTarget(VuforiaTrackable target){
             // the listener is the software that is looking at the data coming from the camera to check
             // for vumarks
         if (((VuforiaTrackableDefaultListener)target.getListener()).isVisible()) { // is vumark visible
@@ -119,7 +119,7 @@ public class skystoneVuforia {
         intake.leftOpen();
         intake.setIntakePower(1);
 
-        targetVisible(target);
+        searchForTarget(target);
 
         if (targetVisibale && !skystoneReached){
             getLocationFromTarget();
