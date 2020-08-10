@@ -1,5 +1,9 @@
 package com.acmerobotics.opmodes.AutoOpModes;
 
+import com.acmerobotics.RobomaticTesting.roboRobot;
+import com.acmerobotics.RobomaticTesting.util.SkystoneConfiguration;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.RobomaticTesting.util.SkystoneConfiguration;
 import com.acmerobotics.robot.Drive;
 import com.acmerobotics.robot.FoundationMover;
 import com.acmerobotics.robot.armEncoder;
@@ -8,10 +12,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@Config
 @Autonomous(name="Blue Foundation")
 public class BlueFoundation extends LinearOpMode {
 
     private int state;
+
+    protected roboRobot robot;
+    protected SkystoneConfiguration.StartLocation startLocation;
 
 
     @Override
@@ -28,6 +36,7 @@ public class BlueFoundation extends LinearOpMode {
         drive.resetAngle();
         time.reset();
         drive.update();
+        startLocation = robot.config.startLocation;
 
         telemetry.addData("state", state);
         telemetry.addData("current pos", drive.getCurrentPos());
