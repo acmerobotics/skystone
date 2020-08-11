@@ -22,7 +22,8 @@ public class ConfigTest extends LinearOpMode {
         packet.put("start location", configuration.startLocation);
         packet.put("parking location", configuration.parkingLocation);
         packet.put("delay", configuration.delay);
-        packet.put("get both skystones", configuration.bothSkystones);
+        packet.put("get both skystones", configuration.collectBothSkystones);
+        packet.put("has initialation run", configuration.hasInitializationBeenRun);
 
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
         waitForStart();

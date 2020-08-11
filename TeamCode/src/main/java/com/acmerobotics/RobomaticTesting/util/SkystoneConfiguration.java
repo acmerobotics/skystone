@@ -30,7 +30,9 @@ public class SkystoneConfiguration {
 
     public ParkingLocation parkingLocation;
 
-    public boolean bothSkystones;
+    public boolean collectBothSkystones;
+
+    public boolean hasInitializationBeenRun;
 
    @IntegerConfiguration(max=10)
     public int delay;

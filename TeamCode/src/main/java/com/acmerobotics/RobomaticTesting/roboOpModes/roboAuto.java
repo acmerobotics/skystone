@@ -9,9 +9,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 @Autonomous(name="roboAuto")
 public class roboAuto extends LinearOpMode {
 
+    // this was angry so I commented out a bunch of stuff cause I couldn't be bothered to fix it.
+
     @Override
     public void runOpMode() {
-        roboRobot robot = new roboRobot(this);
+        roboRobot robot = new roboRobot(this, hardwareMap);
 
         roboConfig config = (roboConfig) new ConfigurationLoader(hardwareMap.appContext).getConfig();
 

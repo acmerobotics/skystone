@@ -16,9 +16,11 @@ public class roboRobot extends Robot {
     public final roboArm arm;
     public final roboLift lift;
     public final roboIntake intake;
+    public final RoboFoundationMover foundationMover;
     // public final runToTest;
     // public final ImuTest
 
+    private LinearOpMode mainOpMode;
     private HardwareMap map;
 
     public SkystoneConfiguration config;
@@ -29,6 +31,7 @@ public class roboRobot extends Robot {
         registerHub("hub0"); // lets Robomatic interact with the devices connected with the hub
         registerHub("hub1");
 
+        this.mainOpMode = opMode;
         this.map = map;
 
         // create obj
@@ -37,6 +40,7 @@ public class roboRobot extends Robot {
         lift = new roboLift(this);
         intake = new roboIntake(this);
         config = (SkystoneConfiguration) new ConfigurationLoader(map.appContext).getConfig();
+        foundationMover = new RoboFoundationMover(this);
         // runToTest = new runToTest(this);
         // ImyTest = new ImuTest(this);
 
@@ -47,5 +51,13 @@ public class roboRobot extends Robot {
         registerSubsytem(intake);
         // registerSubsytem(runToTest);
         // registerSubsytem(ImuTest);
+    }
+
+    public void pause(double millis) {
+        long start = System.currentTimeMillis();
+        while (((millis + start) - System.currentTimeMillis()) > 0 && !mainOpMode.isStopRequested()) {
+            update();
+        }
+
     }
 }
