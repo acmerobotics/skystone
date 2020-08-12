@@ -135,7 +135,7 @@ public class k_styleRoadrunner extends Subsystem {
                 double t = time.milliseconds() / 1000; // get time since last goToPos (last time reset) used
 
                 // if the time since goToPos was used is greater than the duration of the motion profile
-                // then the profile has reached its position and ther is no longer a need to continue using
+                // then the profile has reached its position and there is no longer a need to continue using
                 // motion profile instead the position can be held by PID alone in HOLD_POSITION
                 if (t > profile.duration()) {
                     liftMode = mode.HOLD_POSITION;
@@ -171,6 +171,8 @@ public class k_styleRoadrunner extends Subsystem {
                 liftMotor1.setPower(correction + currentLiftPower); // current liftPower should work
                         // as a feedforward to keep the arm stable and make the PID just correct small errors.
                 liftMotor2.setPower(correction + currentLiftPower);
+
+                break;
 
             case BOTTOM:
 
@@ -261,7 +263,7 @@ public class k_styleRoadrunner extends Subsystem {
     private double getFeedforward(MotionState state){
         // feed forward calculation
 
-        // this feed forward calculation is nearly identical to the one used in the readrunner PIDF controller
+        // this feed forward calculation is nearly identical to the one used in the roadrunner PIDF controller
         double feedforward = K_V * state.getV() + K_A * state.getA() + K_g; // mass could also be included with the acc
                                                                             // to account for inertia but I left it out for now
 

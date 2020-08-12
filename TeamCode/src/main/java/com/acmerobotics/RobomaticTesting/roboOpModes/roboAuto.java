@@ -1,7 +1,10 @@
 package com.acmerobotics.RobomaticTesting.roboOpModes;
 
+import android.util.Log;
+
 import com.acmerobotics.RobomaticTesting.roboConfig;
 import com.acmerobotics.RobomaticTesting.roboRobot;
+import com.acmerobotics.opmodes.AutoOpModes.BlueBridgeParkingBuildingZone;
 import com.acmerobotics.robomatic.config.ConfigurationLoader;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -14,6 +17,9 @@ public class roboAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
         roboRobot robot = new roboRobot(this);
+
+        // autos
+        BlueBridgeParkingBuildingZone blueBridgeParkingBuildingZone = new BlueBridgeParkingBuildingZone();
 
         roboConfig config = (roboConfig) new ConfigurationLoader(hardwareMap.appContext).getConfig();
 
@@ -44,6 +50,12 @@ public class roboAuto extends LinearOpMode {
 
             else if (config.startLocation == roboConfig.StartLocation.BUILDING){
                 telemetry.addLine("run: a blue building zone auto ");
+                try {
+                    blueBridgeParkingBuildingZone.runOpMode(); // if done this way I have to deal with or remove InterruptedException
+                }
+                catch (Exception InterruptedException){
+                    Log.e("roboAuto", "thread was interrupted in auto");
+                }
             }
 
         }
