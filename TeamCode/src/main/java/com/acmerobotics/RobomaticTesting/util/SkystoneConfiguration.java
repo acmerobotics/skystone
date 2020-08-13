@@ -14,11 +14,18 @@ public class SkystoneConfiguration {
     public AllianceColor allianceColor;
 
 
-    public enum StartLocation {
+    public enum AutoType {
         FOUNDATION,
         SKYSTONE,
         PARKING
 
+    }
+
+    public AutoType autoType;
+
+    public enum StartLocation {
+        BUILDING_ZONE,
+        LOADING_ZONE
     }
 
     public StartLocation startLocation;

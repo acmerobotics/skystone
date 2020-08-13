@@ -15,6 +15,7 @@ public abstract class AutoOpMode extends LinearOpMode {
     protected SkystoneConfiguration.StartLocation startLocation;
     protected SkystoneConfiguration.ParkingLocation parkingLocation;
     protected SkystoneConfiguration.AllianceColor allianceColor;
+    protected SkystoneConfiguration.AutoType autoType;
     private double startTime;
 
     @Override
@@ -29,9 +30,12 @@ public abstract class AutoOpMode extends LinearOpMode {
 
         startTime = System.currentTimeMillis();
 
+        roboRobot.drive.strafePower = 0.5;
+
         startLocation = roboRobot.config.startLocation;
         parkingLocation = roboRobot.config.parkingLocation;
         allianceColor = roboRobot.config.allianceColor;
+        autoType = roboRobot.config.autoType;
 
         //initialization routine
         roboRobot.arm.runTo(110);
@@ -69,6 +73,16 @@ public abstract class AutoOpMode extends LinearOpMode {
     public AutoAction liftToBottom = () -> {
         roboRobot.lift.goToBottom();
     };
+
+    public double currentTime () {
+
+        return (System.currentTimeMillis() - startTime) / 1000.0;
+    }
+
+    public double timeLeft () {
+        return 30 - currentTime();
+
+    }
 
 
 }

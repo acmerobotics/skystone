@@ -3,8 +3,8 @@ package com.acmerobotics.RobomaticTesting.roboOpModes;
 import com.acmerobotics.RobomaticTesting.util.SkystoneConfiguration;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name="blue foundation")
-public class BlueFoundation extends AutoOpMode {
+@Autonomous(name="Red Foundation")
+public class RedFoundation extends AutoOpMode {
 
     @Override
     protected void run() {
@@ -12,26 +12,27 @@ public class BlueFoundation extends AutoOpMode {
         autoType = SkystoneConfiguration.AutoType.FOUNDATION;
         startLocation = SkystoneConfiguration.StartLocation.BUILDING_ZONE;
         parkingLocation = SkystoneConfiguration.ParkingLocation.BRIDGE;
-        allianceColor = SkystoneConfiguration.AllianceColor.BLUE;
+        allianceColor = SkystoneConfiguration.AllianceColor.RED;
         roboRobot.config.collectBothSkystones = false;
 
         roboRobot.drive.resetEncoders();
         roboRobot.drive.resetAngle();
         roboRobot.drive.resetEncoderOmni();
 
-        roboRobot.drive.IgoToStrafingPos(10, "right");
+        roboRobot.drive.IgoToStrafingPos(10, "left");
 
-        roboRobot.drive.goToPosition(21, 0.5);
+        roboRobot.drive.resetEncoders();
+        roboRobot.drive.goToPosition(29, 0.25);
 
-        roboRobot.drive.moveForward(0.18);
+        roboRobot.drive.moveForward(0.18); //this might cause problems, but we'll cross that bridge later
         grabFoundation.execute();
         roboRobot.pause(900);
 
         roboRobot.drive.resetAngle();
-        //there would a be a turn in here but I'm too lazy to fix it
+        //here's a turn. wasn't it wonderful? (see blue foundation for context)
 
         roboRobot.drive.resetEncoders();
-        roboRobot.drive.goToPosition(19, 0.75);
+        roboRobot.drive.goToPosition(20, 0.75);
 
         storeFoundation.execute();
 
@@ -39,12 +40,10 @@ public class BlueFoundation extends AutoOpMode {
         roboRobot.drive.goToPosition(-3, 0.5);
 
         roboRobot.drive.resetAngle();
-        //again, turn. again, not bothering
+        //i'm not doing the code for this
 
         roboRobot.drive.resetEncoders();
-        roboRobot.drive.goToPosition(45, -0.5);
-
-
+        roboRobot.drive.goToPosition(41, -0.5);
 
 
     }
