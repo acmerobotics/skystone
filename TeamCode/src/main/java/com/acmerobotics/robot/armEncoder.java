@@ -70,7 +70,7 @@ public class armEncoder {
 
     public armEncoder(HardwareMap hardwareMap){
 
-        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
+        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor"); // DcMotorEx.class is a reference or representation of the DcMotorEx class
         handServo = hardwareMap.get(Servo.class, "handServo");
 
     }
