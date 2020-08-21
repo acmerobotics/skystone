@@ -12,6 +12,9 @@ class Test2: LinearOpMode(){
     override fun runOpMode(){
         val arm = KotlinArm(hardwareMap)
 
+        // java class in kotlin program
+        val javaArm = armEncoder(hardwareMap)
+
         waitForStart()
 
         if (isStopRequested()){
