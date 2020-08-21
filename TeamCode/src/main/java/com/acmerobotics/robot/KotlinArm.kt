@@ -25,25 +25,28 @@ class KotlinArm constructor( // class is followed by the primary constructor
 
     // class scope
 
-    // properties (instance fields in Java)
+    // properties (instance fields in Java but you need to add @JvmField to make them assessable as instance
+    // fields in a java program, otherwise you will use a getter or setting, which is automatically created,
+    // to access the properties in a java program.)
 
     // visiablility is public by default
-    var armMotor: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "armMotor") // DcMotorEx.class (java) = DcMotorEx::class.java (kotilin)
+    @JvmField var armMotor: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "armMotor") // DcMotorEx.class (java) = DcMotorEx::class.java (kotilin)
     // .java is used because the referenced class is in java not kotlin
-    var handServo: Servo = hardwareMap.servo.get("handServo") // another way to instantiate a hardware device
+    @JvmField var handServo: Servo = hardwareMap.servo.get("handServo") // another way to instantiate a hardware device
 
-    var position: Double = 0.0
+    @JvmField var position: Double = 0.0
 
     private val handOpenPos: Double = 0.59
     private val handClosePos: Double = 0.1 // val is like a final variable, once it is given
                                             // a value  it can be chande, it is a view only variable
+    val armPower: Double = 1.0
 
     // static variables
     companion object{
-        var P: Double = 20.0
-        var I: Double = 0.25
-        var D: Double = 0.0
-        var F: Double = 0.0
+        @JvmField var P: Double = 20.0
+        @JvmField var I: Double = 0.25
+        @JvmField var D: Double = 0.0
+        @JvmField var F: Double = 0.0
 
         var coefficients: PIDFCoefficients = PIDFCoefficients(P, I, D, F)
 
@@ -76,6 +79,11 @@ class KotlinArm constructor( // class is followed by the primary constructor
 
     fun runTo(position: Int){
         setPID(coefficients)
+
+        armMotor.setTargetPosition(position)
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION)
+
+        armMotor.setPower(armPower)
 
     }
 
