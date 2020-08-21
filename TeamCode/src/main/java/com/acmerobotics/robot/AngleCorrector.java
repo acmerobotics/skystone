@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 @Config
 public class AngleCorrector {
 
-    public static double Pcoefficient = 0.025; // 0.025 is for moving forward and back; for strafing use 0.02
+    public static double Pcoefficient = 0.025; // 0.025 is for moving forward and back; for strafing use 0.02//
 
     public double error;
     public double newPower;
