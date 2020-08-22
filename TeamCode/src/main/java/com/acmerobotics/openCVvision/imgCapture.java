@@ -33,6 +33,6 @@ public class imgCapture {
     }
 
     public void saveImg(){
-        Imgcodecs.imwrite("openCV_img_capture_test.png", img);
+        Imgcodecs.imwrite("openCV_img_capture_test.png", img); // I only save the img so it can help test and trouble shoot
     }
 }
