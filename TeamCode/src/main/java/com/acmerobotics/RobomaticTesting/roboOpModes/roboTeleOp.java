@@ -52,7 +52,7 @@ public class roboTeleOp extends LinearOpMode {
     @Override
     public void runOpMode(){
 
-        roboRobot robot = new roboRobot(this);;
+        roboRobot robot = new roboRobot(this, hardwareMap);
 
         ElapsedTime time = new ElapsedTime();
 
