@@ -109,6 +109,7 @@ public class roboDrive extends Subsystem {
             motors[i] = robot.getMotor("m" + i);
         }
 
+        // this is not the best way to determine if the GenDrive is in teleOp I will change it later
         if (String.valueOf(opMode).equals("roboTeleOp")){
             inTeleOp = true;
         }

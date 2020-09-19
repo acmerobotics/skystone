@@ -16,6 +16,8 @@ public class visionOpenCV {
 
     /*
     classing showing the basic processes of openCV in java
+
+    ( I tested a python version of this so should all be good in java)
      */
 
     public double X;
@@ -74,7 +76,7 @@ public class visionOpenCV {
         // find contours
         Imgproc.findContours(img, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        // I test to make sure there was only one contour but this won't always
+        // I tested to make sure there was only one contour but this won't always
         // be the case
         Mat contour = contours.get(0);
 
