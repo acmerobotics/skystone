@@ -1,7 +1,12 @@
 package com.acmerobotics.openCVvision;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+@TeleOp(name="OpenCV")
 public class captureOpMode extends LinearOpMode {
 
     /*
@@ -11,27 +16,28 @@ public class captureOpMode extends LinearOpMode {
     @Override
     public void runOpMode(){
 
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        Telemetry telemetry = dashboard.getTelemetry();
+
         imgCapture camera = new imgCapture();
 
         waitForStart();
 
-
         telemetry.addLine("start pressed");
 
-        camera.getImg();
+        while (!isStopRequested()){
 
-        camera.saveImg();
+            camera.getImg();
 
-        telemetry.addLine("was img found " + camera.imgFound);
+            camera.saveImg();
 
-        telemetry.addLine("is Img empty " + camera.img.empty());
+            telemetry.addLine("was img found " + camera.imgFound);
 
-        telemetry.addLine("program end");
+            telemetry.addLine("is Img empty " + camera.img.empty());
 
-        telemetry.update();
+            telemetry.addLine("program end");
 
-//        while (!isStopRequested()){
-//
-//        }
+            telemetry.update();
+        }
     }
 }

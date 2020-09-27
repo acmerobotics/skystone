@@ -4,31 +4,32 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class calcRPM {
+public class RPMReader {
 
-    public double TICKS_PER_REVOLUTION = 560; // Rev 20:1
+
+    public double TICKS_PER_REVOLUTION = 0;
 
     public ElapsedTime time;
 
     public DcMotor motor;
 
-    public double Time = 0.001;
+    public double Time = 0.001; // set a non 0 value to prevent any initial div by 0
     public double ticks = 0;
 
     public double lastTicks = 0;
     public double lastTime = 0;
 
 
-    public calcRPM(HardwareMap hardwareMap){
+    public RPMReader(HardwareMap hardwareMap, DcMotor motor, double TICKS_PER_REVOLUTION){
+        this.TICKS_PER_REVOLUTION = TICKS_PER_REVOLUTION;
+
+        this.motor = motor;
+
+        this.motor = hardwareMap.get(DcMotor.class, "motor");
+
+        this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
         time = new ElapsedTime();
-        motor = hardwareMap.get(DcMotor.class, "motor");
-
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-    }
-
-    // get accumulating encoder ticks
-    public double getTicks() { // unnessary function (using it for concept)
-        return motor.getCurrentPosition();
     }
 
     // keep track ticks per sec
@@ -47,7 +48,7 @@ public class calcRPM {
         return tickVelocity;
     }
 
-    // divide accumulated ticks by total ticks in one rotation to get the rpm of 1 min
+    // multiply by 60 then divide ticks vel by total ticks in one rotation to get the rpm of 1 min
     public double getRPM(){
         double ticks = ticksPerSec() * 60;
 
