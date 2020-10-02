@@ -62,330 +62,330 @@ public class roboTeleOp extends LinearOpMode {
         Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
 
-        while(run) {
-
-            // entire init sequence put into a switch case block
-            switch (initState) {
-
-                case 0:
-                    robot.arm.resetEncoder();
-                    initState++;
-
-                case 1:
-
-                    if (!robot.lift.bottomSet) {
-                        robot.arm.runTo(100);
-
-                        robot.lift.tightenLiftString();
-
-                        robot.lift.goToBottom();
-
-                    } else {
-                        initState++;
-                    }
-
-                    break;
-
-                case 2:
-
-                    robot.lift.resetEncoder();
-
-                    robot.arm.runTo(100); // gets arm out of the intake's way
-
-                    initState++;
-
-                case 3:
-                    if (robot.arm.armMotor.getCurrentPosition() > 80) {
-
-                        if (timeReset == false) {
-                            time.reset();
-                            timeReset = true;
-                        }
-
-                        robot.intake.rightFullyOpen();
-                        isRightOpen = true;
-
-                        if (time.seconds() > 1.25) {
-                            robot.intake.leftFullyOpen();
-                            isLeftOpen = true;
-                            isFullyOpen = true;
-                            timeReset = false;
-                            initState++;
-                        }
-                    }
-                    break;
-
-                case 4:
-
-                    if (timeReset == false) {
-                        time.reset();
-                        timeReset = true;
-                    }
-
-                    if (time.seconds() > 1.25) {
-
-                        robot.lift.goToStartHeight(); // raise lift so arm is ready for blocks coming in from intake
-
-                        robot.arm.armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        robot.arm.armMotor.setPower(0.08); // arm goes to place where the 0 position will be
-
-                        if (robot.lift.liftMotor1.getCurrentPosition() >= (robot.lift.setPoint - 50)) {
-
-                            if (!armReady) {
-                                robot.arm.resetEncoder();
-                                robot.arm.setHand("open");
-                                armReady = true;
-                            }
-
-                            run = false; // stops while loop and code continues to waitForStart()
-                            initState++;
-                        }
-                    }
-
-                    break;
-            }
-
-            robot.update(); // update is ran
-        }
-
-        waitForStart();
-
-        while(!isStopRequested()){
-
-            //////////////////////////////////// gamepad1   //////////////////////////////////////////
-
-            Pose2d v = new Pose2d(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
-            robot.drive.setPower(v);
-
-            if (gamepad1.left_bumper) {
-                // close or open normally when left bumper is pressed (works on right)
-
-                if (isLeftBumperPressed == false) {
-
-                    isLeftBumperPressed = true;
-
-                    if (isRightOpen == false) {
-
-                        robot.intake.rightOpen();
-                        isRightOpen = true;
-
-                    } else {
-
-                        robot.intake.rightClose();
-                        isRightOpen = false;
-                        isFullyOpen = false;
-                    }
-
-                }
-
-
-            } else if (!gamepad1.left_bumper && !isFullyOpen && isLeftBumperPressed) {
-                // close or open normally when left_bumper is released (works on left)
-
-                isLeftBumperPressed = false;
-
-                if (isRightOpen == true){
-
-                    robot.intake.leftOpen();
-                    isLeftOpen = true;
-
-                } else {
-                    robot.intake.leftClose();
-                    isLeftOpen = false;
-
-                }
-            }
-
-            if (gamepad1.right_bumper) {
-                // opens intake fully and normal
-
-                if (isRightBumperPressed == false) {
-
-                    isRightBumperPressed = true;
-
-                    if(isFullyOpen == false) {
-
-                        isFullyOpen = true;
-
-                        robot.intake.rightFullyOpen();
-                        robot.intake.leftFullyOpen();
-
-                    } else {
-
-                        isFullyOpen = false;
-
-                        robot.intake.rightOpen();
-                        robot.intake.leftOpen();
-                    }
-                }
-
-
-            } else {
-
-                isRightBumperPressed = false;
-            }
-
-
-            if (gamepad1.left_trigger > 0) {
-
-                robot.intake.setIntakePower(-1);
-
-
-            } else if (gamepad1.right_trigger > 0){
-
-                robot.intake.setIntakePower(1);
-
-            } else {
-
-                robot.intake.setIntakePower(0);
-
-            }
-
-            /////////////////////////////////////// gamepad2   /////////////////////////////////////////////
-
-
-            ////////////////////// Main Lift Code ///////////////////////
-            if (gamepad2.dpad_up) {
-                if (isDpadUp == false) {
-
-                    isDpadUp = true;
-
-                    isDpadDown = false;
-
-                    blocks += 1;
-                    //lift.setPosition(blocks, lift.liftPower, liftEncoder.Mode.BLOCKS);
-                    robot.lift.runToBlocks(blocks);
-                }
-            }
-
-            else{
-                isDpadUp = false; // allows runTo to be used after every press
-            }
-
-
-            if (gamepad2.dpad_down) {
-
-                if (isDpadDown == false) {
-
-                    isDpadDown = true;
-
-                    isDpadUp = false;
-
-                    blocks -= 1;
-                    //lift.runTo(blocks, lift.liftPower, liftEncoder.Mode.BLOCKS);
-                    robot.lift.runToBlocks(blocks);
-                }
-            }
-
-            else{
-                isDpadDown = false;
-            }
-
-
-            ////////////////////// Lift Error Prevention /////////////////////////
-
-
-            if (gamepad2.right_trigger > 0){
-                if (!isRightTriggerPressed){
-                    isRightTriggerPressed = true;
-                    robot.lift.runToIncrement(200);
-                }
-            }
-
-            else{
-                isRightTriggerPressed = false;
-            }
-
-
-            if (gamepad2.left_trigger > 0){
-                if (!isLeftTriggerPressed){
-                    isLeftTriggerPressed = true;
-                    robot.lift.runToIncrement(-200);
-                }
-            }
-
-            else{
-                isLeftTriggerPressed = false;
-            }
-
-            //////////////////////// ARM //////////////////////////
-
-            if (gamepad2.a){
-                //starting height, arm at rest (at hard stop)
-
-                //hand will grab block
-
-                robot.lift.runTo(liftEncoder.startHeight);
-
-                robot.arm.runTo(8);
-
-                robot.arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot.arm.armMotor.setPower(0.08);
-            }
-
-
-            if (gamepad2.x){
-                // lift goes to bottom, arm moves to a position where it is greater than the foundation (2 in) and 1 in above
-                // the foundation so it can block a block
-
-                // allows robot to go under bridge
-
-                int blockLifted = foundation;
-
-                robot.arm.runTo(blockLifted);
-                robot.lift.runTo(liftEncoder.bottomPosition); // using bottom position instead of 0
-            }
-
-
-            if (gamepad2.b){
-
-                robot.arm.runTo(underB);
-            }
-
-            if (gamepad2.y){
-                if (!isYPressed) {
-                    isYPressed = true;
-
-                    if (extraBlocks == 0) {
-                        robot.arm.runTo(oneExtraBlock);
-                        extraBlocks = 1;
-                    }
-
-                    else if (extraBlocks == 1){
-                        robot.arm.runTo(twoExtraBlock);
-                        extraBlocks = 0;
-                    }
-                }
-            }
-
-            else{
-                isYPressed = false;
-            }
-
-
-            ////////////////////////////// HAND ////////////////////////////
-
-
-            if (gamepad2.right_bumper){
-                robot.arm.setHand("open");
-            }
-
-            if (gamepad2.left_bumper){
-                robot.arm.setHand("close");
-            }
-
-
-            ////////////////////////// Telemetry //////////////////////////////
-
-            telemetry.addData("blocks", blocks);
-
-            telemetry.update();
-
-            //////////////////////// Robot Update //////////////////////////////
-
-            robot.update();
-
-        }
+//        while(run) {
+//
+//            // entire init sequence put into a switch case block
+//            switch (initState) {
+//
+//                case 0:
+//                    robot.arm.resetEncoder();
+//                    initState++;
+//
+//                case 1:
+//
+//                    if (!robot.lift.bottomSet) {
+//                        robot.arm.runTo(100);
+//
+//                        robot.lift.tightenLiftString();
+//
+//                        robot.lift.goToBottom();
+//
+//                    } else {
+//                        initState++;
+//                    }
+//
+//                    break;
+//
+//                case 2:
+//
+//                    robot.lift.resetEncoder();
+//
+//                    robot.arm.runTo(100); // gets arm out of the intake's way
+//
+//                    initState++;
+//
+//                case 3:
+//                    if (robot.arm.armMotor.getCurrentPosition() > 80) {
+//
+//                        if (timeReset == false) {
+//                            time.reset();
+//                            timeReset = true;
+//                        }
+//
+//                        robot.intake.rightFullyOpen();
+//                        isRightOpen = true;
+//
+//                        if (time.seconds() > 1.25) {
+//                            robot.intake.leftFullyOpen();
+//                            isLeftOpen = true;
+//                            isFullyOpen = true;
+//                            timeReset = false;
+//                            initState++;
+//                        }
+//                    }
+//                    break;
+//
+//                case 4:
+//
+//                    if (timeReset == false) {
+//                        time.reset();
+//                        timeReset = true;
+//                    }
+//
+//                    if (time.seconds() > 1.25) {
+//
+//                        robot.lift.goToStartHeight(); // raise lift so arm is ready for blocks coming in from intake
+//
+//                        robot.arm.armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//                        robot.arm.armMotor.setPower(0.08); // arm goes to place where the 0 position will be
+//
+//                        if (robot.lift.liftMotor1.getCurrentPosition() >= (robot.lift.setPoint - 50)) {
+//
+//                            if (!armReady) {
+//                                robot.arm.resetEncoder();
+//                                robot.arm.setHand("open");
+//                                armReady = true;
+//                            }
+//
+//                            run = false; // stops while loop and code continues to waitForStart()
+//                            initState++;
+//                        }
+//                    }
+//
+//                    break;
+//            }
+//
+//            robot.update(); // update is ran
+//        }
+//
+//        waitForStart();
+//
+//        while(!isStopRequested()){
+//
+//            //////////////////////////////////// gamepad1   //////////////////////////////////////////
+//
+//            Pose2d v = new Pose2d(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+//            robot.drive.setPower(v);
+//
+//            if (gamepad1.left_bumper) {
+//                // close or open normally when left bumper is pressed (works on right)
+//
+//                if (isLeftBumperPressed == false) {
+//
+//                    isLeftBumperPressed = true;
+//
+//                    if (isRightOpen == false) {
+//
+//                        robot.intake.rightOpen();
+//                        isRightOpen = true;
+//
+//                    } else {
+//
+//                        robot.intake.rightClose();
+//                        isRightOpen = false;
+//                        isFullyOpen = false;
+//                    }
+//
+//                }
+//
+//
+//            } else if (!gamepad1.left_bumper && !isFullyOpen && isLeftBumperPressed) {
+//                // close or open normally when left_bumper is released (works on left)
+//
+//                isLeftBumperPressed = false;
+//
+//                if (isRightOpen == true){
+//
+//                    robot.intake.leftOpen();
+//                    isLeftOpen = true;
+//
+//                } else {
+//                    robot.intake.leftClose();
+//                    isLeftOpen = false;
+//
+//                }
+//            }
+//
+//            if (gamepad1.right_bumper) {
+//                // opens intake fully and normal
+//
+//                if (isRightBumperPressed == false) {
+//
+//                    isRightBumperPressed = true;
+//
+//                    if(isFullyOpen == false) {
+//
+//                        isFullyOpen = true;
+//
+//                        robot.intake.rightFullyOpen();
+//                        robot.intake.leftFullyOpen();
+//
+//                    } else {
+//
+//                        isFullyOpen = false;
+//
+//                        robot.intake.rightOpen();
+//                        robot.intake.leftOpen();
+//                    }
+//                }
+//
+//
+//            } else {
+//
+//                isRightBumperPressed = false;
+//            }
+//
+//
+//            if (gamepad1.left_trigger > 0) {
+//
+//                robot.intake.setIntakePower(-1);
+//
+//
+//            } else if (gamepad1.right_trigger > 0){
+//
+//                robot.intake.setIntakePower(1);
+//
+//            } else {
+//
+//                robot.intake.setIntakePower(0);
+//
+//            }
+//
+//            /////////////////////////////////////// gamepad2   /////////////////////////////////////////////
+//
+//
+//            ////////////////////// Main Lift Code ///////////////////////
+//            if (gamepad2.dpad_up) {
+//                if (isDpadUp == false) {
+//
+//                    isDpadUp = true;
+//
+//                    isDpadDown = false;
+//
+//                    blocks += 1;
+//                    //lift.setPosition(blocks, lift.liftPower, liftEncoder.Mode.BLOCKS);
+//                    robot.lift.runToBlocks(blocks);
+//                }
+//            }
+//
+//            else{
+//                isDpadUp = false; // allows runTo to be used after every press
+//            }
+//
+//
+//            if (gamepad2.dpad_down) {
+//
+//                if (isDpadDown == false) {
+//
+//                    isDpadDown = true;
+//
+//                    isDpadUp = false;
+//
+//                    blocks -= 1;
+//                    //lift.runTo(blocks, lift.liftPower, liftEncoder.Mode.BLOCKS);
+//                    robot.lift.runToBlocks(blocks);
+//                }
+//            }
+//
+//            else{
+//                isDpadDown = false;
+//            }
+//
+//
+//            ////////////////////// Lift Error Prevention /////////////////////////
+//
+//
+//            if (gamepad2.right_trigger > 0){
+//                if (!isRightTriggerPressed){
+//                    isRightTriggerPressed = true;
+//                    robot.lift.runToIncrement(200);
+//                }
+//            }
+//
+//            else{
+//                isRightTriggerPressed = false;
+//            }
+//
+//
+//            if (gamepad2.left_trigger > 0){
+//                if (!isLeftTriggerPressed){
+//                    isLeftTriggerPressed = true;
+//                    robot.lift.runToIncrement(-200);
+//                }
+//            }
+//
+//            else{
+//                isLeftTriggerPressed = false;
+//            }
+//
+//            //////////////////////// ARM //////////////////////////
+//
+//            if (gamepad2.a){
+//                //starting height, arm at rest (at hard stop)
+//
+//                //hand will grab block
+//
+//                robot.lift.runTo(liftEncoder.startHeight);
+//
+//                robot.arm.runTo(8);
+//
+//                robot.arm.armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                robot.arm.armMotor.setPower(0.08);
+//            }
+//
+//
+//            if (gamepad2.x){
+//                // lift goes to bottom, arm moves to a position where it is greater than the foundation (2 in) and 1 in above
+//                // the foundation so it can block a block
+//
+//                // allows robot to go under bridge
+//
+//                int blockLifted = foundation;
+//
+//                robot.arm.runTo(blockLifted);
+//                robot.lift.runTo(liftEncoder.bottomPosition); // using bottom position instead of 0
+//            }
+//
+//
+//            if (gamepad2.b){
+//
+//                robot.arm.runTo(underB);
+//            }
+//
+//            if (gamepad2.y){
+//                if (!isYPressed) {
+//                    isYPressed = true;
+//
+//                    if (extraBlocks == 0) {
+//                        robot.arm.runTo(oneExtraBlock);
+//                        extraBlocks = 1;
+//                    }
+//
+//                    else if (extraBlocks == 1){
+//                        robot.arm.runTo(twoExtraBlock);
+//                        extraBlocks = 0;
+//                    }
+//                }
+//            }
+//
+//            else{
+//                isYPressed = false;
+//            }
+//
+//
+//            ////////////////////////////// HAND ////////////////////////////
+//
+//
+//            if (gamepad2.right_bumper){
+//                robot.arm.setHand("open");
+//            }
+//
+//            if (gamepad2.left_bumper){
+//                robot.arm.setHand("close");
+//            }
+//
+//
+//            ////////////////////////// Telemetry //////////////////////////////
+//
+//            telemetry.addData("blocks", blocks);
+//
+//            telemetry.update();
+//
+//            //////////////////////// Robot Update //////////////////////////////
+//
+//            robot.update();
+//
+//        }
 
     }
 }

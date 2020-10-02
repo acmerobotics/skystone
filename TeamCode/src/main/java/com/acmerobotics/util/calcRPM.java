@@ -1,6 +1,7 @@
 package com.acmerobotics.util;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -10,7 +11,7 @@ public class calcRPM {
 
     public ElapsedTime time;
 
-    public DcMotor motor;
+    public DcMotorEx motor;
 
     public double Time = 0.001;
     public double ticks = 0;
@@ -21,7 +22,7 @@ public class calcRPM {
 
     public calcRPM(HardwareMap hardwareMap){
         time = new ElapsedTime();
-        motor = hardwareMap.get(DcMotor.class, "motor");
+        motor = hardwareMap.get(DcMotorEx.class, "motor");
 
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }

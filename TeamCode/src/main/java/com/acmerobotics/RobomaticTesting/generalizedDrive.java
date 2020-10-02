@@ -110,7 +110,7 @@ public class generalizedDrive extends Subsystem {
     private LinearOpMode opMode;
 
 
-    public generalizedDrive(Robot robot, LinearOpMode opMode){
+    public generalizedDrive(Robot robot, LinearOpMode opMode, boolean inTeleOp){
         super("Drive");
 
         this.opMode = opMode;
@@ -127,12 +127,6 @@ public class generalizedDrive extends Subsystem {
             motors[i] = robot.getMotor("m" + i);
         }
 
-        if (opModeEquals("roboTeleOp") || opModeEquals("TeleOpUsingGenDrive")){ // insert a list of or statements with TeleOps that use the drive
-            inTeleOp = true;
-        }
-        else {
-            inTeleOp = false;
-        }
 
         if(!inTeleOp){
             omniTracker = robot.getMotor("intakeMotor");
@@ -181,10 +175,6 @@ public class generalizedDrive extends Subsystem {
 
         telemetryData.addData("autoMode ", autoMode);
 
-        if (inTeleOp){
-
-            setVelocity(targetVelocity);
-        }
 
         if (!inTeleOp){
 
@@ -192,12 +182,6 @@ public class generalizedDrive extends Subsystem {
             //error = error /  12; // might move this statement to a method
             pidController.setOutputBounds(-1, 1);
 
-            if (autoMode != lastAutoMode){ // will reset between autoModes but user still has to
-                                            // reset between strafes and turns not Y's
-                resetEncoders();
-                resetEncoderOmni();
-                lastAutoMode = autoMode;
-            }
 
             switch (autoMode){
                 case UNKNOWN:
@@ -266,7 +250,7 @@ public class generalizedDrive extends Subsystem {
 
         targetVelocity = new Pose2d(v * Math.cos(theta), v * Math.sin(theta), omega);
 
-        //setVelocity(targetVelocity);
+        setVelocity(targetVelocity);
 
     }
 
@@ -278,7 +262,7 @@ public class generalizedDrive extends Subsystem {
 
         targetVelocity = new Pose2d(v * Math.cos(theta), v * Math.sin(theta), omega);
 
-        //setVelocity(targetVelocity);
+        setVelocity(targetVelocity);
     }
 
 
@@ -366,13 +350,8 @@ public class generalizedDrive extends Subsystem {
     }
 
     public void resetAngle(){
-        // imuSensor.getValue returns an obj when it should return a float to get around this I convert the obj to a string then to a double
-        // the imuSensor.getValue returns the heading in radians, setting the return value to degrees is hard unless the hard code is changed or I manually do the convergence
-        // I decided to manually change the radians to degrees
 
-        String stringValue = String.valueOf(imuSensor.getValue()); // obj to string
-        double radians = Double.valueOf(stringValue); // string to double
-        lastAngle = convertToDegrees(radians); // radians to degrees
+        lastAngle = Math.toDegrees((float) imuSensor.getValue());
 
         globalAngle = 0;
 
@@ -380,15 +359,9 @@ public class generalizedDrive extends Subsystem {
 
     public double getAngle(){
 
-        // imuSensor.getValue returns an obj when it should return a float to get around this I convert the obj to a string then to a double
-        // the imuSensor.getValue returns the heading in radians, setting the return value to degrees is hard unless the hard code is changed or I manually do the convergence
-        // I decided to manually change the radians to degrees
+        double angle = Math.toDegrees((float) imuSensor.getValue()); // radians to degrees
 
-        String stringValue = String.valueOf(imuSensor.getValue()); // obj to string
-        double radians = Double.valueOf(stringValue); // string to double
-        double angles = convertToDegrees(radians); // radians to degrees
-
-        double deltaAngle = angles - lastAngle;
+        double deltaAngle = angle - lastAngle;
 
         if (deltaAngle < -180)
             deltaAngle += 360;
@@ -397,7 +370,7 @@ public class generalizedDrive extends Subsystem {
 
         globalAngle += deltaAngle;
 
-        lastAngle = angles;
+        lastAngle = angle;
 
         return globalAngle;
 

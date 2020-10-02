@@ -19,7 +19,7 @@ public class roboAuto extends LinearOpMode {
         roboRobot robot = new roboRobot(this);
 
         // autos
-        BlueBridgeParkingBuildingZone blueBridgeParkingBuildingZone = new BlueBridgeParkingBuildingZone();
+        //BlueBridgeParkingBuildingZone blueBridgeParkingBuildingZone = new BlueBridgeParkingBuildingZone();
 
         roboConfig config = (roboConfig) new ConfigurationLoader(hardwareMap.appContext).getConfig();
 
@@ -32,30 +32,28 @@ public class roboAuto extends LinearOpMode {
 
         waitForStart();
 
-        if (config.color == roboConfig.AllianceColor.RED){
-            if (config.startLocation == roboConfig.StartLocation.LOADING){
-                telemetry.addLine("run: a red loading zone auto ");
-            }
+        while(!isStopRequested()) {
 
-            else if (config.startLocation == roboConfig.StartLocation.BUILDING){
-                telemetry.addLine("run: a red building zone auto ");
-            }
-
-        }
-
-        else if (config.color == roboConfig.AllianceColor.BLUE){
-            if (config.startLocation == roboConfig.StartLocation.LOADING){
-                telemetry.addLine("run: a blue loading zone auto ");
-            }
-
-            else if (config.startLocation == roboConfig.StartLocation.BUILDING){
-                telemetry.addLine("run: a blue building zone auto ");
-                try {
-                    blueBridgeParkingBuildingZone.runOpMode(); // if done this way I have to deal with or remove InterruptedException
+            if (config.color == roboConfig.AllianceColor.RED) {
+                if (config.startLocation == roboConfig.StartLocation.LOADING) {
+                    telemetry.addLine("run: a red loading zone auto ");
+                } else if (config.startLocation == roboConfig.StartLocation.BUILDING) {
+                    telemetry.addLine("run: a red building zone auto ");
                 }
-                catch (Exception InterruptedException){
-                    Log.e("roboAuto", "thread was interrupted in auto");
+
+            } else if (config.color == roboConfig.AllianceColor.BLUE) {
+                if (config.startLocation == roboConfig.StartLocation.LOADING) {
+                    telemetry.addLine("run: a blue loading zone auto ");
+                } else if (config.startLocation == roboConfig.StartLocation.BUILDING) {
+                    telemetry.addLine("run: a blue building zone auto ");
+//                try {
+//                    blueBridgeParkingBuildingZone.runOpMode(); // if done this way I have to deal with or remove InterruptedException
+//                }
+//                catch (Exception InterruptedException){
+//                    Log.e("roboAuto", "thread was interrupted in auto");
+//                }
                 }
+
             }
 
         }

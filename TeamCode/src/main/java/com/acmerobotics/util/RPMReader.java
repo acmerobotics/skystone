@@ -1,6 +1,6 @@
 package com.acmerobotics.util;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -11,7 +11,7 @@ public class RPMReader {
 
     public ElapsedTime time;
 
-    public DcMotor motor;
+    public DcMotorEx motor;
 
     public double Time = 0.001; // set a non 0 value to prevent any initial div by 0
     public double ticks = 0;
@@ -20,14 +20,14 @@ public class RPMReader {
     public double lastTime = 0;
 
 
-    public RPMReader(HardwareMap hardwareMap, DcMotor motor, double TICKS_PER_REVOLUTION){
+    public RPMReader(HardwareMap hardwareMap, DcMotorEx motor, double TICKS_PER_REVOLUTION){
         this.TICKS_PER_REVOLUTION = TICKS_PER_REVOLUTION;
 
         this.motor = motor;
 
-        this.motor = hardwareMap.get(DcMotor.class, "motor");
+        this.motor = hardwareMap.get(DcMotorEx.class, "motor");
 
-        this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        this.motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
         time = new ElapsedTime();
     }
@@ -54,7 +54,18 @@ public class RPMReader {
 
         double RPM = ticks / TICKS_PER_REVOLUTION;
 
+        RPM = Math.ceil(RPM);
+
         return RPM;
+    }
+
+    public void setRPM(double targetRPM){
+        motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER); // I only have to set this once
+        // convert rpm to ticks per sec
+        double tickVelPerSec = targetRPM * TICKS_PER_REVOLUTION / 60;
+
+        // set velocity
+        motor.setVelocity(tickVelPerSec);
     }
 
 }
